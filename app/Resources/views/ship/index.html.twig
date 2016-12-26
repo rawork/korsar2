@@ -1,0 +1,27 @@
+<div class="clearfix">
+    <div class="ship-container">
+        <div class="logo">
+            <img src="/bundles/public/img/flag/flag{{ ship.flag }}.png">
+        </div>
+
+        <div class="name">&laquo;<span data-field="name">{% if ship.name %}{{ ship.name }}{% else %}Без имени{% endif %}</span>&raquo;
+            {% if user.ship_id == ship.id and user.role_id == 1 %}<img class="edit" src="/bundles/public/img/pencil.png">{% endif %}
+        </div>
+        <div class="captain">
+            Капитан: <span id="ship-captain">{% if captain %}{{ captain.nickname }}{% else %}не выбран{% endif %}</span>
+            {% if user.ship_id == ship.id and user.role_id == 1 and allowChangeCaptain==1 %}<a id="ship-btn-captain-form" href="/ajax/ship/captain" data-toggle="modal" data-target="#myModal"><img src="/bundles/public/img/pencil.png"></a>{% endif %}
+        </div>
+        <div class="account">Общий счет: <span id="ship-common-purse">{{ ship.purse|number_format }}</span> пиастров</div>
+        <div class="likes">Авторитет корабля: {{ ship.likes|number_format }}</div>
+        <div class="slogan">Девиз: <span data-field="slogan">
+            {% if ship.slogan %}{{ ship.slogan }}{% else %}отсутствует{% endif %}</span>
+            {% if user.ship_id == ship.id and user.role_id == 1 %}<img class="edit" src="/bundles/public/img/pencil.png">{% endif %}
+        </div>
+        {% if user.ship_id == ship.id and user.role_id == 1 and candidateQuantity > 0 %}<a id="ship-btn-show" href="/ajax/ship/hire" data-toggle="modal" data-target="#myModal" class="show-candidates">Посмотреть кандидатов</a>{% endif %}
+        {% if user.ship_id == ship.id and user.role_id == 13 and allowDivideMoney == 1 and ship.purse > 0 %}<a id="ship-btn-divide" href="/ajax/ship/money" data-toggle="modal" data-target="#myModal" class="show-candidates">Разделить добычу</a>{% endif %}
+    </div>
+    <div class="detail-container">
+
+    </div>
+</div>
+<div class="ship-pirates">{{ render('Fuga:Public:Ship:crew', {id: ship.id}) }}</div>

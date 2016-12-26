@@ -1,0 +1,19 @@
+<h2>раздел добычи</h2>
+<h1>На счету команды {{ ship.purse }} пиастров</h1>
+<div class="divide">
+    <input type="hidden" id="ship-purse" value="{{ ship.purse }}">
+    <div class="head">
+        <div class="name">Член экипажа</div>
+        <div class="purse">Доля добычи</div>
+    </div>
+    <div class="fixed-container">
+        {% for member in crew %}
+            <div class="member">
+                <div class="name">{{ member.nickname }} ({{ member.role_id_value.item.name }})</div>
+                <div class="purse"><input class="user-purse" name="purse_{{ member.id }}" value="0"></div>
+            </div>
+        {% endfor %}
+    </div>
+    <button id="ship-btn-money" class="btn">Разделить</button>
+</div>
+

@@ -1,0 +1,25 @@
+<div class="avatar">
+    <img id="cabin-avatar" src="{{ user.avatar_extra.main.path }}">
+    <button id="cabin-btn-avatar">Изменить аватар</button><br>
+    <a class="change-password" data-toggle="modal" data-target="#myModal" href="/ajax/user/passchange" href="/ajax/user/password">Изменить пароль</a><br><br>
+    <a class="change-password" href="/cabin/logout">Выйти</a>
+</div>
+<div class="user-info">
+    <div class="nickname"><span data-field="nickname">{{ user.nickname }}</span>
+        <img class="edit" src="/bundles/public/img/pencil.png"></div>
+    <div class="name"><span data-field="name">{{ user.name }}</span> <span data-field="lastname">{{ user.lastname }}</span>
+        <img class="edit" src="/bundles/public/img/pencil.png"></div>
+    <div class="status">Статус: {{ user.group_id_title }}</div>
+    <div class="prof">Профессия: {% if user.role %}{{ user.role.name }}{% else %}не определена{% endif %}</div>
+    <div class="ship">Корабль: {% if user.ship %}<a href="/ship">&laquo;{{ user.ship.name }}&raquo;</a>{% else %} не нанят{% endif %}</div>
+    <div class="purse">На счету: {{ user.purse }} пиастров</div>
+    <div class="likes">Авторитет: {{ user.likes }}</div>
+
+    <div class="messages">
+        {% for message in messages %}
+        <div>{{ message.text }}</div>
+        {% endfor %}
+    </div>
+
+</div>
+

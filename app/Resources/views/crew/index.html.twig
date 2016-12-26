@@ -1,0 +1,31 @@
+{% if ships %}
+<div class="content content-crew clearfix">
+    <div class="slider-wrapper">
+        <div class="ship-gallery">
+            {% for ship in ships %}
+            <div data-id="{{ ship.id }}" data-url="/ajax/crew/like" class="ship{% if ship.is_over == 1 %} inactive{% endif %}">
+                <div class="data relative">
+                    <i class="like{% if ship.liked %} active{% endif %}{% if user.no_like %} no-access{% endif %}"></i>
+                    <i class="photo">
+                        <img src="/bundles/public/img/flag/flag{{ ship.flag|number_format }}.png">
+                    </i>
+                    <i class="description">
+                        {% if ship.is_over == 1 %}
+                            “{{ ship.name }}”
+                        {% else %}
+                            <a href="{{ path('ship_page', {node: curnode.name,id: ship.id}) }}">“{{ ship.name }}”</a>
+                        {% endif %}
+                    </i>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="text-center">
+    <br><br><br><br><br><br>
+    <h2>КОМАНДЫ ГОТОВЯТСЯ К ПРИКЛЮЧЕНИЯМ</h2>
+    <br><br><br><br><br><br>    <br><br><br><br><br><br>    <br><br><br><br><br>
+</div>
+{% endif %}

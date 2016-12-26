@@ -1,0 +1,9 @@
+<h2 class="auth">АВТОРИЗАЦИЯ</h2>
+{% if message %}<div class="message-login message-{{ message.type }}">{{ message.text }}</div>{% endif %}
+<form class="auth" action="/cabin/enter" method="post">
+    <input type="text" name="login" placeholder="Логин"><br>
+    <a data-toggle="modal" data-target="#myModal" href="/ajax/user/register">Зарегистрироваться</a><br>
+    <input type="password" name="password" placeholder="Пароль"><br>
+    <a data-toggle="modal" data-target="#myModal" href="/ajax/user/forget">Забыли пароль?</a><br>
+    <button id="cabin-btn-login" class="btn">ВОЙТИ</button>
+</form>

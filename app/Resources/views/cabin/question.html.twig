@@ -1,0 +1,14 @@
+<h2>тест для определения профессии</h2>
+<div class="question">{{ question.id }}) {{ question.question }}</div>
+<div class="answers">
+<input name="question" value="1" type="hidden">
+<input type="radio" id="answer_1" name="answer" value="1" />
+<label for="answer_1">{{ question.answer1 }}</label>
+<input type="radio" id="answer_2" name="answer" value="2" />
+<label for="answer_2">{{ question.answer2 }}</label>
+<input type="radio" id="answer_3" name="answer" value="3" />
+<label for="answer_3">{{ question.answer3 }}</label>
+<input type="radio" id="answer_4" name="answer" value="4" />
+<label for="answer_4">{{ question.answer4 }}</label>
+</div>
+<button id="cabin-btn-test" class="btn">Ответить</button>

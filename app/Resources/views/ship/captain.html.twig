@@ -1,0 +1,28 @@
+<h2>НАЗНАЧЕНИЕ КАПИТАНА</h2>
+<div class="hire-captain">
+    <div class="candidates captain-candidates">
+        {% for candidate in crew %}
+            <div class="pirate">
+                <div class="foto relative">
+                    <i class="image"><img src="{{ candidate.avatar_extra.main.path }}"></i>
+                    <i class="hire"><a href="#" class="ship-btn-captain" data-role-name="{{ candidate.role_id_value.item.name }}" data-role="{{ candidate.role_id }}" data-id="{{ candidate.id }}">Выбрать</a></i>
+                </div>
+                <div class="name">{{ candidate.nickname }}</div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="marines">
+        <h2 class="marine-title">выберите матроса на должность </h2>
+        <div class="candidates">
+            {% for candidate in marines %}
+                <div class="pirate">
+                    <div class="foto relative">
+                        <i class="image"><img src="{{ candidate.avatar_extra.main.path }}"></i>
+                        <i class="hire"><a href="#" class="ship-btn-captain" data-id="{{ candidate.id }}">Выбрать</a></i>
+                    </div>
+                    <div class="name">{{ candidate.nickname }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

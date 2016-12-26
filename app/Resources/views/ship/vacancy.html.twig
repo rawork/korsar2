@@ -1,0 +1,8 @@
+<div class="vacancy-container">
+    <div class="title">Вакансии на корабле:</div>
+    {% for vacancy in vacancies %}
+    <div class="vacancy">
+        <span>{{ vacancy.role_id_value.item.name }}</span><button data-ship="{{ vacancy.ship_id }}" data-vacancy="{{ vacancy.id }}" class="{% if vacancy.candidates|length > 2 or user.role_id != vacancy.role_id or user.is_busy > 0 or user.ship_id > 0 %}inactive {% endif %}vacancy-answer">Наняться</button>
+    </div>
+    {% endfor %}
+</div>

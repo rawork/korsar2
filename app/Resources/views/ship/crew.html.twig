@@ -1,0 +1,13 @@
+<div class="ship-pirates">
+    <div class="title">Экипаж корабля:</div>
+    <div class="pirates-wrapper skull-scroll">
+        <div class="pirates clearfix">
+            {% for pirate in crew  %}
+            <div>
+                <img alt="{{ pirate.role_id_value.item.name }}" src="{{ pirate.avatar_value.extra.main.path }}"><br>
+                <span>{{ pirate.nickname }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

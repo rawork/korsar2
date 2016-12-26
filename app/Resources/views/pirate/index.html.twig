@@ -1,0 +1,41 @@
+
+<div class="slider-wrapper">
+    <div class="gallery jcarousel">
+        <ul>
+            {%  set i = 1 %}
+            {% for pirate in pirates %}
+            {% if i == 1 %}
+            <li>
+            <div class="slide">
+            {% endif %}
+                    <div data-id="{{ pirate.id }}" data-url="/ajax/pirate/like" class="pirate{% if pirate.is_over == 1 %} inactive{% endif %}">
+                        <div class="data relative">
+                            <i class="like{% if pirate.liked == 1 %} active{% endif %}{% if user.no_like %} no-access{% endif %}"></i>
+                            <i class="photo">
+                                <img src="{{ pirate.avatar_value.extra.main.path }}">
+                            </i>
+                            <i class="description">
+                                <div class="name">{{ pirate.nickname }}</div>
+                                <div class="role">{{ pirate.role_id_value.item.name }}</div>
+                                <div class="ship">“{{ pirate.ship_id_value.item.name }}”</div>
+                            </i>
+                        </div>
+                    </div>
+            {% if i == 15 %}
+            {%  set i = 1 %}
+            </div>
+            </li>
+            {% else %}
+            {%  set i = i + 1 %}
+            {% endif %}
+            {% endfor %}
+            {% if i > 1 %}
+            </div>
+            </li>
+            {% endif %}
+        </ul>
+
+        <a href="#" class="jcarousel-control-prev"><img src="/bundles/public/img/arrow_left.png"></a>
+        <a href="#" class="jcarousel-control-next"><img src="/bundles/public/img/arrow_right.png"></a>
+    </div>
+</div>

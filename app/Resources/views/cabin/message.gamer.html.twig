@@ -1,0 +1,6 @@
+<img src="/bundles/public/img/ancor.png">
+<h2>ТЕКУЩЕЕ ИСПЫТАНИЕ</h2>
+<div>
+{{ render('Fuga:Public:Common:block', {name: 'current_game_message'}) }}
+</div>
+<a id="game-btn-link" class="btn{% if user.group_id == 3 %} no-active{% endif %}"{% if gamelink %} href="{{ gamelink }}"{% endif %}>ИГРАТЬ</a>

@@ -1,0 +1,24 @@
+<h2>НАЙМ ПИРАТОВ</h2>
+<div class="hire-pirates-title">
+    Должность
+</div>
+<div class="hire-pirates">
+    {% for vacancy in vacancies %}
+    {% if vacancy.candidates%}
+    <div class="vacancy clearfix">
+        <div class="title pull-left">{{ vacancy.role_id_value.item.name }} ({{ vacancy.quantity }})</div>
+        <div class="candidates">
+            {% for candidate in vacancy.candidates %}
+            <div class="pirate">
+                <div class="foto relative">
+                    <i class="image"><img src="{{ candidate.avatar_extra.main.path }}"></i>
+                    <i class="hire"><a href="#" class="ship-btn-hire" data-id="{{ candidate.id }}">Нанять</a></i>
+                </div>
+                <div class="name">{{ candidate.user_id_value.item.nickname }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>

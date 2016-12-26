@@ -1,0 +1,36 @@
+{
+    "steps": {
+        "step1": {
+            "need": ["tool1", "tool2", "tool3"],
+            "task": "<h2>у вас 60 секунд чтобы собрать 3 пары инструментов!</h2>",
+            "text": "Вы должны собрать пары инструментов:"
+        },
+        "step2": {
+            "need": ["food1", "food2", "food3"],
+            "task": "<h2>у вас 60 секунд чтобы собрать 3 пары припасов!</h2>",
+            "text": "Вы должны собрать пары припасов:"
+        },
+        "step3": {
+            "need": ["medicine1", "medicine2", "medicine3"],
+            "task": "<h2>у вас 60 секунд чтобы собрать 3 пары лекарств!</h2>",
+            "text": "Вы должны собрать пары лекарств:"
+        },
+        "step4": {
+            "need": ["bullet1", "bullet2", "bullet3"],
+            "task": "<h2>у вас 60 секунд чтобы собрать 3 пары снарядов!</h2>",
+            "text": "Вы должны собрать пары снарядов:"
+        },
+        "step5": {
+            "need": ["weapon1", "weapon2", "weapon3"],
+            "task": "<h2>у вас 60 секунд чтобы собрать 3 пары орудий!</h2>",
+            "text": "Вы должны собрать пары орудий:"
+        }
+    },
+    "cells": 30,
+    "time": 60,
+    "customs": [
+        "custom1", "custom2", "custom3", "custom4", "custom5", "custom6",
+        "custom7", "custom8", "custom9", "custom10", "custom11", "custom12",
+        "custom13", "custom14", "custom15", "custom16", "custom17", "custom18"
+    ]
+}

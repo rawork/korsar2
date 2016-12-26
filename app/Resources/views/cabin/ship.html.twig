@@ -1,0 +1,16 @@
+<h2>настройка корабля</h2>
+
+<input type="text" id="ship-name" name="name" placeholder="Название корабля">
+<ul class="flags">
+    {% for flag in flags %}
+        <li>
+            <img src="/bundles/public/img/flag/flag{{ flag.id }}.png"><br>
+            <input type="radio" id="flag_{{ flag.id }}" name="flag" value="{{ flag.id }}" />
+            <label for="flag_{{ flag.id }}">&nbsp;</label>
+        </li>
+    {% endfor %}
+</ul>
+
+<button id="cabin-btn-ship" class="btn">Сохранить</button>
+
+

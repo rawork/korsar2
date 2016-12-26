@@ -1,0 +1,26 @@
+<h2>Регистрация</h2>
+<form id="form-register" class="register" action="/ajax/user/register" method="post" enctype="multipart/form-data">
+<div class="radiogroup">
+{% if roles %}
+<input data-avatar="true" type="radio" id="role_2" name="role_id" value="2" checked="checked" />
+<label for="role_2">Корсар<br>
+<small>(Игрок)</small>
+</label>
+{% endif %}
+<input type="radio" id="role_3" name="role_id" value="3" />
+<label for="role_3">Хранитель сокровищ<br>
+<small>(болельщик)</small>
+</label>
+</div>
+<input type="text" name="name" placeholder="Имя"><br>
+<input type="text" name="lastname" placeholder="Фамилия"><br>
+<input type="text" name="nickname" placeholder="Ник"><br>
+<input type="text" name="login" placeholder="Логин (E-mail)"><br>
+<input type="password" name="password" placeholder="Пароль"><br>
+<input type="password" name="password_again" placeholder="Пароль еще раз"><br>
+<div class="field-file">
+<div>Выбрать аватар</div>
+<input type="file" name="avatar" size="1">
+</div><br>
+<button id="cabin-btn-register" class="btn">Зарегистрироваться</button>
+</form>
