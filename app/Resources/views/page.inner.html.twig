@@ -7,7 +7,7 @@
 
     <link href="/bundles/public/css/normalize.css" rel="stylesheet" media="screen">
     <link href="/bundles/public/css/jcarousel.css" rel="stylesheet" media="screen">
-    <link href="/bundles/public/css/app.inner.css?20150630" rel="stylesheet" media="screen">
+    <link href="{{ asset('/bundles/public/css/app.inner.css') }}" rel="stylesheet" media="screen">
     {{ appcss }}
 
     <!--[if lt IE 9]>
@@ -73,7 +73,7 @@
     <script src="/bundles/scrollbar/jquery.mCustomScrollbar.js"></script>
     <script src="/bundles/jcarousel/jquery.jcarousel.min.js"></script>
     <script src="/bundles/jquery/jquery.iframe-transport.js"></script>
-    <script src="/bundles/public/js/app.js?20150629"></script>
+    <script src="{{ asset('/bundles/public/js/app.js') }}"></script>
     {{ appjs }}
 </body>
 </html>

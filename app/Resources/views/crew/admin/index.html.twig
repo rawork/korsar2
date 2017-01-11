@@ -1,0 +1,11 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block content %}
+    <h4>Управление командами</h4>
+    <h5>Открыть вакансии "Матрос" (для всех команд в конце 1 тура)</h5>
+    <form id="crew-vacancy" method="post" action="{{ path('admin_crew_vacancy_create') }}">
+        <button type="submit" class="btn btn-default">Создать вакансии</button>
+    </form>
+    <br><br>
+    <div class="alert alert-info hidden" id="message-vacancy"></div>
+{% endblock %}

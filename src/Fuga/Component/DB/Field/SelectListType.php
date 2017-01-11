@@ -110,7 +110,7 @@ class SelectListType extends Type
 			$items = $stmt->fetchAll();
 
 			return $this->get('templating')->render(
-				'form/field/selectlist.dialog.html.twig',
+				'form/field/selectlist.dialog',
 				array(
 					'items' => $items,
 					'name' => $name,
@@ -128,7 +128,7 @@ class SelectListType extends Type
 			$items = $stmt->fetchAll();
 
 			return $this->get('templating')->render(
-				'form/field/selectlist.simple.html.twig',
+				'form/field/selectlist.simple',
 				array(
 					'items' => $items,
 					'name' => $name,

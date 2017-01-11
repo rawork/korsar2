@@ -8,8 +8,8 @@ class FugaExtension  extends \Twig_Extension
 	public function getFunctions()
 	{
 		return array(
-			new \Twig_SimpleFunction('render', array($this, 'renderAction')),
-			new \Twig_SimpleFunction('path', array($this, 'generatePath')),
+			new \Twig_SimpleFunction('render', array($this, 'render')),
+			new \Twig_SimpleFunction('path', array($this, 'path')),
 			new \Twig_SimpleFunction('t', array($this, 'translate')),
 			new \Twig_SimpleFunction('asset', array($this, 'asset')),
 		);
@@ -23,12 +23,12 @@ class FugaExtension  extends \Twig_Extension
 		);
 	}
 
-	public function renderAction($path, $options = array())
+	public function render($path, $options = array())
 	{
 		return $GLOBALS['container']->callAction($path, $options);
 	}
 
-	public function generatePath($name, $options = array(), $locale = PRJ_LOCALE)
+	public function path($name, $options = array(), $locale = PRJ_LOCALE)
 	{
 		if (isset($options['node']) && '/' == $options['node']) {
 			unset($options['node']);

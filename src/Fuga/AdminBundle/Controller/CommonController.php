@@ -7,27 +7,27 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CommonController extends AdminController
 {
-	public function stateAction($state)
+	public function state($state)
 	{
 		$modules = $this->getManager('Fuga:Admin:Module')->getByState($state);
 		$response = new Response();
-		$response->setContent($this->render('admin/index.html.twig', compact('modules', 'state')));
+		$response->setContent($this->render('admin/index', compact('modules', 'state')));
 		$response->prepare($this->get('request'));
 
 		return $response;
 	}
 
-	public function moduleAction($state, $module)
+	public function module($state, $module)
 	{
 		$entities = $this->getManager('Fuga:Admin:Module')->getEntitiesByModule($module);
 		$response = new Response();
-		$response->setContent($this->render('admin/module.html.twig', compact('entities', 'state', 'module')));
+		$response->setContent($this->render('admin/module', compact('entities', 'state', 'module')));
 		$response->prepare($this->get('request'));
 
 		return $response;
 	}
 
-	public function settingAction($state, $module)
+	public function setting($state, $module)
 	{
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$params = $this->getManager('Fuga:Common:Param')->findAll($module);
@@ -65,7 +65,7 @@ class CommonController extends AdminController
 
 		$response = new Response();
 		$response->setContent(
-			$this->render('admin/common/setting.html.twig',
+			$this->render('admin/common/setting',
 			compact('state', 'module', 'title', 'message', 'params'))
 		);
 		$response->prepare($this->get('request'));

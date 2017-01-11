@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 class SecurityController extends Controller
 {
 	
-	public function loginAction()
+	public function login()
 	{
 		$message = null;
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
@@ -32,10 +32,10 @@ class SecurityController extends Controller
 
 		$message = $this->flash('danger');
 
-		return new Response($this->render('admin/form/login.html.twig', compact('message')));
+		return new Response($this->render('admin/form/login', compact('message')));
 	}
 	
-	public function forgetAction()
+	public function forget()
 	{
 		$message = null;
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -75,22 +75,15 @@ class SecurityController extends Controller
 		}
 		$message = $this->flash('danger') ?: $this->flash('success');
 
-		return new Response($this->render('admin/form/forget.html.twig', compact('message')));
+		return new Response($this->render('admin/form/forget', compact('message')));
 	}
 	
-	public function logoutAction()
+	public function logout()
 	{
-		$this->get('security')->logout();
-		if (empty($_SERVER['HTTP_REFERER']) || preg_match('/^'.PRJ_REF.'\/admin\/logout/', $_SERVER['HTTP_REFERER'])) {
-			$uri = $this->generateUrl('admin_index');
-		} else {
-			$uri = $_SERVER['HTTP_REFERER'];
-		}
-
-		return $this->redirect($uri);
+		return $this->get('security')->logout();
 	}
 	
-	public function passwordAction($key)
+	public function password($key)
 	{
 		$user = $this->get('container')->getItem('user_user', "hashkey='".$key."'");
 		if ($user && !empty($user['email'])) {
@@ -116,6 +109,14 @@ class SecurityController extends Controller
 		}
 
 		return $this->redirect($this->generateUrl('admin_index'));
+	}
+
+	public function closed()
+	{
+		$response = new Response();
+		$response->setContent($this->render('page.closed', array('project_logo' => PRJ_LOGO)));
+
+		return $response;
 	}
 	
 }

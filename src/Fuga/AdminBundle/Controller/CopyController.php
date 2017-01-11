@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CopyController extends AdminController
 {
-	public function copyAction($state, $module, $entity, $id, $quantity)
+	public function copy($state, $module, $entity, $id, $quantity)
 	{
 		set_time_limit(0);
 		$this->get('session')->getFlashBag()->add(
@@ -20,7 +20,7 @@ class CopyController extends AdminController
 		));
 	}
 
-	public function dialogAction($id)
+	public function dialog($id)
 	{
 		$response = new JsonResponse();
 		$response->setData(array(

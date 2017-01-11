@@ -26,7 +26,7 @@ class CheckboxType extends Type {
 	}
 
 	public function getInput($value = '', $name = '') {
-		return '<input type="checkbox" value="1" name="'.($name ?: $this->getName()).'" '.(empty($this->dbValue) ? '' : 'checked').'>';
+		return '<label><input type="checkbox" value="1" name="'.($name ?: $this->getName()).'" '.(empty($this->dbValue) ? '' : 'checked').'></label>';
 	}
 
 	public function getSearchInput() {

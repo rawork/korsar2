@@ -2,17 +2,12 @@
 
 namespace Fuga\PublicBundle\Controller;
 
-use Fuga\CommonBundle\Controller\PublicController;
+use Fuga\CommonBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class ShipController extends PublicController
+class ShipController extends Controller
 {
-	public function __construct()
-	{
-		parent::__construct('ship');
-	}
-
-	public function indexAction()
+	public function index()
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 		if (!$user || $user['group_id'] == FAN_GROUP || $user['ship_id'] == 0) {
@@ -32,10 +27,10 @@ class ShipController extends PublicController
 		$this->get('container')->setVar('appcss', '<link href="/bundles/public/css/app.chat.css" rel="stylesheet" media="screen">');
 		$this->get('container')->setVar('appjs', '<script src="/bundles/public/js/app.chat.js"></script>');
 
-		return $this->render('ship/index.html.twig', compact('ship', 'user', 'candidateQuantity', 'captain',  'allowChangeCaptain', 'allowDivideMoney'));
+		return $this->render('ship/index', compact('ship', 'user', 'candidateQuantity', 'captain',  'allowChangeCaptain', 'allowDivideMoney'));
 	}
 
-	public function crewAction($id)
+	public function crew($id)
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 		if (!$user || $user['group_id'] == FAN_GROUP) {
@@ -43,10 +38,10 @@ class ShipController extends PublicController
 		}
 		$crew = $this->get('container')->getItems('user_user', 'is_active=1 AND is_over=0 AND ship_id='.$id);
 
-		return $this->render('ship/crew.html.twig', compact('crew'));
+		return $this->render('ship/crew', compact('crew'));
 	}
 
-	public function chatAction($id)
+	public function chat($id)
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 		if (!$user || $user['group_id'] == FAN_GROUP) {
@@ -54,10 +49,10 @@ class ShipController extends PublicController
 		}
 		$messages = $this->get('container')->getItems('ship_chat', 'publish=1 AND ship_id='.$user['ship_id'], null, 20);
 
-		return $this->render('ship/chat.html.twig', compact('messages'));
+		return $this->render('ship/chat', compact('messages'));
 	}
 
-	public function changeAction()
+	public function change()
 	{
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$response = new JsonResponse();
@@ -110,7 +105,7 @@ class ShipController extends PublicController
 		return $this->redirect('/');
 	}
 
-	public function hireAction()
+	public function hire()
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
@@ -246,7 +241,7 @@ class ShipController extends PublicController
 				if (is_array($vacancy['candidates'])) {
 					foreach ($vacancy['candidates'] as &$candidate) {
 						$field = $this->get('container')->getTable('user_user')->getFieldType($this->get('container')->getTable('user_user')->fields['avatar']);
-						$candidate['avatar_extra'] = $this->get('imagestorage')->additionalFiles($candidate['user_id_value']['item']['avatar'], array('sizes' => $field->getParam('sizes')));
+						$candidate['avatar_extra'] = $this->get('imagestorage')->additionalFiles($candidate['user_id_value']['item']['avatar'], ['sizes' => $field->getParam('sizes')]);
 					}
 					unset($candidate);
 				}
@@ -254,7 +249,7 @@ class ShipController extends PublicController
 			unset($vacancy);
 
 			$response->setData(array(
-				'content' => $this->render('ship/hire.html.twig', compact('vacancies')),
+				'content' => $this->render('ship/hire', compact('vacancies')),
 			));
 
 			return $response;
@@ -263,7 +258,7 @@ class ShipController extends PublicController
 		return $this->redirect('/');
 	}
 
-	public function captainAction()
+	public function captain()
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
@@ -415,7 +410,7 @@ class ShipController extends PublicController
 			if (is_array($crew)) {
 				foreach ($crew as &$candidate) {
 					$field = $this->get('container')->getTable('user_user')->getFieldType($this->get('container')->getTable('user_user')->fields['avatar']);
-					$candidate['avatar_extra'] = $this->get('imagestorage')->additionalFiles($candidate['avatar'], array('sizes' => $field->getParam('sizes')));
+					$candidate['avatar_extra'] = $this->get('imagestorage')->additionalFiles($candidate['avatar'], ['sizes' => $field->getParam('sizes')]);
 				}
 				unset($candidate);
 			}
@@ -423,14 +418,14 @@ class ShipController extends PublicController
 			if (is_array($marines)) {
 				foreach ($marines as &$candidate) {
 					$field = $this->get('container')->getTable('user_user')->getFieldType($this->get('container')->getTable('user_user')->fields['avatar']);
-					$candidate['avatar_extra'] = $this->get('imagestorage')->additionalFiles($candidate['avatar'], array('sizes' => $field->getParam('sizes')));
+					$candidate['avatar_extra'] = $this->get('imagestorage')->additionalFiles($candidate['avatar'], ['sizes' => $field->getParam('sizes')]);
 				}
 				unset($candidate);
 			}
 
 			$response->setData(array(
 				'error' => false,
-				'content' => $this->render('ship/captain.html.twig', compact('crew', 'marines')),
+				'content' => $this->render('ship/captain', compact('crew', 'marines')),
 			));
 
 			return $response;
@@ -439,7 +434,7 @@ class ShipController extends PublicController
 		return $this->redirect('/');
 	}
 
-	public function moneyAction()
+	public function money()
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
@@ -558,14 +553,14 @@ class ShipController extends PublicController
 			if (is_array($crew)) {
 				foreach ($crew as &$candidate) {
 					$field = $this->get('container')->getTable('user_user')->getFieldType($this->get('container')->getTable('user_user')->fields['avatar']);
-					$candidate['avatar_extra'] = $this->get('imagestorage')->additionalFiles($candidate['avatar'], array('sizes' => $field->getParam('sizes')));
+					$candidate['avatar_extra'] = $this->get('imagestorage')->additionalFiles($candidate['avatar'], ['sizes' => $field->getParam('sizes')]);
 				}
 				unset($candidate);
 			}
 
 			$response->setData(array(
 				'error' => false,
-				'content' => $this->render('ship/money.html.twig', compact('crew', 'ship')),
+				'content' => $this->render('ship/money', compact('crew', 'ship')),
 			));
 
 			return $response;

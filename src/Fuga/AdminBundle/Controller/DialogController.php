@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DialogController extends Controller
 {
-	public function selectAction()
+	public function select()
 	{
 		$inputId   = $this->get('request')->request->get('input');
 		$tableName = $this->get('request')->request->get('table');
@@ -51,13 +51,13 @@ class DialogController extends Controller
 		$response->setData(array(
 			'title' => 'Выбор: '.$field['title'],
 			'button' => '<a class="btn btn-success btn-popup-choice" data-input="'.$inputId.'">Выбрать</a>',
-			'content' => $this->render('admin/dialog/select.html.twig', $params),
+			'content' => $this->render('admin/dialog/select', $params),
 		));
 
 		return $response;
 	}
 
-	public function paginationAction($table, $field, $entity, $page)
+	public function pagination($table, $field, $entity, $page)
 	{
 		$locale = $this->get('session')->get('locale');
 		$tableEntity = $this->get('container')->getTable($table);
@@ -105,7 +105,7 @@ class DialogController extends Controller
 		return $response;
 	}
 
-	public function treeAction()
+	public function tree()
 	{
 		$inputId = $this->get('request')->request->get('input');
 		$tableName = $this->get('request')->request->get('table');
@@ -158,13 +158,13 @@ class DialogController extends Controller
 		$response->setData( array(
 			'title' => 'Выбор: '.$field['title'],
 			'button' => '<a class="btn btn-success btn-popup-choice" data-input="'.$inputId.'">Выбрать</a>',
-			'content' => $this->render('admin/dialog/tree.html.twig', $params),
+			'content' => $this->render('admin/dialog/tree', $params),
 		));
 
 		return $response;
 	}
 
-	function listAction() {
+	function list() {
 		$inputId = $this->get('request')->request->get('input_id');
 		$tableName = $this->get('request')->request->get('table_name');
 		$fieldName = $this->get('request')->request->get('field_name');
@@ -192,7 +192,7 @@ class DialogController extends Controller
 		$response->setData( array(
 			'title' => 'Выбор: '.$field['title'],
 			'button' => '<a class="btn btn-success btn-list-choice" data-input="'.$inputId.'">Выбрать</a>',
-			'content' => $this->render('admin/dialog/list.html.twig', $params),
+			'content' => $this->render('admin/dialog/list', $params),
 		));
 
 		return $response;
@@ -205,7 +205,7 @@ class DialogController extends Controller
 		return $content;
 	}
 
-	function templateAction()
+	function template()
 	{
 		$versionId = $this->get('request')->request->get('version_id');
 		$version = $this->get('container')->getItem('template_version', $versionId);

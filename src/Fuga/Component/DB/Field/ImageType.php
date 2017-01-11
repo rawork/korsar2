@@ -30,7 +30,7 @@ class ImageType extends FileType {
 	}
 
 	public function getSQLValue($inputName = '') {
-		$this->get('imagestorage')->setOptions(array('sizes' => $this->getParam('sizes')));
+		$this->get('imagestorage')->setOptions(['sizes' => $this->getParam('sizes')]);
 		$inputName = $inputName ? $inputName : $this->getName();
 		$fileName = $this->dbValue;
 		if ($fileName && $this->get('request')->request->get($inputName.'_delete')) {
@@ -47,7 +47,7 @@ class ImageType extends FileType {
 	public function getNativeValue() {
 		$value = array('value' => parent::getNativeValue());
 		if ($value['value']) {
-			if ($files = $this->get('imagestorage')->additionalFiles($this->dbValue, array('sizes' => $this->getParam('sizes')))) {
+			if ($files = $this->get('imagestorage')->additionalFiles($this->dbValue, ['sizes' => $this->getParam('sizes')])) {
 				$value['extra'] = $files;
 			}
 		}

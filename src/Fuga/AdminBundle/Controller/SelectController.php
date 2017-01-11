@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class SelectController extends Controller
 {
-	public function completeAction()
+	public function complete()
 	{
 		$results = array();
 		$response = new JsonResponse();

@@ -61,6 +61,10 @@ abstract class Controller {
 	{
 		return $this->get('translator')->t($name);
 	}
+
+	public function log($message){
+		$this->get('log')->addError($message);
+	}
 	
 	public function flash($name)
 	{

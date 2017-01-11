@@ -2,22 +2,17 @@
 
 namespace Fuga\PublicBundle\Controller;
 
-use Fuga\CommonBundle\Controller\PublicController;
+use Fuga\CommonBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class ChatController extends PublicController
+class ChatController extends Controller
 {
-	public function __construct()
-	{
-		parent::__construct('chat');
-	}
-
-	public function indexAction()
+	public function index()
 	{
 		return $this->redirect('/');
 	}
 
-	public function commonAction()
+	public function common()
 	{
 		if ($this->isXmlHttpRequest()) {
 			$response = new JsonResponse();
@@ -55,7 +50,7 @@ class ChatController extends PublicController
 		return $this->redirect('/');
 	}
 
-	public function commonhistoryAction()
+	public function commonhistory()
 	{
 		if ($this->isXmlHttpRequest()) {
 			$response = new JsonResponse();
@@ -89,7 +84,7 @@ class ChatController extends PublicController
 		return $this->redirect('/');
 	}
 
-	public function commonmessageAction()
+	public function commonmessage()
 	{
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$response = new JsonResponse();
@@ -130,7 +125,7 @@ class ChatController extends PublicController
 		return $this->redirect('/');
 	}
 
-	public function shipAction()
+	public function ship()
 	{
 		if ($this->isXmlHttpRequest()) {
 			$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
@@ -169,7 +164,7 @@ class ChatController extends PublicController
 		return $this->redirect('/');
 	}
 
-	public function shiphistoryAction()
+	public function shiphistory()
 	{
 		if ($this->isXmlHttpRequest()) {
 			$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
@@ -205,7 +200,7 @@ class ChatController extends PublicController
 		return $this->redirect('/');
 	}
 
-	public function shipmessageAction()
+	public function shipmessage()
 	{
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$response = new JsonResponse();

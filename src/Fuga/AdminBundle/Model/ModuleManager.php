@@ -3,17 +3,28 @@
 namespace Fuga\AdminBundle\Model;
 
 use Fuga\CommonBundle\Model\ModelManager;
+use Symfony\Component\Yaml\Yaml;
 
 class ModuleManager extends ModelManager
 {
+	protected $config;
 
-	private $states = array(
+	protected $states = [
 		'content' => 'Структура и контент',
 		'service' => 'Сервисы',
 		'system'  => 'Настройки',
-	);
+	];
 
-	function getEntitiesByModule($moduleName)
+	protected function getConfig()
+	{
+		if (!$this->config) {
+			$this->config = Yaml::parse(file_get_contents(PRJ_DIR.'/app/config/admin.menu.yml'));
+		}
+
+		return $this->config;
+	}
+
+	public function getEntitiesByModule($moduleName)
 	{
 		$ret = array();
 		$module = $this->get('container')->getModule($moduleName);
@@ -54,11 +65,15 @@ class ModuleManager extends ModelManager
 			);
 		}
 
-		if ($module['name'] == 'poll') {
-			$ret[] = array (
-				'ref' => $this->get('routing')->getGenerator()->generate('admin_poll_export'),
-				'name' => 'Экспорт'
-			);
+		$config = $this->getConfig();
+
+		foreach ($config as $var => $data) {
+			if ($module['name'] == $var) {
+				$ret[] = array (
+					'ref' => $this->get('routing')->getGenerator()->generate($data['route']),
+					'name' => $data['title']
+				);
+			}
 		}
 
 		return $ret;

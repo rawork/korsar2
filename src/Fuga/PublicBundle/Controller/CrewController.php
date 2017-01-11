@@ -2,17 +2,12 @@
 
 namespace Fuga\PublicBundle\Controller;
 
-use Fuga\CommonBundle\Controller\PublicController;
+use Fuga\CommonBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class CrewController extends PublicController
+class CrewController extends Controller
 {
-	public function __construct()
-	{
-		parent::__construct('crew');
-	}
-
-	public function indexAction()
+	public function index()
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 
@@ -31,17 +26,17 @@ class CrewController extends PublicController
 			$user['no_like'] = true;
 		}
 
-		return $this->render('crew/index.html.twig', compact('ships', 'user'));
+		return $this->render('crew/index', compact('ships', 'user'));
 	}
 
-	public function shipAction($id)
+	public function ship($id)
 	{
 		$ship = $this->get('container')->getItem('crew_ship', $id);
 
-		return $this->render('crew/ship.html.twig', compact('ship'));
+		return $this->render('crew/ship', compact('ship'));
 	}
 
-	public function vacancyAction($id)
+	public function vacancy($id)
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 		if (!$user || $user['group_id'] == FAN_GROUP) {
@@ -55,10 +50,10 @@ class CrewController extends PublicController
 		}
 		unset($vacancy);
 
-		return $this->render('ship/vacancy.html.twig', compact('vacancies', 'user'));
+		return $this->render('ship/vacancy', compact('vacancies', 'user'));
 	}
 
-	public function likeAction()
+	public function like()
 	{
 		$response = new JsonResponse();
 
@@ -79,7 +74,7 @@ class CrewController extends PublicController
 		$like = $this->get('container')->getItem('crew_likes', 'user_id='.$user['id'].' AND ship_id='.$ship_id);
 
 		try {
-			$this->get('connection')->beginTransaction();
+			$this->get('connection')->beginTrans();
 			if ($like) {
 				$this->get('container')->deleteItem('crew_likes', 'id='.$like['id']);
 				$this->get('container')->updateItem(
@@ -116,7 +111,7 @@ class CrewController extends PublicController
 		return $response;
 	}
 
-	public function replyAction()
+	public function reply()
 	{
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$response = new JsonResponse();

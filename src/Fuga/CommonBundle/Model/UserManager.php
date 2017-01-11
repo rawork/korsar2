@@ -12,7 +12,10 @@ class UserManager extends ModelManager {
 			$this->currentUser = $this->get('security')->getCurrentUser();
 			if ($this->currentUser) {
 				$field = $this->get('container')->getTable('user_user')->getFieldType($this->get('container')->getTable('user_user')->fields['avatar']);
-				$this->currentUser['avatar_extra'] = $this->get('imagestorage')->additionalFiles($this->currentUser['avatar'], array('sizes' => $field->getParam('sizes')));
+				$this->currentUser['avatar_extra'] = $this->get('imagestorage')->additionalFiles(
+					$this->currentUser['avatar'],
+					['sizes' => $field->getParam('sizes')]
+				);
 				$this->currentUser['avatar'] = $this->currentUser['avatar'] ? UPLOAD_REF.$this->currentUser['avatar'] : '';
 				$this->currentUser['ship_id'] = isset($this->currentUser['ship_id']) ? $this->currentUser['ship_id'] : 0;
 				$this->currentUser['role_id'] = isset($this->currentUser['role_id']) ? $this->currentUser['role_id'] : 0;

@@ -561,6 +561,33 @@ function showListDialog(inputId, table_name, field_name, value){
 
         });
 
+        $('#crew-vacancy').submit(function(){
+            var that = $(this);
+            var path = that.attr('action');
+            var message = $('#message-vacancy');
+
+            message.hide();
+
+            $.post(path, that.serialize(), function(data){
+                if (data.error) {
+                    message
+                        .removeClass()
+                        .addClass('alert alert-error')
+                        .html(data.message)
+                        .fadeIn(500);
+                } else {
+                    message
+                        .removeClass()
+                        .addClass('alert alert-success')
+                        .html(data.message)
+                        .fadeIn(500);
+                }
+
+            }, "json");
+
+            return false;
+        });
+
         var cals = $('.field-date');
         if (cals.length > 0) {
             $.cachedScript( prj_ref + '/bundles/calendar/calendar.js' ).done(function( script, textStatus ) {

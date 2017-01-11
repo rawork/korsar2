@@ -1,7 +1,7 @@
 <?php
 
-define('LIB_VERSION', '7.0.0');
-define('LIB_DATE', '2015.12.06');
+define('LIB_VERSION', '7.5.0');
+define('LIB_DATE', '2016.12.30');
 
 mb_http_input('UTF-8'); 
 mb_http_output('UTF-8'); 
@@ -9,8 +9,6 @@ mb_internal_encoding("UTF-8");
 
 $loader = require __DIR__.'/../vendor/autoload.php';
 
-use Fuga\Component\Container;
-use Fuga\Component\Registry;
 
 function exception_handler($exception) 
 {	
@@ -21,7 +19,7 @@ function exception_handler($exception)
 
 	if (isset($_SERVER['REQUEST_URI'])) {
 		$controller = new Fuga\CommonBundle\Controller\ExceptionController();
-		$res = $controller->indexAction($statusCode, $message);
+		$res = $controller->index($statusCode, $message);
 		$res->send();
 	} else {
 		echo $message;
@@ -61,20 +59,15 @@ if (file_exists(__DIR__.'/config/config.php')) {
 	require_once __DIR__.'/config/config.php';
 }
 
-$container = new Container($loader);
+$container = new Fuga\Component\Container($loader);
 
 // инициализация переменных
-if (isset($_SERVER['REQUEST_URI'])) {
-	$params = array();
-	$sql = 'SELECT name, value FROM config_variable';
-	$stmt = $container->get('connection')->prepare($sql);
+if (php_sapi_name() != 'cli') {
+	$stmt = $container->get('connection')->query('SELECT name, value FROM config_variable');
 	$stmt->execute();
-	$vars = $stmt->fetchAll();
-	foreach ($vars as $var) {
-		$params[strtolower($var['name'])] = $var['value'];
+	while ($var = $stmt->fetch()) {
 		define($var['name'], $var['value']);
 	}
 
-	// TODO убрать инициализацию всех таблиц
 	$container->initialize();
 }

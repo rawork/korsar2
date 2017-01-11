@@ -453,7 +453,7 @@ class Table
 						$values[$fieldType->getName()] = $this->container->get('filestorage')->save($fileInfo['basename'], PRJ_DIR.UPLOAD_REF.$fieldValue);
 					} elseif ($field['type'] == 'image') {
 						$fileInfo = pathinfo($fieldValue);
-						$this->container->get('imagestorage')->setOptions(array('sizes' => $fieldType->getParam('sizes')));
+						$this->container->get('imagestorage')->setOptions(['sizes' => $fieldType->getParam('sizes')]);
 						$values[$fieldType->getName()] = $this->container->get('imagestorage')->save($fileInfo['basename'], PRJ_DIR.UPLOAD_REF.$fieldValue);
 					} else {
 						$values[$fieldType->getName()] = $fieldValue;

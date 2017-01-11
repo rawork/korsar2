@@ -8,7 +8,7 @@ use Fuga\CommonBundle\Controller\Controller;
 
 class SearchController extends Controller {
 	
-	function indexAction() {
+	function index() {
 		$searchText = $this->get('request')->query->get('text');
 		
 		if ($searchText) {
@@ -45,17 +45,17 @@ class SearchController extends Controller {
 					$results[$j-1]['num'] = $j;
 					$items[] = $results[$j-1];
 				}
-				$content .= $this->render('search/list.html.twig', compact('ptext', 'items', 'searchText'));
+				$content .= $this->render('search/list', compact('ptext', 'items', 'searchText'));
 			} else {
-				$content .= $this->render('search/empty.html.twig', compact('searchText'));
+				$content .= $this->render('search/empty', compact('searchText'));
 			}
 		}
-		$content = $this->render('search/form.html.twig', compact('searchText')).$content;
+		$content = $this->render('search/form', compact('searchText')).$content;
 		return $content;
 	}
 
-	public function formAction()
+	public function form()
 	{
-		return $this->render('search/form.html.twig');
+		return $this->render('search/form');
 	}
 }

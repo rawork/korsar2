@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class MenuController extends AdminController {
 
-	public function stateAction($state, $module = '')
+	public function state($state, $module = '')
 	{
 		if (!$this->get('session')->get('fuga_user')) {
 			if ($this->get('request')->isXmlHttpRequest()) {
@@ -26,11 +26,11 @@ class MenuController extends AdminController {
 			$modules[] = array(
 				'name' => $mod['name'],
 				'title' => $mod['title'],
-				'submenu' => $mod['name'] == $module ? $this->render('admin/menu/module.html.twig', compact('entities')) : '',
+				'submenu' => $mod['name'] == $module ? $this->render('admin/menu/module', compact('entities')) : '',
 			);
 		}
 
-		$text = $this->get('templating')->render('admin/menu/state.html.twig', compact('state', 'modules', 'module'));
+		$text = $this->get('templating')->render('admin/menu/state', compact('state', 'modules', 'module'));
 
 		if ($this->get('request')->isXmlHttpRequest()) {
 			$response = new JsonResponse();
@@ -42,7 +42,7 @@ class MenuController extends AdminController {
 		}
 	}
 
-	public function moduleAction($module) {
+	public function module($module) {
 		if (!$this->get('session')->get('fuga_user')) {
 			if ($this->get('request')->isXmlHttpRequest()) {
 				return json_encode(array('error' => true));
@@ -51,7 +51,7 @@ class MenuController extends AdminController {
 
 		$entities = $this->getManager('Fuga:Admin:Module')->getEntitiesByModule($module);
 
-		$text = $this->render('admin/menu/module.html.twig', compact('entities'));
+		$text = $this->render('admin/menu/module', compact('entities'));
 		if ($this->get('request')->isXmlHttpRequest()) {
 			$response = new JsonResponse();
 			$response->setData(array('content' => $text));
@@ -62,8 +62,8 @@ class MenuController extends AdminController {
 		}
 	}
 
-	public function entityAction($links)
+	public function entity($links)
 	{
-		return $this->render('admin/menu/entity.html.twig', compact('links'));
+		return $this->render('admin/menu/entity', compact('links'));
 	}
 } 

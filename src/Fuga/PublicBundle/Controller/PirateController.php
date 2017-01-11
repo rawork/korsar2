@@ -2,17 +2,12 @@
 
 namespace Fuga\PublicBundle\Controller;
 
-use Fuga\CommonBundle\Controller\PublicController;
+use Fuga\CommonBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class PirateController extends PublicController
+class PirateController extends Controller
 {
-	public function __construct()
-	{
-		parent::__construct('pirate');
-	}
-
-	public function indexAction()
+	public function index()
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 
@@ -31,10 +26,10 @@ class PirateController extends PublicController
 			$user['no_like'] = true;
 		}
 
-		return $this->render('pirate/index.html.twig', compact('pirates', 'user'));
+		return $this->render('pirate/index', compact('pirates', 'user'));
 	}
 
-	public function likeAction()
+	public function like()
 	{
 		$response = new JsonResponse();
 

@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class BackupController extends AdminController
 {
-	public function createAction() {
+	public function create() {
 		$my_time = time();
 		$my_key = $this->get('util')->genKey(8);
 
@@ -41,7 +41,7 @@ class BackupController extends AdminController
 		return $response;
 	}
 
-	public function getAction($file)
+	public function get($file)
 	{
 		$filepath = BACKUP_DIR.'/'.$file;
 
@@ -59,14 +59,14 @@ class BackupController extends AdminController
 		return $response;
 	}
 
-	public function deleteAction($file)
+	public function delete($file)
 	{
 		$this->get('fs')->remove(BACKUP_DIR.'/'.$file);
 
 		return $this->redirect($this->generateUrl('admin_service'));
 	}
 
-	public function restoreAction(Request $request) {
+	public function restore(Request $request) {
 		$filepath = PRJ_DIR . '/app/restore.php';
 		$filename = 'restore.php';
 

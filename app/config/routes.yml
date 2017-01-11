@@ -66,6 +66,19 @@ admin_module_setting:
     state: (content|service|system)
     module: \w+
 
+admin_game_management:
+  path: /admin/content/game/managment
+  defaults: { _controller: 'Fuga:Public:Admin:Game:index', state: 'content', module: 'game'}
+
+admin_crew_management:
+  path: /admin/content/crew/managment
+  defaults: { _controller: 'Fuga:Public:Admin:Crew:index', state: 'content', module: 'crew'}
+
+admin_crew_vacancy_create:
+  path: /ajax/admin/crew/vacancy/create
+  defaults: { _controller: 'Fuga:Public:Admin:Crew:vacancy' }
+
+
 admin_entity_index:
   path: /admin/{state}/{module}/{entity}{suffix}
   defaults: { _controller: 'Fuga:Admin:Crud:index', suffix: '' }
@@ -149,6 +162,10 @@ admin_subscribe_send:
   path: /admin/send
   defaults: { _controller: 'Fuga:Public:Subscribe:send' }
 
+admin_cache_clear:
+  path: /admin/cache/clear
+  defaults: { _controller: 'Fuga:Admin:Cache:clear' }
+
 admin_index:
   path: /admin
   defaults: { _controller: 'Fuga:Admin:Common:state', state: 'content' }
@@ -164,9 +181,7 @@ admin_module_index:
     state: (content|service|system)
     module: \w+
 
-admin_cache_clear:
-  path: /admin/cache/clear
-  defaults: { _controller: 'Fuga:Admin:Cache:clear' }
+
 
 
 user_login:
@@ -231,6 +246,9 @@ pirate_like:
   path: /ajax/pirate/like
   defaults: { _controller: 'Fuga:Public:Pirate:like'}
 
+news_fresh:
+  path: /ajax/news/fresh
+  defaults: { _controller: 'Fuga:Public:Tavern:fresh'}
 
 game_task_data:
   path: /ajax/sandbox/task/data

@@ -99,7 +99,7 @@ class Paginator {
 	}
 
 	public function setTemplate($name) {
-		$this->template = 'paginator/'.$name.'.html.twig';
+		$this->template = 'paginator/'.$name;
 	}
 	
 }

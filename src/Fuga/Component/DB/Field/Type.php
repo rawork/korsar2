@@ -18,10 +18,11 @@ class Type {
 		if ($this->getParam('l_field') && !$this->getParam('l_sort')) {
 			$this->setParam('l_sort', $this->getParam('l_field'));
 		}
-		if ($this->getParam('sizes')) {
-			$this->setParam('sizes', 'default|50x50xadaptive,'.$this->getParam('sizes'));
+		if ($sizes = $this->getParam('sizes')) {
+			$sizes["default"] = ["width" => 50, "height" => 50, "adaptive" => true];
+			$this->setParam('sizes', $sizes);
 		} else {
-			$this->setParam('sizes', '');
+			$this->setParam('sizes', []);
 		}
 		if (!$this->getParam('link_type')) {
 			$this->setParam('link_type', 'one');

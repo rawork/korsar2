@@ -253,6 +253,7 @@ button:hover {
 #field .news {
     top: 65px;
     left: 867px;
+    display: none;
 }
 
 #field .news-btn {

@@ -24,6 +24,17 @@ class ParamManager extends ModelManager
 		return $this->params[$name];
 	}
 
+	public function findByName($module, $name) {
+		$sql = "SELECT * FROM config_param WHERE module= :module AND name= :name";
+		$stmt = $this->get('connection')->prepare($sql);
+		$stmt->bindValue("module", $module);
+		$stmt->bindValue("name", $name);
+		$stmt->execute();
+		$param = $stmt->fetch();
+
+		return $param ? $param['value'] : null;
+	}
+
 	public function getValue($module, $name) {
 		if(!isset($this->params[$module]) || !isset($this->params[$module][$name])) {
 			$sql = "SELECT * FROM config_param WHERE module= :module AND name= :name";

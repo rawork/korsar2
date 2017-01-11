@@ -3,6 +3,7 @@
     <h2>{{ news.name }}</h2>
     <div class="text">
         {{ news.content }}
+        <div class="file">{% if news.file %}<a href="{{ news.file_value }}">Инструкция к игре</a>{% endif %}</div>
         <div class="date">{{ news.created|format_date('d.m.Y') }}</div>
     </div>
 </div>

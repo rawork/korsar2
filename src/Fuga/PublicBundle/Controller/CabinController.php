@@ -2,17 +2,12 @@
 
 namespace Fuga\PublicBundle\Controller;
 
-use Fuga\CommonBundle\Controller\PublicController;
+use Fuga\CommonBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class CabinController extends PublicController
+class CabinController extends Controller
 {
-	public function __construct()
-	{
-		parent::__construct('cabin');
-	}
-
-	public function indexAction()
+	public function index()
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 		if (!$user || $user['group_id'] == FAN_GROUP) {
@@ -25,10 +20,10 @@ class CabinController extends PublicController
 
 		$messages = $this->get('container')->getItems('cabin_messages', 'publish=1 AND user_id='.$user['id']);
 
-		return $this->render('cabin/index.html.twig', compact('user', 'messages'));
+		return $this->render('cabin/index', compact('user', 'messages'));
 	}
 
-	public function mainpageAction()
+	public function mainpage()
 	{
 		$user = $this->get('security')->getCurrentUser();
 		if ($user) {
@@ -37,16 +32,16 @@ class CabinController extends PublicController
 				if (!$this->get('security')->isGroup('gamer') && !$this->get('security')->isSuperuser()){
 					$gamelink = '';
 				}
-				return $this->render('cabin/message.gamer.html.twig', compact('gamelink', 'user'));
+				return $this->render('cabin/message.gamer', compact('gamelink', 'user'));
 			} else {
-				return $this->render('cabin/message.common.html.twig');
+				return $this->render('cabin/message.common');
 			}
 		}
 
-		return $this->loginAction();
+		return $this->login();
 	}
 
-	public function enterAction()
+	public function enter()
 	{
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 
@@ -68,29 +63,29 @@ class CabinController extends PublicController
 		return $this->redirect('/');
 	}
 
-	public function loginAction()
+	public function login()
 	{
 		$message = $this->flash('danger');
 		if ($this->isXmlHttpRequest()) {
 			$response = new JsonResponse();
 			$response->setData(array(
-				'content' => $this->render('cabin/login.html.twig', compact('message')),
+				'content' => $this->render('cabin/login', compact('message')),
 			));
 
 			return $response;
 		}
 
-		return $this->render('cabin/login.html.twig', compact('message'));
+		return $this->render('cabin/login', compact('message'));
 	}
 
-	public function logoutAction()
+	public function logout()
 	{
 		$this->get('security')->logout();
 
 		return $this->redirect('/');
 	}
 
-	public function registerAction()
+	public function register()
 	{
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$response = new JsonResponse();
@@ -164,7 +159,7 @@ class CabinController extends PublicController
 
 				if (!empty($_FILES['avatar']) && !empty($_FILES['avatar']['name'])) {
 					$field = $this->get('container')->getTable('user_user')->getFieldType($this->get('container')->getTable('user_user')->fields['avatar']);
-					$this->get('imagestorage')->setOptions(array('sizes' => $field->getParam('sizes')));
+					$this->get('imagestorage')->setOptions(['sizes' => $field->getParam('sizes')]);
 					$data['avatar'] = $this->get('imagestorage')->save($_FILES['avatar']['name'], $_FILES['avatar']['tmp_name']);
 				} else {
 					$response->setData(array(
@@ -176,7 +171,7 @@ class CabinController extends PublicController
 			}
 
 			try {
-				$this->get('connection')->beginTransaction();
+				$this->get('connection')->beginTrans();
 				if ($data['group_id'] == GAMER_GROUP){
 					if (isset($roles[HELPER_ROLE])) {
 						$data['role_id'] = HELPER_ROLE;
@@ -249,7 +244,7 @@ class CabinController extends PublicController
 
 			$response = new JsonResponse();
 			$response->setData(array(
-				'content' => $this->render('cabin/register.html.twig', compact('roles')),
+				'content' => $this->render('cabin/register', compact('roles')),
 			));
 
 			return $response;
@@ -258,7 +253,7 @@ class CabinController extends PublicController
 		return  $this->redirect('/');
 	}
 
-	public function forgetAction()
+	public function forget()
 	{
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$response = new JsonResponse();
@@ -313,7 +308,7 @@ class CabinController extends PublicController
 		if ($this->isXmlHttpRequest()) {
 			$response = new JsonResponse();
 			$response->setData(array(
-				'content' => $this->render('cabin/forget.html.twig'),
+				'content' => $this->render('cabin/forget'),
 			));
 
 			return $response;
@@ -322,7 +317,7 @@ class CabinController extends PublicController
 		return $this->redirect('/');
 	}
 
-	public function passchangeAction()
+	public function passchange()
 	{
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$response = new JsonResponse();
@@ -386,7 +381,7 @@ class CabinController extends PublicController
 		if ($this->isXmlHttpRequest()) {
 			$response = new JsonResponse();
 			$response->setData(array(
-				'content' => $this->render('cabin/password.html.twig'),
+				'content' => $this->render('cabin/password'),
 			));
 
 			return $response;
@@ -395,7 +390,7 @@ class CabinController extends PublicController
 		return $this->redirect('/');
 	}
 
-	public function currentAction()
+	public function current()
 	{
 		$response = new JsonResponse();
 		$response->setData(array(
@@ -405,7 +400,7 @@ class CabinController extends PublicController
 		return $response;
 	}
 
-	public function purseAction()
+	public function purse()
 	{
 		$response = new JsonResponse();
 
@@ -431,14 +426,14 @@ class CabinController extends PublicController
 		return $response;
 	}
 
-	public function testAction()
+	public function test()
 	{
 		if ($this->isXmlHttpRequest()) {
 			$questionId = $this->get('request')->request->get('question');
 			$question = $this->get('container')->getItem('question_prof', $questionId);
 			$response = new JsonResponse();
 			$response->setData(array(
-				'content' => $this->render('cabin/question.html.twig', compact('question')),
+				'content' => $this->render('cabin/question', compact('question')),
 			));
 
 			return $response;
@@ -447,7 +442,7 @@ class CabinController extends PublicController
 		return $this->redirect('/');
 	}
 
-	public function profAction()
+	public function prof()
 	{
 		if ($this->isXmlHttpRequest()) {
 			$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
@@ -467,7 +462,7 @@ class CabinController extends PublicController
 
 			$response = new JsonResponse();
 			$response->setData(array(
-				'content' => $this->render('cabin/prof.html.twig', compact('prof')),
+				'content' => $this->render('cabin/prof', compact('prof')),
 			));
 
 			return $response;
@@ -476,7 +471,7 @@ class CabinController extends PublicController
 		return $this->redirect('/');
 	}
 
-	public function shipAction()
+	public function ship()
 	{
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
@@ -497,7 +492,7 @@ class CabinController extends PublicController
 			}
 
 			try {
-				$this->get('connection')->beginTransaction();
+				$this->get('connection')->beginTrans();
 
 				$this->get('connection')->update(
 					'crew_ship',
@@ -530,7 +525,7 @@ class CabinController extends PublicController
 			}
 
 			$response->setData(array(
-				'content' => $this->render('cabin/register.gamer.html.twig'),
+				'content' => $this->render('cabin/register.gamer'),
 			));
 
 			return $response;
@@ -540,7 +535,7 @@ class CabinController extends PublicController
 			$flags = $this->get('container')->getItems('crew_flag', 'is_used=0');
 			$response = new JsonResponse();
 			$response->setData(array(
-				'content' => $this->render('cabin/ship.html.twig', compact('flags')),
+				'content' => $this->render('cabin/ship', compact('flags')),
 			));
 
 			return $response;
@@ -549,7 +544,7 @@ class CabinController extends PublicController
 		return $this->redirect('/');
 	}
 
-	public function avatarAction()
+	public function avatar()
 	{
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$response = new JsonResponse();
@@ -567,7 +562,7 @@ class CabinController extends PublicController
 
 			if (!empty($_FILES['avatar']) && !empty($_FILES['avatar']['name'])) {
 				$field = $this->get('container')->getTable('user_user')->getFieldType($this->get('container')->getTable('user_user')->fields['avatar']);
-				$this->get('imagestorage')->setOptions(array('sizes' => $field->getParam('sizes')));
+				$this->get('imagestorage')->setOptions(['sizes' => $field->getParam('sizes')]);
 				$data['avatar'] = $this->get('imagestorage')->save($_FILES['avatar']['name'], $_FILES['avatar']['tmp_name']);
 				$avatar = $this->get('imagestorage')->path($data['avatar']);
 			} else {
@@ -605,7 +600,7 @@ class CabinController extends PublicController
 
 			$response = new JsonResponse();
 			$response->setData(array(
-				'content' => $this->render('cabin/avatar.html.twig'),
+				'content' => $this->render('cabin/avatar'),
 			));
 
 			return $response;
@@ -614,7 +609,7 @@ class CabinController extends PublicController
 		return $this->redirect('/');
 	}
 
-	public function changeAction()
+	public function change()
 	{
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$response = new JsonResponse();

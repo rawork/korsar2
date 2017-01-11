@@ -9,7 +9,7 @@ use Gregwar\Captcha\CaptchaBuilder;
 
 class CommonController extends Controller {
 
-	public function dinamicAction($node, $action, $params = array())
+	public function dinamic($node, $action, $params = array())
 	{
 		$node = $this->getManager('Fuga:Common:Page')->getNodeByName($node);
 
@@ -33,14 +33,14 @@ class CommonController extends Controller {
 		return '';
 	}
 
-	public function indexAction($node = null, $action = null, $options = array())
+	public function index($node = null, $action = null, $options = array())
 	{
 		$node = $node ?: '/';
 		$action = $action ?: 'index';
 
 		if ($this->get('request')->isXmlHttpRequest()) {
 			$response = new JsonResponse();
-			$response->setData($this->dinamicAction($node, $action, $options));
+			$response->setData($this->dinamic($node, $action, $options));
 
 			return $response;
 		}
@@ -53,7 +53,7 @@ class CommonController extends Controller {
 		}
 
 		if ($action == 'index') {
-			$staticContent = $this->render('page/static.html.twig', array('node' => $nodeItem));
+			$staticContent = $this->render('page/static', array('node' => $nodeItem));
 		}
 
 		$links = $this->getManager('Fuga:Common:Page')->getNodes('/', true);
@@ -78,7 +78,7 @@ class CommonController extends Controller {
 		$this->get('templating')->assign($params);
 
 
-		$res = $this->dinamicAction($node, $action, $options);
+		$res = $this->dinamic($node, $action, $options);
 		if (is_object($res) && $res instanceof Response) {
 			return $res;
 		} elseif (is_array($res)) {
@@ -98,16 +98,16 @@ class CommonController extends Controller {
 		return $response;
 	}
 	
-	public function blockAction($name)
+	public function block($name)
 	{
 		$item = $this->get('container')->getItem('page_block',"name='{$name}' AND publish=1");
 		
 		return $item ? $item['content'] : '';
 	}
 	
-	public function breadcrumbAction($nodes)
+	public function breadcrumb($nodes)
 	{
-		return $this->render('common/breadcrumb.html.twig', compact('nodes'));
+		return $this->render('common/breadcrumb', compact('nodes'));
 	}
 	
 	private function getMapList($uri = 0)
@@ -120,26 +120,26 @@ class CommonController extends Controller {
 				$node['sub'] = '';
 				if ($node['module_id']) {
 					$controller = $this->get('container')->createController($node['module_id_path']);
-					$node['sub'] = $controller->mapAction();
+					$node['sub'] = $controller->map();
 				}
 				$node['sub'] .= $this->getMapList($node['id']);
 				$nodes[] = $node;
 			}
 		}
-		return $this->render('common/map.html.twig', compact('nodes', 'block'));
+		return $this->render('common/map', compact('nodes', 'block'));
 	}
 
-	public function mapAction()
+	public function map()
 	{
 		return $this->getMapList();
 	}
 	
-	public function formAction($name)
+	public function form($name)
 	{
 		return $this->getManager('Fuga:Common:Form')->getForm($name);
 	}
 
-	public function captchaAction()
+	public function captcha()
 	{
 		$captcha = new CaptchaBuilder();
 		$captcha->setBackgroundColor(255, 255, 255);
@@ -154,7 +154,7 @@ class CommonController extends Controller {
 	}
 
 	// TODO fileupload -> filestorage
-	public function fileuploadAction()
+	public function fileupload()
 	{
 		$error = array();
 		$msg = array();
@@ -224,7 +224,7 @@ class CommonController extends Controller {
 				));
 				$sizes = $this->get('request')->request->get('sizes');
 				if ($sizes) {
-					$this->get('imagestorage')->afterSave($file, array('sizes' => $sizes));
+					$this->get('imagestorage')->afterSave($file, ['sizes' => $sizes]);
 				}
 			}
 		}

@@ -4,7 +4,7 @@ namespace Fuga\AdminBundle\Controller;
 
 class TableController extends AdminController
 {
-	public function createAction($state, $module, $entity)
+	public function create($state, $module, $entity)
 	{
 		$table = $this->get('container')->getTable($module.'_'.$entity);
 		$this->get('session')->getFlashBag()->add(
@@ -18,7 +18,7 @@ class TableController extends AdminController
 		));
 	}
 
-	public function alterAction($state, $module, $entity)
+	public function alter($state, $module, $entity)
 	{
 		$table = $this->get('container')->getTable($module.'_'.$entity);
 		$this->get('session')->getFlashBag()->add(

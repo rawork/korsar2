@@ -514,7 +514,7 @@ function  strip_tags(str, allowed_tags) {
         $('.message-login').trigger('click');
 
 
-        $.get('/ajax/user/current', {},
+        $.get('/ajax/user/current?_=' + new Date().getTime(), {},
             function(data){
                 if (data.user) {
                     $('.no-access').each(function(){
@@ -543,6 +543,13 @@ function  strip_tags(str, allowed_tags) {
                     } else if (data.user.role_id == 1 && data.user.ship.flag == 0) {
                         $('.start-ship').trigger('click');
                     }
+                }
+            }, "json");
+
+        $.get('/ajax/news/fresh?_=' + new Date().getTime(), {},
+            function(data){
+                if (data.fresh) {
+                    $('i.news').show();
                 }
             }, "json");
 

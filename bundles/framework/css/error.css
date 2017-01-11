@@ -1,16 +1,33 @@
+@font-face {
+    font-family: 'Beryozki';
+    src: url('../../public/css/fonts/Beryozki.eot?#iefix') format('embedded-opentype'),
+    url('../../public/css/fonts/Beryozki.woff') format('woff'),
+    url('../../public/css/fonts/Beryozki.ttf')  format('truetype'),
+    url('../../public/css/fonts/Beryozki.svg#Beryozki') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
 html * {
 
 }
 
 body{
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 16px;
+    background-color: #111;
+    background-image: url('../../public/img/bg.jpg');
+    background-position: top center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    color: #fff;
+    font-family: 'Beryozki', Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 40px;
     text-transform: uppercase;
-	font-weight: 300;
 }
 
 h1 {
-	font-size: 30px;
+	font-size:72px;
 	font-weight:normal;
 	padding:0;
     padding-bottom: 20px;
@@ -32,10 +49,10 @@ h1 {
 }
 
 .error-text {
-	font-size: 20px;
-	line-height: 28px;
+	font-size: 30px;
+	line-height: 40px;
 }
 
 a{
-    color: #999;
+    color: #fff;
 }

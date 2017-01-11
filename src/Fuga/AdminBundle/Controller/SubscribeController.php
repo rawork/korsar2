@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class SubscribeController extends AdminController
 {
-	public function exportAction()
+	public function export()
 	{
 		$state = 'service';
 		$module = 'subscribe';
@@ -22,13 +22,13 @@ class SubscribeController extends AdminController
 		}
 
 		$response = new Response();
-		$response->setContent($this->render('admin/subscribe/export.html.twig', compact('rubrics', 'last_update', 'state', 'module')));
+		$response->setContent($this->render('admin/subscribe/export', compact('rubrics', 'last_update', 'state', 'module')));
 		$response->prepare($this->get('request'));
 
 		return $response;
 	}
 
-	public function downloadAction(){
+	public function download(){
 		$time = time();
 		$filepath = PRJ_DIR . '/app/cache/subscribe.txt';
 		$filename = 'subscribe'.date('YmdHis', $time).'.txt';

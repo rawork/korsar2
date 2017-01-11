@@ -141,7 +141,7 @@ class IndexAction extends AdminController
 			'title' => $this->table->title,
 		);
 		
-		return $this->render('admin/action/index.html.twig', $params);
+		return $this->render('admin/action/index', $params);
 	}
 
 	private function getTree($parentId, $prefixWidth = 0, $styleClass = '')
@@ -217,7 +217,7 @@ class IndexAction extends AdminController
 			'message' => $message,
 			'title' => $this->table->title,
 		);
-		return $this->render('admin/action/index.html.twig', $params);
+		return $this->render('admin/action/index', $params);
 	}
 
 	private function getFilterForm()
@@ -236,7 +236,7 @@ class IndexAction extends AdminController
 			'search_filter_id' => $this->get('request')->request->get('search_filter_id'),
 		);
 
-		return $this->get('templating')->render('admin/common/filter.html.twig', $params);
+		return $this->get('templating')->render('admin/common/filter', $params);
 	}
 
 	private function initSearchCriteria()

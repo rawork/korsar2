@@ -26,6 +26,10 @@ class TwigTemplating implements TemplatingInterface {
 	public function render($template, $params = array(), $silent = false)
 	{
 		try {
+			if (!preg_match('/\.html\.twig$/', $template) && !preg_match('/\.json\.twig$/', $template)) {
+				$template .= '.html.twig';
+			}
+
 			if (empty($template)) {
 				throw new \Exception('Для обработки передан шаблон без названия.');
 			}

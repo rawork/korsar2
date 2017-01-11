@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ExceptionController extends Controller
 {
 	
-	public function indexAction($status_code, $status_text)
+	public function index($status_code, $status_text)
 	{
 		$project_logo = PRJ_LOGO;
 		$mainpage_link  = PRJ_REF.'/';
@@ -15,7 +15,7 @@ class ExceptionController extends Controller
 		$response = new Response();
 		$response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
 		$response->setCharset('UTF-8');
-		$response->setContent($this->render('page.error.html.twig', compact('status_code', 'status_text', 'project_logo', 'mainpage_link')));
+		$response->setContent($this->render('page.error', compact('status_code', 'status_text', 'project_logo', 'mainpage_link')));
 
 		return $response;
 	}

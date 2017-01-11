@@ -233,6 +233,7 @@ button:hover {
 #field .news {
     top: 65px;
     left: 867px;
+    display: none;
 }
 
 #field .news-btn {
@@ -526,6 +527,11 @@ div.field-file {
     margin: 0;
     padding: 0;
     margin-bottom: 10px;
+}
+
+.news-container .file {
+    margin-top: 10px;
+    font-size: 18px;
 }
 
 .news-container .date {

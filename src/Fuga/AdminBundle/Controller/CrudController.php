@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CrudController extends AdminController
 {
-	public function indexAction($state, $module, $entity)
+	public function index($state, $module, $entity)
 	{
 		$action = new IndexAction($state, $module, $entity);
 
@@ -23,7 +23,7 @@ class CrudController extends AdminController
 		return $response;
 	}
 
-	public function addAction($state, $module, $entity)
+	public function add($state, $module, $entity)
 	{
 		$table = $this->get('container')->getTable($module.'_'.$entity);
 
@@ -79,10 +79,10 @@ class CrudController extends AdminController
 			'isRoot' => $this->get('security')->isSuperuser(),
 		);
 
-		return new Response($this->render('admin/action/add.html.twig', $params));
+		return new Response($this->render('admin/action/add', $params));
 	}
 
-	public function editAction($state, $module, $entity, $id)
+	public function edit($state, $module, $entity, $id)
 	{
 		$table = $this->get('container')->getTable($module.'_'.$entity);
 
@@ -140,10 +140,10 @@ class CrudController extends AdminController
 			'links' => $links,
 		);
 
-		return new Response($this->render('admin/action/edit.html.twig', $params));
+		return new Response($this->render('admin/action/edit', $params));
 	}
 
-	public function deleteAction($state, $module, $entity, $id)
+	public function delete($state, $module, $entity, $id)
 	{
 		$id = 'id='.$id;
 		$table = $this->get('container')->getTable($module.'_'.$entity);
@@ -158,7 +158,7 @@ class CrudController extends AdminController
 		));
 	}
 
-	public function groupeditAction($state, $module, $entity)
+	public function groupedit($state, $module, $entity)
 	{
 		$ids = $this->get('request')->request->get('ids');
 		$table = $this->get('container')->getTable($module.'_'.$entity);
@@ -216,10 +216,10 @@ class CrudController extends AdminController
 			'ids' => $ids,
 		);
 
-		return new Response($this->render('admin/action/groupedit.html.twig', $params));
+		return new Response($this->render('admin/action/groupedit', $params));
 	}
 
-	public function groupdeleteAction($state, $module, $entity)
+	public function groupdelete($state, $module, $entity)
 	{
 		$ids = explode(',', $this->get('request')->request->get('ids'));
 		if(is_array($ids)) {
@@ -241,7 +241,7 @@ class CrudController extends AdminController
 	}
 
 	// TODO export not work
-	public function exportAction($state, $module, $entity)
+	public function export($state, $module, $entity)
 	{
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$ret = $this->uai->module->exportCSV();
@@ -258,7 +258,7 @@ class CrudController extends AdminController
 	}
 
 	// TODO import not work
-	function importAction()
+	function import()
 	{
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$this->uai->messageAction($this->uai->module->importCSV() ? 'Импорт выполнен' : 'Ошибки при импорте', $this->uai->getBaseRef().'&action=s_import');

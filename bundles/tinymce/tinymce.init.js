@@ -1,5 +1,5 @@
 window.tinymce.dom.Event.domLoaded = true;
-tinymce.baseURL = "/opros/bundles/tinymce";
+tinymce.baseURL = "/bundles/tinymce";
 tinymce.suffix = ".min";
 tinymce.init({
 	selector : '.tinymce',
@@ -17,11 +17,11 @@ tinymce.init({
 	width: '100%',
 	image_advtab: true,
 
-	external_filemanager_path:window.prj_ref+"/opros/bundles/filemanager/",
+	external_filemanager_path:window.prj_ref+"/bundles/filemanager/",
 	filemanager_title:"Файловый менеджер" ,
-	external_plugins: { "filemanager" : window.prj_ref+"/opros/bundles/filemanager/plugin.min.js"},
+	external_plugins: { "filemanager" : window.prj_ref+"/bundles/filemanager/plugin.min.js"},
 	content_css: [
-		'/opros/bundles/public/css/app.css'
+		'/bundles/public/css/app.css'
 	]
 });
 

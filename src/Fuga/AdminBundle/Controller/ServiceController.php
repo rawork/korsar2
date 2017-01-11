@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class ServiceController extends AdminController
 {
-	public function indexAction()
+	public function index()
 	{
 		$state = 'system';
 		$module = 'config';
@@ -23,13 +23,13 @@ class ServiceController extends AdminController
 		$finder->files()->in(BACKUP_DIR.'/')->name('*.gz');
 
 		$response = new Response();
-		$response->setContent($this->render('admin/service/index.html.twig', compact('finder', 'message', 'state', 'module')));
+		$response->setContent($this->render('admin/service/index', compact('finder', 'message', 'state', 'module')));
 		$response->prepare($this->get('request'));
 
 		return $response;
 	}
 
-	public function restoreAction() {
+	public function restore() {
 		$filepath = PRJ_DIR . '/app/restore.php';
 		$filename = 'restore.php';
 

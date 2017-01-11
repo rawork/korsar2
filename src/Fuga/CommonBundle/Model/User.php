@@ -21,7 +21,7 @@ class User {
 				'title' => 'Аватар',
 				'type' => 'image',
 				'width' => '10%',
-				'sizes' => 'main|256x256xadaptive',
+				'sizes' => ["main" => ["width" => 256, "height" => 256, "adaptive" => true]],
 			),
 			'login' => array (
 				'name' => 'login',

@@ -19,7 +19,7 @@ class AdminController extends Controller
 		return parent::render($template, $params);
 	}
 
-	public function rppAction()
+	public function rpp()
 	{
 		$table = $this->get('request')->request->get('table');
 		$rpp = $this->get('request')->request->get('rpp', 25);

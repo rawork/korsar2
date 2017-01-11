@@ -2,26 +2,21 @@
 
 namespace Fuga\PublicBundle\Controller;
 
-use Fuga\CommonBundle\Controller\PublicController;
+use Fuga\CommonBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class GameController extends PublicController
+class GameController extends Controller
 {
-	public function __construct()
-	{
-		parent::__construct('game');
-	}
-
-	public function indexAction()
+	public function index()
 	{
 		return $this->redirect('/');
 	}
 	
-	public function diceAction()
+	public function dice()
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 		if (!$user || $user['group_id'] == FAN_GROUP) {
-			return $this->render('game/access.html.twig');
+			return $this->render('game/access');
 		}
 
 		$this->get('container')->setVar('title', 'КОСТИ');
@@ -29,14 +24,14 @@ class GameController extends PublicController
 		$this->get('container')->setVar('appcss', '<link href="/bundles/public/css/sandbox.dice.css" rel="stylesheet" media="screen">');
 		$this->get('container')->setVar('appjs', '<script src="/bundles/public/js/sandbox.dice.js"></script>');
 
-		return $this->render('game/dice.html.twig');
+		return $this->render('game/dice');
 	}
 
-	public function taskAction()
+	public function task()
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 		if (!$user || $user['group_id'] == FAN_GROUP) {
-			return $this->render('game/access.html.twig');
+			return $this->render('game/access');
 		}
 
 		$this->get('container')->setVar('title', 'СКОЛЬКО ДЕНЕГ НА ГАЛЕОНЕ?');
@@ -44,14 +39,14 @@ class GameController extends PublicController
 		$this->get('container')->setVar('appcss', '<link href="/bundles/public/css/sandbox.task.css" rel="stylesheet" media="screen">');
 		$this->get('container')->setVar('appjs', '<script src="/bundles/storage/jquery.storageapi.min.js"></script><script src="/bundles/public/js/sandbox.task.js"></script>');
 
-		return $this->render('game/task.html.twig');
+		return $this->render('game/task');
 	}
 
-	public function pexesoAction()
+	public function pexeso()
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 		if (!$user || $user['group_id'] == FAN_GROUP) {
-			return $this->render('game/access.html.twig');
+			return $this->render('game/access');
 		}
 
 		$this->get('container')->setVar('title', 'ПОДГОТОВКА КОРАБЛЯ');
@@ -59,14 +54,14 @@ class GameController extends PublicController
 		$this->get('container')->setVar('appcss', '<link href="/bundles/public/css/sandbox.pexeso.css" rel="stylesheet" media="screen">');
 		$this->get('container')->setVar('appjs', '<script src="/bundles/storage/jquery.storageapi.min.js"></script><script src="/bundles/public/js/sandbox.pexeso.js"></script>');
 
-		return $this->render('game/pexeso.html.twig');
+		return $this->render('game/pexeso');
 	}
 
-	public function mapAction()
+	public function map()
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 		if (!$user || $user['group_id'] == FAN_GROUP) {
-			return $this->render('game/access.html.twig');
+			return $this->render('game/access');
 		}
 
 		$this->get('container')->setVar('title', 'ЛОЦМАНСКАЯ КАРТА');
@@ -74,14 +69,14 @@ class GameController extends PublicController
 		$this->get('container')->setVar('appcss', '<link href="/bundles/public/css/sandbox.map.css" rel="stylesheet" media="screen">');
 		$this->get('container')->setVar('appjs', '<script src="/bundles/public/js/sandbox.map.js?20150630"></script>');
 
-		return $this->render('game/map.html.twig');
+		return $this->render('game/map');
 	}
 
-	public function labirintAction()
+	public function labirint()
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 		if (!$user || $user['group_id'] == FAN_GROUP) {
-			return $this->render('game/access.html.twig');
+			return $this->render('game/access');
 		}
 
 		$this->get('container')->setVar('title', 'АБОРДАЖ ГАЛЕОНА');
@@ -89,14 +84,14 @@ class GameController extends PublicController
 		$this->get('container')->setVar('appcss', '<link href="/bundles/public/css/sandbox.labirint.css" rel="stylesheet" media="screen">');
 		$this->get('container')->setVar('appjs', '<script src="/bundles/storage/jquery.storageapi.min.js"></script><script src="/bundles/public/js/sandbox.labirint.js"></script>');
 
-		return $this->render('game/labirint.html.twig');
+		return $this->render('game/labirint');
 	}
 
-	public function marketAction()
+	public function market()
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 		if (!$user || $user['group_id'] == FAN_GROUP) {
-			return $this->render('game/access.html.twig');
+			return $this->render('game/access');
 		}
 
 		$this->get('container')->setVar('title', 'ПРОДАЖА НАГРАБЛЕННОГО');
@@ -104,14 +99,14 @@ class GameController extends PublicController
 		$this->get('container')->setVar('appcss', '<link href="/bundles/public/css/sandbox.market.css" rel="stylesheet" media="screen">');
 		$this->get('container')->setVar('appjs', '<script src="/bundles/storage/jquery.storageapi.min.js"></script><script src="/bundles/public/js/sandbox.market.js"></script>');
 
-		return $this->render('game/market.html.twig');
+		return $this->render('game/market');
 	}
 
-	public function battleAction()
+	public function battle()
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 		if (!$user || $user['group_id'] == FAN_GROUP) {
-			return $this->render('game/access.html.twig');
+			return $this->render('game/access');
 		}
 
 		$this->get('container')->setVar('title', 'МОРСКОЙ БОЙ');
@@ -119,14 +114,14 @@ class GameController extends PublicController
 		$this->get('container')->setVar('appcss', '<link href="/bundles/public/css/sandbox.battle.css" rel="stylesheet" media="screen">');
 		$this->get('container')->setVar('appjs', '<script src="/bundles/storage/jquery.storageapi.min.js"></script><script src="/bundles/public/js/sandbox.battle.js"></script>');
 
-		return $this->render('game/battle.html.twig');
+		return $this->render('game/battle');
 	}
 
-	public function duelAction()
+	public function duel()
 	{
 		$user = $this->getManager('Fuga:Common:User')->getCurrentUser();
 		if (!$user || $user['group_id'] == FAN_GROUP) {
-			return $this->render('game/access.html.twig');
+			return $this->render('game/access');
 		}
 
 		$this->get('container')->setVar('title', 'ДУЭЛЬ КАПИТАНОВ');
@@ -134,11 +129,11 @@ class GameController extends PublicController
 		$this->get('container')->setVar('appcss', '<link href="/bundles/public/css/sandbox.duel.css" rel="stylesheet" media="screen">');
 		$this->get('container')->setVar('appjs', '<script src="/bundles/storage/jquery.storageapi.min.js"></script><script src="/bundles/public/js/sandbox.duel.js"></script>');
 
-		return $this->render('game/duel.html.twig');
+		return $this->render('game/duel');
 	}
 
 
-	public function taskdataAction()
+	public function taskdata()
 	{
 		$response = new JsonResponse();
 
@@ -186,7 +181,7 @@ class GameController extends PublicController
 		return $response;
 	}
 
-	public function pexesodataAction()
+	public function pexesodata()
 	{
 		$response = new JsonResponse();
 
@@ -235,7 +230,7 @@ class GameController extends PublicController
 		return $response;
 	}
 
-	public function mapdataAction()
+	public function mapdata()
 	{
 		$response = new JsonResponse();
 
@@ -303,7 +298,7 @@ class GameController extends PublicController
 		return $response;
 	}
 
-	public function marketdataAction()
+	public function marketdata()
 	{
 		$response = new JsonResponse();
 
@@ -351,7 +346,7 @@ class GameController extends PublicController
 		return $response;
 	}
 
-	public function marketquestionAction()
+	public function marketquestion()
 	{
 		$response = new JsonResponse();
 
@@ -386,7 +381,7 @@ class GameController extends PublicController
 
 	}
 
-	public function dueldataAction()
+	public function dueldata()
 	{
 		$response = new JsonResponse();
 

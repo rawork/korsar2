@@ -162,6 +162,7 @@ class Container
 	
 	private function getAllTables()
 	{
+		// TODO кешировать инициализацию всех таблиц
 		$ret = array();
 		$this->modules = $this->tempmodules;
 		$sql = "SELECT id, sort, name, title, 'content' AS ctype FROM config_module ORDER BY sort, title";
@@ -197,6 +198,7 @@ class Container
 		foreach ($tables as $table) {
 			$ret[$table['module'].'_'.$table['name']] = new DB\Table($table, $this);
 		}
+
 		return $ret;
 	}
 
@@ -223,11 +225,6 @@ class Container
 		return $tables;
 	}
 	
-	public function getPrev($table, $id, $link = 'parent_id')
-	{
-		return $this->getTable($table)->getPrev($id, $link);
-	}
-
 	public function getItem($table, $criteria = 0, $sort = null, $select = null)
 	{
 		return $this->getTable($table)->getItem($criteria, $sort, $select);
@@ -366,7 +363,14 @@ class Container
 	
 	public function getControllerClass($path)
 	{
+		if (count(explode(':', $path)) == 5) {
+			list($vendor, $bundle, $subdir, $name) = explode(':', $path);
+
+			return $vendor.'\\'.$bundle.'Bundle\\Controller\\'.$subdir.'\\'.ucfirst($name).'Controller';
+		}
+
 		list($vendor, $bundle, $name) = explode(':', $path);
+
 		return $vendor.'\\'.$bundle.'Bundle\\Controller\\'.ucfirst($name).'Controller';
 	}
 	
@@ -381,9 +385,14 @@ class Container
 
 	public function callAction($path, $options = array())
 	{
-		list($vendor, $bundle, $name, $action) = explode(':', $path);
+		if (count(explode(':', $path)) == 5) {
+			list($vendor, $bundle, $subdir, $name, $action) = explode(':', $path);
+		} else {
+			list($vendor, $bundle, $name, $action) = explode(':', $path);
+		}
+
 		$obj = new \ReflectionClass($this->getControllerClass($path));
-		$action .= 'Action'; 	
+		//$action .= 'Action';
 		if (!$obj->hasMethod($action)) {
 			$this->get('log')->addError('Не найден обработчик ссылки '.$path);
 			throw new NotFoundHttpException(PRJ_ENV == 'dev'

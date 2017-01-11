@@ -23,7 +23,7 @@ class GalleryType extends ImageType {
 	}
 
 	public function getSQLValue($inputName = '') {
-		$this->get('imagestorage')->setOptions(array('sizes' => $this->getParam('sizes')));
+		$this->get('imagestorage')->setOptions(['sizes' => $this->getParam('sizes')]);
 		$inputName = $inputName ?: $this->getName();
 		if (!empty($_FILES[$inputName]) && !empty($_FILES[$inputName]['name'])) {
 			foreach ($_FILES[$inputName]["name"] as $i => $file) {
@@ -67,7 +67,7 @@ class GalleryType extends ImageType {
 		$stmt->execute();
 		$files = $stmt->fetchAll();
 		foreach ($files as &$file) {
-			$file['extra'] = $this->get('imagestorage')->additionalFiles($file['file'], array('sizes' => $this->getParam('sizes')));
+			$file['extra'] = $this->get('imagestorage')->additionalFiles($file['file'], ['sizes' => $this->getParam('sizes')]);
 			$file['file'] = $this->get('imagestorage')->path($file['file']);
 		}
 		unset($file);

@@ -1,0 +1,159 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block content %}
+    <h4>Управление играми</h4>
+    <h5>Математическая задача</h5>
+    <form method="post">
+        <div class="form-group">
+            <label for="date1">Дата и время игры</label>
+            <input type="text" class="form-control" id="date1" placeholder="YYYY-MM-DD HH:MM">
+        </div>
+        <div class="form-group">
+            <label for="role1">Группа игроков</label>
+            <select class="form-control" id="role1">
+                <option value="0">Всем игрокам</option>
+                {% for role in roles %}
+                <option value="{{ role.id }}">{{ role.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button class="btn btn-default btn-task">Назначить игры</button>
+    </form>
+    <h5>Подготовка корабля (PEXESO)</h5>
+    <form method="post">
+        <div class="form-group">
+            <label for="date1">Дата и время игры</label>
+            <input type="text" class="form-control" id="date1" placeholder="YYYY-MM-DD HH:MM">
+        </div>
+        <div class="form-group">
+            <label for="role1">Группа игроков</label>
+            <select class="form-control" id="role1">
+                <option value="0">Всем игрокам</option>
+                {% for role in roles %}
+                    <option value="{{ role.id }}">{{ role.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button class="btn btn-default btn-pexeso">Назначить игры</button>
+    </form>
+    <h5>Лоцманская карта</h5>
+    <form method="post">
+        <div class="form-group">
+            <label for="date1">Дата и время игры</label>
+            <input type="text" class="form-control" id="date1" placeholder="YYYY-MM-DD HH:MM">
+        </div>
+        <div class="form-group">
+            <label for="role1">Группа игроков</label>
+            <select class="form-control" id="role1">
+                <option value="0">Всем игрокам</option>
+                {% for role in roles %}
+                    <option value="{{ role.id }}">{{ role.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button class="btn btn-default btn-map">Назначить игры</button>
+    </form>
+    <h5>Абордаж галеона</h5>
+    <form method="post">
+        <div class="form-group">
+            <label for="date1">Дата и время игры</label>
+            <input type="text" class="form-control" id="date1" placeholder="YYYY-MM-DD HH:MM">
+        </div>
+        <div class="form-group">
+            <label for="role1">Группа игроков</label>
+            <select class="form-control" id="role1">
+                <option value="0">Всем игрокам</option>
+                {% for role in roles %}
+                    <option value="{{ role.id }}">{{ role.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button class="btn btn-default btn-labirint">Назначить игры</button>
+    </form>
+    <h5>Продажа награбленного (Биржа)</h5>
+    <form method="post">
+        <div class="form-group">
+            <label for="date1">Дата и время игры Группа 1</label>
+            <input type="text" class="form-control" id="date1" placeholder="YYYY-MM-DD HH:MM">
+        </div>
+        <div class="form-group">
+            <label for="date2">Дата и время игры Группа 2</label>
+            <input type="text" class="form-control" id="date2" placeholder="YYYY-MM-DD HH:MM">
+        </div>
+        <div class="form-group">
+            <label for="date3">Дата и время игры Группа 3</label>
+            <input type="text" class="form-control" id="date3" placeholder="YYYY-MM-DD HH:MM">
+        </div>
+        <div class="form-group">
+            <label for="date4">Дата и время игры Группа 4</label>
+            <input type="text" class="form-control" id="date4" placeholder="YYYY-MM-DD HH:MM">
+        </div>
+        <div class="form-group">
+            <label for="role1">Группа игроков</label>
+            <select class="form-control" id="role1">
+                <option value="0">Всем игрокам</option>
+                {% for role in roles %}
+                    <option value="{{ role.id }}">{{ role.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button class="btn btn-default btn-market">Назначить игры</button>
+    </form>
+    <h5>Продажа награбленного (Биржа)</h5>
+    <form method="post">
+        <div class="form-group">
+            <label for="date1">Дата и время игры Группа 1</label>
+            <input type="text" class="form-control" id="date1" placeholder="YYYY-MM-DD HH:MM">
+        </div>
+        <div class="form-group">
+            <label for="date2">Дата и время игры Группа 2</label>
+            <input type="text" class="form-control" id="date2" placeholder="YYYY-MM-DD HH:MM">
+        </div>
+        <div class="form-group">
+            <label for="date3">Дата и время игры Группа 3</label>
+            <input type="text" class="form-control" id="date3" placeholder="YYYY-MM-DD HH:MM">
+        </div>
+        <div class="form-group">
+            <label for="date4">Дата и время игры Группа 4</label>
+            <input type="text" class="form-control" id="date4" placeholder="YYYY-MM-DD HH:MM">
+        </div>
+        <div class="form-group">
+            <label for="role1">Группа игроков</label>
+            <select class="form-control" id="role1">
+                <option value="0">Всем игрокам</option>
+                {% for role in roles %}
+                    <option value="{{ role.id }}">{{ role.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button class="btn btn-default btn-market">Назначить игры</button>
+    </form>
+    <h5>Морской бой</h5>
+    <form method="post">
+        <div class="form-group">
+            <label for="date1">Дата и время игры</label>
+            <input type="text" class="form-control" id="date1" placeholder="YYYY-MM-DD HH:MM">
+        </div>
+        <div class="form-group">
+            <label for="role1">Группа игроков</label>
+            <select class="form-control" id="role1">
+                <option value="13">Капитанам</option>
+            </select>
+        </div>
+        <button class="btn btn-default btn-market">Назначить игры</button>
+    </form>
+    <h5>Дуэль</h5>
+    <form method="post">
+        <div class="form-group">
+            <label for="date1">Дата и время игры</label>
+            <input type="text" class="form-control" id="date1" placeholder="YYYY-MM-DD HH:MM">
+        </div>
+        <div class="form-group">
+            <label for="role1">Группа игроков</label>
+            <select class="form-control" id="role1">
+                <option value="13">Капитанам</option>
+            </select>
+        </div>
+        <button class="btn btn-default btn-market">Назначить игры</button>
+    </form>
+{% endblock %}

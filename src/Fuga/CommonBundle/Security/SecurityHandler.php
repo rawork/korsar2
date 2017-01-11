@@ -5,7 +5,6 @@ namespace Fuga\CommonBundle\Security;
 use Fuga\Component\Container;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 class SecurityHandler
 {
@@ -23,11 +22,16 @@ class SecurityHandler
 	
 	public function isSecuredArea()
 	{
-		if (preg_match('/^'.PRJ_REF.'\/admin\/(logout|forget|password)/', $_SERVER['REQUEST_URI'])) {
+		if (preg_match('/^'.(PRJ_REF ? '\\'.PRJ_REF : '').'\/admin\/(logout|forget|password)/', $_SERVER['REQUEST_URI'])) {
 			return false;
 		}
-		
-		return 'Y' == PROJECT_LOCKED || preg_match('/^'.PRJ_REF.'\/admin/', $_SERVER['REQUEST_URI']);
+
+		return preg_match('/^'.(PRJ_REF ? '\\'.PRJ_REF : '').'\/admin/', $_SERVER['REQUEST_URI']);
+	}
+
+	public function isClosedArea()
+	{
+		return 'Y' == PROJECT_LOCKED && !preg_match('/^'.(PRJ_REF ? '\\'.PRJ_REF : '').'\/admin/', $_SERVER['REQUEST_URI']);
 	}
 	
 	public function getCurrentUser()
@@ -109,8 +113,16 @@ class SecurityHandler
 	public function logout()
 	{
 		$this->container->get('session')->invalidate();
-		$response = new Response();
+
+		if (empty($_SERVER['HTTP_REFERER']) || preg_match('/^'.(PRJ_REF ? '\\'.PRJ_REF : '').'\/admin\/logout/', $_SERVER['HTTP_REFERER'])) {
+			$uri = $this->generateUrl('admin_index');
+		} else {
+			$uri = $_SERVER['HTTP_REFERER'];
+		}
+
+		$response = new RedirectResponse($uri);
 		$response->headers->clearCookie('fuga_key');
+		$response->headers->clearCookie('fuga_user');
 
 		return $response;
 	}
@@ -121,7 +133,7 @@ class SecurityHandler
 		if ($login == DEV_USER && $passwordHash == DEV_PASS) {
 			$user = array('login' => $login, 'id' => 0);
 		} else {
-			$sql = "SELECT id, login FROM user_user WHERE login= :login AND password= :password AND is_active=1 LIMIT 1";
+			$sql = "SELECT id, login FROM user_user WHERE login= :login AND password= :password AND is_active=1 AND group_id<>0 LIMIT 1";
 			$stmt = $this->container->get('connection')->prepare($sql);
 			$stmt->bindValue("login", $login);
 			$stmt->bindValue("password", $passwordHash);

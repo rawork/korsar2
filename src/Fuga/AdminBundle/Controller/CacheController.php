@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CacheController extends AdminController
 {
-	public function clearAction()
+	public function clear()
 	{
 //		$this->get('templating')->clearCompiled();
 		$this->get('cache')->deleteAll();

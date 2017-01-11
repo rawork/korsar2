@@ -8,14 +8,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SubscribeController extends Controller
 {
-	public function indexAction()
+	public function index()
 	{
 		$rubrics = $this->get('container')->getItems('subscribe_rubric');
 
-		return $this->render('subscribe/form.html.twig', compact('rubrics'));
+		return $this->render('subscribe/form', compact('rubrics'));
 	}
 
-	public function subscribeAction()
+	public function subscribe()
 	{
 		$email = $this->get('request')->request->get('email');
 		$rubrics = $this->get('request')->request->get('rubrics');
@@ -34,7 +34,7 @@ class SubscribeController extends Controller
 		return $response;
 	}
 
-	public function activateAction($key)
+	public function activate($key)
 	{
 		$response = new Response();
 		$response->setContent($this->getManager('Fuga:Common:Subscribe')->activate($key));
@@ -42,7 +42,7 @@ class SubscribeController extends Controller
 		return $response;
 	}
 
-	public function sendAction()
+	public function send()
 	{
 		$this->get('session')->getFlashBag()->add(
 			'admin.message',

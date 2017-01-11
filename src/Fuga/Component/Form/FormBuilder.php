@@ -136,9 +136,9 @@ class FormBuilder {
 			);
 			try {
 				$locale = $this->get('session')->get('locale');
-				$ret = $this->get('templating')->render('form/'.$this->form['name'].'.'.$locale.'.html.twig', $params);
+				$ret = $this->get('templating')->render('form/'.$this->form['name'].'.'.$locale, $params);
 			} catch (\Exception $e) {
-				$ret = $this->get('templating')->render('form/basic.html.twig', $params);
+				$ret = $this->get('templating')->render('form/basic', $params);
 			}
 		} else {
 			$ret = 'Форма '.$this->name.' не содержит полей';
@@ -176,7 +176,7 @@ class FormBuilder {
 			if ($field['is_required'] && empty($value)) {
 				$ftitle = $field['title'];
 				$error = $params['field_error'];
-				$errors[] = $this->get('templating')->render('form/error.html.twig', compact('ftitle', 'error'));
+				$errors[] = $this->get('templating')->render('form/error', compact('ftitle', 'error'));
 			}
 			if ($field['type'] == 'checkbox') {
 				$value = (empty($value) ? 'нет' : 'да').'<br>';
@@ -199,7 +199,7 @@ class FormBuilder {
 			}	
 			$this->get('mailer')->send(
 				$this->form['title'].' на сайте '.$_SERVER['SERVER_NAME'],
-				$this->get('templating')->render('form/mail.html.twig', compact('fields')),
+				$this->get('templating')->render('form/mail', compact('fields')),
 				$this->email
 			);
 			

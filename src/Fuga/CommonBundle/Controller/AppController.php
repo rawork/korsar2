@@ -28,13 +28,13 @@ class AppController extends Controller
 		if ($this->get('security')->isSecuredArea() && !$this->get('security')->isAuthenticated()) {
 			$controller = new SecurityController();
 
-			return $controller->loginAction();
+			return $controller->login();
 		}
 
 		if ($this->get('security')->isClosedArea()) {
 			$controller = new SecurityController();
 
-			return $controller->closedAction();
+			return $controller->closed();
 		}
 
 		try {
