@@ -2,29 +2,35 @@
     
 namespace Fuga\Component\DB\Field;
 
-class TemplateType extends Type {
-
-	public function __construct(&$params, $entity = null) {
+class TemplateType extends Type
+{
+	public function __construct(&$params, $entity = null)
+	{
 		parent::__construct($params, $entity);
 	}
 	
-	protected function getPath($filename = '') {
+	protected function getPath($filename = '')
+	{
 		return PRJ_REF.TWIG_PATH.$filename;
 	}
 	
-	protected function getRealPath($filename = '') {
+	protected function getRealPath($filename = '')
+	{
 		return PRJ_DIR.TWIG_PATH.$filename;
 	}
 	
-	public function getBackupPath($filename) {
+	public function getBackupPath($filename)
+	{
 		return PRJ_REF.SMARTY_BACKUP_PATH.$filename;
 	}
 	
-	public function getBackupRealPath($filename) {
+	public function getBackupRealPath($filename)
+	{
 		return PRJ_DIR.SMARTY_BACKUP_PATH.$filename;
 	}
 	
-	public function backupTemplate($filename, $backup) {
+	public function backupTemplate($filename, $backup)
+	{
 		@copy($this->getRealPath($filename), $this->getBackupRealPath($backup));
 		@chmod($this->getBackupRealPath($backup), 0666);
 		@unlink($this->getRealPath($filename));
@@ -47,10 +53,12 @@ class TemplateType extends Type {
 		));
 	}
 
-	public function getSQLValue($name = '') {
+	public function getSQLValue($name = '')
+	{
 		$name = $name ?: $this->getName();
 		$filename = $this->get('request')->request->get($name.'_oldvalue');
 		$date = date('Ymd_His');
+
 		if ($filename && $this->get('request')->request->get($name.'_delete')) {
 			$this->backupTemplate($filename, $filename.$date.'.bak');
 			$filename = '';
@@ -90,19 +98,24 @@ class TemplateType extends Type {
 				fclose($fhandle);
 				chmod($this->getRealPath($filename), 0666);
 			}
-		} 
+		}
+
 		return $filename;
 	}
 
-	public function getStatic() {
+	public function getStatic()
+	{
 		$content = '';
+
 		if ($this->dbValue) {
 			$content = '<a href="'.$this->getPath($this->dbValue).'">'.$this->dbValue.'</a> '.$this->get('filestorage')->size($this->getRealPath($this->dbValue));
 		}
+
 		return $content;
 	}
 
-	public function getInput($value = '', $name = '') {
+	public function getInput($value = '', $name = '')
+	{
 		$text  = '';
 		$content = '';
 		$value = $value ?: $this->dbValue;
@@ -141,14 +154,17 @@ class TemplateType extends Type {
 <div id="'.$name.'_file">Новый: <input type="file" name="'.$name.'"></div>
 <textarea class="form-control" wrap="off" id="'.$name.'_template" name="'.$name.'_template" rows="15">'.htmlspecialchars($text).'</textarea>';
 		}
+
 		return $text;
 	}
 	
-	public function getNativeValue() {
+	public function getNativeValue()
+	{
 		return $this->getPath($this->dbValue);
 	}
 	
-	public function free() {
+	public function free()
+	{
 		$sql = "SELECT id, file FROM template_version
 				WHERE table_name= :table
 				AND field_name= :field AND entity_id= :id ";

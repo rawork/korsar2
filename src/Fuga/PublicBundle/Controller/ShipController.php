@@ -24,8 +24,8 @@ class ShipController extends Controller
 		$allowChangeCaptain = $this->getManager('Fuga:Common:Param')->findByName('ship', 'allow_change_captain');
 		$allowDivideMoney = $this->getManager('Fuga:Common:Param')->findByName('ship', 'allow_divide_money');
 
-		$this->get('container')->setVar('appcss', '<link href="/bundles/public/css/app.chat.css" rel="stylesheet" media="screen">');
-		$this->get('container')->setVar('appjs', '<script src="/bundles/public/js/app.chat.js"></script>');
+		$this->addCss('/bundles/public/css/app.chat.css');
+		$this->addJs('/bundles/public/js/app.chat.js');
 
 		return $this->render('ship/index', compact('ship', 'user', 'candidateQuantity', 'captain',  'allowChangeCaptain', 'allowDivideMoney'));
 	}
@@ -87,7 +87,7 @@ class ShipController extends Controller
 					array('id' => $user['ship_id'])
 				);
 			} catch (\Exception $e) {
-				$this->get('log')->addError($e->getMessage());
+				$this->err($e->getMessage());
 				$response->setData(array(
 					'error' => 'Ошибка сохранения данных. Обратитесь к администратору.',
 				));
@@ -208,7 +208,7 @@ class ShipController extends Controller
 				$this->get('connection')->commit();
 			} catch (\Exception $e) {
 				$this->get('connection')->rollback();
-				$this->get('log')->addError($e->getMessage());
+				$this->err($e->getMessage());
 				$response->setData(array(
 					'error' => 'Ошибка сервера. Обратитесь к администратору.',
 				));
@@ -379,7 +379,7 @@ class ShipController extends Controller
 				$this->get('connection')->commit();
 			} catch (\Exception $e) {
 				$this->get('connection')->rollback();
-				$this->get('log')->addError($e->getMessage());
+				$this->err($e->getMessage());
 				$response->setData(array(
 					'error' => 'Ошибка сервера. Обратитесь к администратору.',
 				));
@@ -522,7 +522,7 @@ class ShipController extends Controller
 				$this->get('connection')->commit();
 			} catch (\Exception $e) {
 				$this->get('connection')->rollback();
-				$this->get('log')->addError($e->getMessage());
+				$this->err($e->getMessage());
 				$response->setData(array(
 					'error' => 'Ошибка сервера. Обратитесь к администратору.',
 				));

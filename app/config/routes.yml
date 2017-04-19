@@ -27,15 +27,15 @@ admin_modulemenu:
 admin_dialog_select:
   path: /admin/dialog/select
   defaults: { _controller: 'Fuga:Admin:Dialog:select' }
-admin_dialog_select_page:
-  path: /admin/dialog/selectpage
-  defaults: { _controller: 'Fuga:Admin:Dialog:selectpage' }
+admin_dialog_pagination:
+  path: /admin/dialog/pagination/{table}/{field}/{entity}/{page}
+  defaults: { _controller: 'Fuga:Admin:Dialog:pagination', page: 1}
 admin_dialog_tree:
   path: /admin/dialog/tree
   defaults: { _controller: 'Fuga:Admin:Dialog:tree' }
 admin_dialog_list:
   path: /admin/dialog/list
-  defaults: { _controller: 'Fuga:Admin:Dialog:list' }
+  defaults: { _controller: 'Fuga:Admin:Dialog:list2' }
 admin_dialog_template:
   path: /admin/dialog/template
   defaults: { _controller: 'Fuga:Admin:Dialog:template' }
@@ -78,6 +78,15 @@ admin_crew_vacancy_create:
   path: /ajax/admin/crew/vacancy/create
   defaults: { _controller: 'Fuga:Public:Admin:Crew:vacancy' }
 
+admin_game_simple_group_create:
+  path: /ajax/admin/game/simple/create
+  defaults: { _controller: 'Fuga:Public:Admin:Game:simple' }
+admin_game_labirint_create:
+  path: /ajax/admin/game/labirint/create
+  defaults: { _controller: 'Fuga:Public:Admin:Game:labirint' }
+admin_game_battle_create:
+  path: /ajax/admin/game/battle/create
+  defaults: { _controller: 'Fuga:Public:Admin:Game:battle' }
 
 admin_entity_index:
   path: /admin/{state}/{module}/{entity}{suffix}

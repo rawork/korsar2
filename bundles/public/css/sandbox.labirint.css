@@ -2168,7 +2168,7 @@
 
 /* new dices */
 .wrap{width:90px; height:90px; margin:10px auto 30px auto; position:relative}
-.dice{width:90px; height:90px; background:url('../img/labirint/dice.png') no-repeat; cursor: pointer;}
+.dice{width:90px; height:90px; background:url('../img/labirint/dice.png') no-repeat; cursor: pointer; display: none}
 .dice_1{background-position:-5px -4px}
 .dice_2{background-position:-5px -107px}
 .dice_3{background-position:-5px -212px}
@@ -2184,4 +2184,6 @@ p#result span{font-weight:bold; color:#f30; margin:6px}
     top:0; left:0; z-index:999}
 
 /* end dices */
+
+
 

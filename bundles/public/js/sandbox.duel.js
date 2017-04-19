@@ -32,7 +32,7 @@
                 moneyUpdateUrl: '/ajax/sandbox/duel/data',
 
                 messageInit: '<h2 class="init-message">Игра загружается, подождите...</h2>',
-                messageBefore: '<h2 class="before-message">Время начала игры<br>#time#</h2><br><button class="btn" id="task-btn-reload">Обновить страницу</button>',
+                messageBefore: '<h2 class="before-message">Время начала игры<br>#time#</h2><br><button class="btn" id="btn-reload">Обновить страницу</button>',
                 messageAfter: '<h2 class="end-message">Игра завершена</h2>'
             },
 
@@ -192,7 +192,7 @@
                 var that = this;
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
-                $(document).on('click', '#task-btn-reload', function(){
+                $(document).on('click', '#btn-reload', function(){
                     window.location.reload();
                 });
 

@@ -2,12 +2,15 @@
 
 namespace Fuga\Component\DB\Field;
 
-class ImageType extends FileType {
-	public function __construct(&$params, $entity = null) {
+class ImageType extends FileType
+{
+	public function __construct(&$params, $entity = null)
+	{
 		parent::__construct($params, $entity);
 	}
 	
-	public function getStatic() {
+	public function getStatic()
+	{
 		$value = $this->getNativeValue();
 		$fileName = $value['value'];
 		$additionalFiles = '';
@@ -41,10 +44,12 @@ class ImageType extends FileType {
 			$this->get('imagestorage')->remove($fileName);
 			$fileName = $this->get('imagestorage')->save($_FILES[$inputName]['name'], $_FILES[$inputName]['tmp_name']);
 		}
+
 		return $fileName;
 	}
 	
-	public function getNativeValue() {
+	public function getNativeValue()
+	{
 		$value = array('value' => parent::getNativeValue());
 		if ($value['value']) {
 			if ($files = $this->get('imagestorage')->additionalFiles($this->dbValue, ['sizes' => $this->getParam('sizes')])) {
@@ -55,7 +60,8 @@ class ImageType extends FileType {
 		return $value;			
 	}
 	
-	public function free() {
+	public function free()
+	{
 		$this->get('imagestorage')->remove($this->dbValue);
 	}
 

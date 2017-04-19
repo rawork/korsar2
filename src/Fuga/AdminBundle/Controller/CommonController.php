@@ -32,14 +32,20 @@ class CommonController extends AdminController
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$params = $this->getManager('Fuga:Common:Param')->findAll($module);
 			foreach ($params as $param) {
-				if ($this->get('request')->request->get('param_'.$param['name'])
-					&& $value = $this->getManager('Fuga:Common:Param')->validate(
-						$this->get('request')->request->get('param_'.$param['name']),
-						$param)) {
-					$this->get('connection')->update('config_param',
-						array('value' => $value),
-						array('name' => $param['name'], 'module' => $param['module'])
-					);
+				if ($rawValue = $this->get('request')->request->get('param_'.$param['name'])){
+
+					if ($param['type'] == 'date') {
+						$hour = $this->get('request')->request->get('param_'.$param['name'].'_hour');
+						$minute = $this->get('request')->request->get('param_'.$param['name'].'_minute');
+						$rawValue .= ' '.$hour.':'.$minute;
+					}
+
+					if ($value = $this->getManager('Fuga:Common:Param')->validate($rawValue, $param)) {
+						$this->get('connection')->update('config_param',
+							array('value' => $value),
+							array('name' => $param['name'], 'module' => $param['module'])
+						);
+					}
 				} elseif ($param['type'] == 'boolean') {
 					$this->get('connection')->update('config_param',
 						array('value' => 0),

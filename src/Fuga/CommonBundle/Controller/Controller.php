@@ -29,10 +29,16 @@ abstract class Controller {
 
 	public function generateUrl($name, $options = array(), $locale = PRJ_LOCALE)
 	{
-		if (isset($options['node']) && '/' == $options['node']) {
-			unset($options['node']);
+		try {
+			if (isset($options['node']) && '/' == $options['node']) {
+				unset($options['node']);
+			}
+			return ($locale != PRJ_LOCALE ? '/'.$locale : '').$this->get('routing')->getGenerator()->generate($name, $options);
+		} catch (\Exception $e) {
+			$this->log($e->getMessage());
 		}
-		return ($locale != PRJ_LOCALE ? '/'.$locale : '').$this->get('routing')->getGenerator()->generate($name, $options);
+
+		return '';
 	}
 
 	public function redirect($url, $status = 302)
@@ -62,8 +68,24 @@ abstract class Controller {
 		return $this->get('translator')->t($name);
 	}
 
-	public function log($message){
+	public function log($message)
+	{
 		$this->get('log')->addError($message);
+	}
+
+	public function err($message)
+	{
+		$this->get('log')->addError($message);
+	}
+
+	public function addJs($path)
+	{
+		$this->get('container')->addJs($path);
+	}
+
+	public function addCss($path)
+	{
+		$this->get('container')->addCss($path);
 	}
 	
 	public function flash($name)

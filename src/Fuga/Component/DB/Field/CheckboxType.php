@@ -2,37 +2,44 @@
 
 namespace Fuga\Component\DB\Field;
 
-class CheckboxType extends Type {
+class CheckboxType extends Type
+{
+	protected $type = 'boolean';
 
 	public function __construct(&$params, $entity = null)
 	{
 		parent::__construct($params, $entity);
 	}
 	
-	public function getValue($name = '') {
+	public function getValue($name = '')
+	{
 		$name = $name ? $name : $this->getName();
-//		$value = isset($_REQUEST[$name]) ? $_REQUEST[$name] : null;
 		$value = $this->get('request')->request->get($name);
 		return $value;
 	}
 
-	public function getSQLValue($name = '') {
+	public function getSQLValue($name = '')
+	{
 		$value = intval($this->getValue($name));
 		return $value  == 1 ? $value : 0;
 	}
 
-	public function getStatic() {
+	public function getStatic()
+	{
 		return $this->dbValue == 1 ? 'Да' : 'Нет';
 	}
 
-	public function getInput($value = '', $name = '') {
+	public function getInput($value = '', $name = '')
+	{
 		return '<label><input type="checkbox" value="1" name="'.($name ?: $this->getName()).'" '.(empty($this->dbValue) ? '' : 'checked').'></label>';
 	}
 
-	public function getSearchInput() {
+	public function getSearchInput()
+	{
 		$name = $this->getSearchName();
 		$value = $this->getSearchValue();
 		$yes = $no = $no_matter = "";
+
 		switch ($value) {
 			case "on":
 				$yes = 'checked';
@@ -43,6 +50,7 @@ class CheckboxType extends Type {
 			default: 
 				$no_matter = 'checked';
 		}
+
 		return '
 <label class="radio-inline">
   <input type="radio" name="'.$name.'" id="'.$name.'_yes" value="on" '.$yes.'>
@@ -69,11 +77,6 @@ class CheckboxType extends Type {
 			default:
 				return false;
 		}
-	}
-
-	public function getType()
-	{
-		return 'boolean';
 	}
 
 	public function getGroupSQLValue()

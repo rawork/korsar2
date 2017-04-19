@@ -13,8 +13,9 @@ class DialogController extends Controller
 		$inputId   = $this->get('request')->request->get('input');
 		$tableName = $this->get('request')->request->get('table');
 		$fieldName = $this->get('request')->request->get('field');
-		$entityId  = $this->get('request')->request->getInt('value');
+		$entityId  = $this->get('request')->request->getInt('value', 0);
 		$title 	   = $this->get('request')->request->get('title');
+
 		$table = $this->get('container')->getTable($tableName);
 		$fieldName = str_replace($entityId, '', $fieldName);
 		$fieldName = str_replace('search_filter_', '', $fieldName);
@@ -26,10 +27,11 @@ class DialogController extends Controller
 			$criteria[] = 'module_id='.(isset($module['id']) ? $module['id'] : 0 );
 		}
 		$criteria = implode(' AND ', $criteria);
+
 		$paginator = $this->get('paginator');
 		$paginator->paginate(
 			$this->get('container')->getTable($field['l_table']),
-			rawurldecode($this->generateUrl('admin_dialog_pagination', array('table' => $tableName, 'field' => $fieldName, 'entity' => $entityId, 'page' => '###'))),
+			rawurldecode($this->generateUrl('admin_dialog_pagination', array('table' => $tableName, 'field' => $fieldName, 'entity' => $entityId > 0 ? $entityId : 0, 'page' => '###'))),
 			$criteria,
 			10,
 			1,
@@ -164,7 +166,8 @@ class DialogController extends Controller
 		return $response;
 	}
 
-	function list() {
+	// todo php 7 reserved word "list" - need new name for method
+	function list2() {
 		$inputId = $this->get('request')->request->get('input_id');
 		$tableName = $this->get('request')->request->get('table_name');
 		$fieldName = $this->get('request')->request->get('field_name');

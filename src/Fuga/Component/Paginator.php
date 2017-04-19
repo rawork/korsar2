@@ -7,6 +7,9 @@ class Paginator {
 	public $limit;
 	
 	private $templating;
+
+	private $container;
+
 	private $template; 
 
 	private $baseUrl		= './'; 
@@ -19,8 +22,9 @@ class Paginator {
 
 	private $content;
 	
-	public function __construct($templating) {
+	public function __construct($templating, $container) {
 		$this->templating = $templating;
+		$this->container = $container;
 	}
 	
 	public function paginate($table, $baseUrl, $criteria = '', $rowPerPage = 25, $currentPage = 1, $maxDisplayPages = 10, $templateName = 'default') {

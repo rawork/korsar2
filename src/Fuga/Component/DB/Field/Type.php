@@ -2,18 +2,21 @@
 
 namespace Fuga\Component\DB\Field;
 
-class Type {
-	
+class Type
+{
 	protected $params = array();
 	protected $dbValue = null;
 	protected $dbId = 0;
+	protected $type = 'string';
 	
-	public function __construct($params, $entity = null) {
+	public function __construct($params, $entity = null)
+	{
 		$this->setParams($params);
 		$this->setEntity($entity);
 	}
 
-	public function setParams($params = array()) {
+	public function setParams($params = array())
+	{
 		$this->params = $params;
 		if ($this->getParam('l_field') && !$this->getParam('l_sort')) {
 			$this->setParam('l_sort', $this->getParam('l_field'));
@@ -32,17 +35,21 @@ class Type {
 		}
 	}
 	
-	public function setParam($name, $value) {
+	public function setParam($name, $value)
+	{
 		$this->params[$name] = $value;
 	}
 	
-	public function getParam($name) {
+	public function getParam($name)
+	{
 		return isset($this->params[$name])? $this->params[$name] : null;
 	}
 
-	public function setEntity($entity = null) {
+	public function setEntity($entity = null)
+	{
 		$this->dbId = null;
 		$this->dbValue = null;
+
 		if (is_array($entity) && isset($entity['id'])) {
 			$this->dbId		= (int)$entity['id'];
 			$this->dbValue	= isset($entity[$this->getName()]) ? $entity[$this->getName()] : '';
@@ -51,23 +58,27 @@ class Type {
 		}
 	}
 
-	public function getName() {
+	public function getName()
+	{
 		return $this->getParam('name');
 	}
 
-	public function getGroupInput() {
+	public function getGroupInput()
+	{
 		return $this->getInput('', $this->getName().$this->dbId);
 	}
 	
-	public function getGroupStatic() {
+	public function getGroupStatic()
+	{
 		return $this->getStatic();
 	}
 
-	public function getGroupSQLValue() {
+	public function getGroupSQLValue()
+	{
 		return $this->getSQLValue($this->getName().$this->dbId);
 	}
 
-	/*** these methods must be protected: */
+	// todo these methods must be protected
 	public function getSearchName($subName = '')
 	{
 		return 'search_filter_'.$this->getName().($subName ? '_'.$subName : '');
@@ -82,35 +93,42 @@ class Type {
 		return $value;
 	}
 
-	public function getSearchValue($subName = '') {
+	public function getSearchValue($subName = '')
+	{
 		return $this->getValue($this->getSearchName($subName));
 	}
 
-	public function getSQLValue($name = '') {
+	public function getSQLValue($name = '')
+	{
 		return $this->getValue($name);
 	}
 	
-	public function getNativeValue() {
+	public function getNativeValue()
+	{
 		return $this->dbValue;
 	}
 
-	public function getStatic() {
+	public function getStatic()
+	{
 		$ret = strip_tags(trim($this->dbValue));
 		return $ret ?: '&nbsp;';
 	}
 
-	public function getInput($value = '', $name = '') {
+	public function getInput($value = '', $name = '')
+	{
 		$name = $name ? $name : $this->getName();
 		$value = $value ? str_replace('"', '&quot;', $value) : str_replace('"', '&quot;', $this->dbValue);
 		
 		return '<input type="text" class="form-control" name="'.$name.'" value="'.$value.'" >';
 	}
 
-	public function getSearchInput() {
+	public function getSearchInput()
+	{
 		return $this->getInput($this->getSearchValue(), $this->getSearchName());
 	}
 
-	public function getSearchSQL() {
+	public function getSearchSQL()
+	{
 		if ($value = $this->getSearchValue()) {
 			return $this->getName()." LIKE '%".$value."%'";
 		}
@@ -118,7 +136,8 @@ class Type {
 		return '';
 	}
 
-	public function getSearchURL($name = '') {
+	public function getSearchURL($name = '')
+	{
 		if ($value = $this->getSearchValue($name)) {
 			return $this->getSearchName($name).'='.$value;
 		}
@@ -126,18 +145,21 @@ class Type {
 		return '';
 	}
 	
-	public function getType() {
-		return 'string';
-	}
-
 	public function free(){}
 
-	public function get($name) {
+	public function get($name)
+	{
 		global $container;
+
 		if ($name == 'container') {
 			return $container;
 		} else {
 			return $container->get($name);
 		}
+	}
+
+	public function getType()
+	{
+		return $this->type;
 	}
 }

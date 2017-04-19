@@ -319,11 +319,14 @@ class Table
 			$fromSchema = $sm->createSchema();
 			$toSchema = clone $fromSchema;
 			$table = $toSchema->getTable($this->dbName());
+
 			foreach ($this->fields as $field) {
 				if (in_array($field['type'], array('gallery'))) {
 					continue;
 				}
+
 				$type = $this->getFieldType($field)->getType();
+
 				try {
 					$column = $table->getColumn($field['name']);
 					if ($column->getType()->getName() != $type && 'id' != $column->getName()) {
@@ -338,17 +341,19 @@ class Table
 				}
 			}
 			$columns = $table->getColumns();
+
 			foreach ($columns as $column) {
 				if ('id' == $column->getName()) {
 					continue;
 				}	
-				if (!isset($this->fields[$column->getName()]))
+
+				if (!isset($this->fields[$column->getName()])){
 					$table->dropColumn($column->getName());
+				}
 			}
 
 			// TODO Написать создание уникальных индексов по описанию
 			// TODO Написать создание индексов по описанию
-
 			if ($this->params['is_search']) {
 				// TODO Заново написать создание индексов для поиска
 			}
@@ -558,6 +563,7 @@ class Table
 				' WHERE '.$options['where'].
 				' ORDER BY '.$options['order_by'].
 				' LIMIT '.$options['limit'];
+
 			$this->stmt = $this->container->get('connection')->prepare($sql);
 			$this->stmt->execute();
 
@@ -624,6 +630,7 @@ class Table
 			));
 			$quantity = $this->stmt->fetchColumn();
 		} catch (\Exception $e) {
+			$this->container->get('log')->addError($e->getMessage());
 			$quantity = 0;
 		}
 		

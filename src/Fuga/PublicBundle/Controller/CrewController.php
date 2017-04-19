@@ -99,7 +99,7 @@ class CrewController extends Controller
 			}
 			$this->get('connection')->commit();
 		} catch (\Exception $e){
-			$this->get('log')->addError($e->getMessage());
+			$this->err($e->getMessage());
 			$this->get('connection')->rollback();
 		}
 
@@ -130,7 +130,7 @@ class CrewController extends Controller
 			$vacancy = $this->get('container')->getItem('crew_vacancy', 'id='.$vacancyId.' AND publish=1 AND quantity>0');
 
 			if (!$ship) {
-				$this->get('log')->addError('Vacancy ship error for ID:'.$shipId);
+				$this->err('Vacancy ship error for ID:'.$shipId);
 				$response->setData(array(
 					'error' => 'Не найден корабль вакансии',
 				));
@@ -139,7 +139,7 @@ class CrewController extends Controller
 			}
 
 			if (!$vacancy) {
-				$this->get('log')->addError('Vacancy error for ID:'.$vacancyId);
+				$this->err('Vacancy error for ID:'.$vacancyId);
 				$response->setData(array(
 					'error' => 'Вакансия закрыта',
 				));

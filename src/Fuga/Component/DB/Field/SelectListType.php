@@ -13,10 +13,10 @@ class SelectListType extends Type
 	{
 		$name = $name ? $name : $this->getName();
 		$value = $this->get('request')->request->get($name);
-		$this->get('connection')->delete('user_group_module', array($this->getParam('link_inversed') => $this->dbId));
+		$this->get('connection')->delete($this->getParam('link_table'), array($this->getParam('link_inversed') => $this->dbId));
 		foreach ($value as $id) {
 			$this->get('connection')->insert(
-				'user_group_module',
+				$this->getParam('link_table'),
 				array(
 					$this->getParam('link_inversed') => $this->dbId,
 					$this->getParam('link_mapped') => $id,
@@ -101,7 +101,7 @@ class SelectListType extends Type
 		if ('dialog' == $this->getParam('view_type')) {
 			$sql = 'SELECT t1.'.$this->getParam('link_mapped').', t0.*
 			FROM '.$this->getParam('l_table').' as t0
-			LEFT JOIN '.$this->getParam('link_table').' as t1 ON t1.'.$this->getParam('link_mapped').' = t0.id
+			LEFT JOIN '.$this->getParam('link_table').' as t1 ON (t1.'.$this->getParam('link_mapped').' = t0.id AND t1.'.$this->getParam('link_inversed').'='.$this->dbId.')
 			WHERE t1.'.$this->getParam('link_inversed').' = :id
 			ORDER BY t0.'.$this->getParam('l_sort');
 			$stmt = $this->get('connection')->prepare($sql);
@@ -121,7 +121,7 @@ class SelectListType extends Type
 		} else {
 			$sql = 'SELECT t1.'.$this->getParam('link_inversed').',t1.'.$this->getParam('link_mapped').', t0.*
 			FROM '.$this->getParam('l_table').' as t0
-			LEFT JOIN '.$this->getParam('link_table').' as t1 ON t1.'.$this->getParam('link_mapped').' = t0.id
+			LEFT JOIN '.$this->getParam('link_table').' as t1 ON (t1.'.$this->getParam('link_mapped').' = t0.id AND t1.'.$this->getParam('link_inversed').'='.$this->dbId.')
 			ORDER BY t0.'.$this->getParam('l_sort');
 			$stmt = $this->get('connection')->prepare($sql);
 			$stmt->execute();

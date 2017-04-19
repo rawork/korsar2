@@ -2,109 +2,111 @@
 
 namespace Fuga\Component\DB\Field;
 
-class DatetimeType extends Type {
-	protected $arr;
-	protected $year, $month, $day, $time; 
-	public function __construct(&$params, $entity = null) {
+class DatetimeType extends Type
+{
+	protected $type = 'datetime';
+
+	public function __construct(&$params, $entity = null)
+	{
 		parent::__construct($params, $entity);
-		// немного уменьшаем геморой...
-		$this->arr = array(
-			'year' => 4,
-			'month' => 2,
-			'day' => 2,
-			'time' => 8
-		);
 	}
 
-	public function value2YMD($value = '') {
-		if (!empty($value)) {
-			$this->year = substr($value, 0, $this->arr['year']);
-			$this->month = substr($value, 5, $this->arr['month']);
-			$this->day = substr($value, 8, $this->arr['day']);
-			$this->time = substr($value, 11, $this->arr['time']);
-		} else {
-			$ts = time();
-			$this->year = date('Y', $ts);
-			$this->month = date('m', $ts);
-			$this->day = date('d', $ts);
-			$this->time = date('H:i:s', $ts);
+	public function getValue($name = '')
+	{
+		$name = $name ?: $this->getName();
+		$value = $this->get('request')->request->get($name);
+		if ($value && $time = $this->get('request')->request->get($name . '_time')) {
+			$value .= ' ' . $time . ':00';
 		}
+
+		return $value;
 	}
 
-	public function getSQLValue($name = '') {
+	public function getSQLValue($name = '')
+	{
 		$value = $this->getValue($name);
-		if (in_array($value, array(null, '00.00.0000 00:00:00', '0000-00-00 00:00:00'))) {
+		if (in_array($value, array(null, '0000-00-00 00:00:00'))) {
 			return "0000-00-00 00:00:00";
-		}	
-		
-		$date = \DateTime::createFromFormat('d.m.Y H:i:s', $this->getValue($name));
+		}
 
-		return $date ? $date->format('Y-m-d H:i:s') : '0000-00-00 00:00:00';
+		return $value;
 	}
 
-	public function getStatic() {
-		$this->value2YMD($this->dbValue);
-		return $this->day.'.'.$this->month.'.'.$this->year.' '.$this->time;
+	public function getStatic()
+	{
+		return !in_array($this->dbValue, array(null, '0000-00-00 00:00:00')) ? $this->get('util')->format_date($this->dbValue, 'j F Y, H:i', false) : '';
 	}
 
-	public function getInput($value = '', $name = '') {
+	public function getInput($value = '', $name = '')
+	{
 		return $this->dateType_getInput(($name ? $name : $this->getName()), $this->dbValue);
 	}
 
-	public function getSearchInput() {
-		if ($date = $this->getSearchValue('beg')) {
-			$date_beg = substr($date,6,4).'-'.substr($date,3,2).'-'.substr($date,0,2).' '.substr($date,11,8);
-		} else {
-			$date_beg = '';
+	public function getSearchInput()
+	{
+		$dateFrom = '';
+		$dateTill = '';
+
+		if ($this->getSearchValue('from')) {
+			$dateFrom = $this->getSearchValue('from') . ' ' . $this->getSearchValue('from_time');
 		}
-		if ($date = $this->getSearchValue('end')) {
-			$date_end = substr($date,6,4).'-'.substr($date,3,2).'-'.substr($date,0,2).' '.substr($date,11,8);
-		} else {
-			$date_end = '';
+		if ($this->getSearchValue('till')) {
+			$dateTill = $this->getSearchValue('till') . ' ' . $this->getSearchValue('till_time');
 		}
-		return '<div class="form-inline">c '.$this->dateType_getInput(parent::getSearchName('beg'), $date_beg, false).' по '.$this->dateType_getInput(parent::getSearchName('end'), $date_end, false).' <a href="#" class="btn-date-empty" data-name="'.parent::getSearchName().'">Обнулить</a></div>';
+
+		return '<div class="form-inline">
+			<div class="input-group">
+			<div class="input-group-addon">C</div>' .
+			$this->dateType_getInput(parent::getSearchName('from'), $dateFrom, false) . '
+			<div class="input-group-addon">По</div>' .
+			$this->dateType_getInput(parent::getSearchName('till'), $dateTill, false) . '
+			</div> 
+		</div>';
 	}
 
-	public function getSearchSQL() {
+	public function getSearchSQL()
+	{
 		$ret = '';
-		if ($date = $this->getSearchValue('beg')) {
-			$ret .= ($ret ? ' AND ' : '').$this->getName().">=STR_TO_DATE('$date','%d.%m.%Y %H:%i:%s')";
+		if ($date = $this->getSearchValue('from')) {
+			$ret = $this->getName() . ">='$date'";
 		}
-		if ($date = $this->getSearchValue('end')) {
-			$ret .= ($ret ? ' AND ' : '').$this->getName()."<=STR_TO_DATE('$date','%d.%m.%Y %H:%i:%s')";
-		}
-		return $ret;	
-	}
-
-	public function getSearchURL($name = '') {
-		$ret = '';
-		if (parent::getSearchURL('beg')) {
-			$ret .= parent::getSearchURL('beg');
-		}
-		if (parent::getSearchURL('end')) {
-			$ret .= ($ret ? '&' : '').parent::getSearchURL('end');
+		if ($date = $this->getSearchValue('till')) {
+			$ret .= ($ret ? ' AND ' : '') . $this->getName() . "<='$date'";
 		}
 		return $ret;
 	}
 
-	public function dateType_getInput($name, $value = '', $insertValue = true) {
-		if ($value || $insertValue) {
-			$this->value2YMD($value);
-			$date = $this->day.'.'.$this->month.'.'.$this->year.' '.$this->time;
-		} else {
-			$date = '';	
+	public function getSearchURL($name = '')
+	{
+		$ret = '';
+		if ($ret = parent::getSearchURL('from')) {
+			if ($time = $this->getSearchValue($this->getSearchName('from_time'))) {
+				$ret .= ' ' . $time;
+			}
 		}
-		
+		if ($date = parent::getSearchURL('till')) {
+			$ret .= ($ret ? '&' : '') . $date;
+			if ($time = $this->getSearchValue($this->getSearchName('till_time'))) {
+				$ret .= ' ' . $time;
+			}
+		}
+
+		return $ret;
+	}
+
+	public function dateType_getInput($name, $value = false, $fill = true)
+	{
+		$date = '';
+		$time = '';
+		if ($value && '0000-00-00 00:00:00' != $value) {
+			$date = substr($value, 0, 10);
+			$time = substr($value, 11, 5);
+		}
+
 		return '
-<div class="input-group">
-	<input class="form-control field-date" type="text" data-name="'.$name.'" data-time="%H:%M:00" readonly="true" value="'.$date.'" name="'.$name.'" id="'.$name.'">
-	<span class="input-group-btn">
-		<a class="btn btn-warning" href="javascript:void(0)" id="trigger_'.$name.'"><span class="glyphicon glyphicon-calendar icon-white"></span></a>
-	</span>
-</div>';
+	<input class="form-control field-date" type="text" placeholder="Выберите дату..." data-value="' . $date . '" name="' . $name . '" id="' . $name . '">
+	<input class="form-control field-time" type="text" placeholder="Выберите время..." value="' . $time . '" name="' . $name . '_time" id="' . $name . '_time">
+	';
 	}
-	
-	public function getType() {
-		return 'datetime';
-	}
+
 }

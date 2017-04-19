@@ -107,7 +107,7 @@ class ChatController extends Controller
 
 
 			} catch (\Exception $e) {
-				$this->get('log')->addError($e->getMessage());
+				$this->err($e->getMessage());
 				$response->setData(array(
 					'error' => true,
 				));
@@ -224,7 +224,7 @@ class ChatController extends Controller
 
 
 			} catch (\Exception $e) {
-				$this->get('log')->addError($e->getMessage());
+				$this->err($e->getMessage());
 				$response->setData(array(
 					'error' => true,
 				));

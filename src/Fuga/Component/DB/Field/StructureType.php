@@ -2,12 +2,15 @@
 
 namespace Fuga\Component\DB\Field;
 
-class StructureType extends TextType {
-	public function __construct(&$params, $entity = null) {
+class StructureType extends TextType
+{
+	public function __construct(&$params, $entity = null)
+	{
 		parent::__construct($params, $entity);
 	}
 
-//	public function getStatic() {
+//	public function getStatic()
+// {
 //		$content = array('<div class="admin-field-structure clearfix" id="'.$this->getParam('name').'">');
 //
 //		$content[] = '</div>';
@@ -15,7 +18,8 @@ class StructureType extends TextType {
 //		return implode('', $content);
 //	}
 
-	public function getSQLValue($inputName = '') {
+	public function getSQLValue($inputName = '')
+	{
 		$values = array();
 		$params = $this->getParam('structure');
 
@@ -24,11 +28,13 @@ class StructureType extends TextType {
 		return json_encode($values);
  	}
 	
-	public function getNativeValue() {
+	public function getNativeValue()
+	{
 		return json_decode(parent::getNativeValue(), true);
 	}
 	
-	public function getInput($value = '', $name = '') {
+	public function getInput($value = '', $name = '')
+	{
 		$name = $name ?: $this->getName();
 		$params = $this->getParam('structure');
 		$values = $this->getNativeValue();

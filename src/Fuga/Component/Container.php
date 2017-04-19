@@ -14,13 +14,15 @@ use Symfony\Component\Routing\Loader\YamlFileLoader;
 class Container 
 {
 	private $tables;
-	private $modules = array();
-	private $ownmodules = array();
-	private $controllers = array();
-	private $templateVars = array();
-	private $services = array();
-	private $managers = array();
-	private $tempmodules = array();
+	private $modules = [];
+	private $ownmodules = [];
+	private $controllers = [];
+	private $templateVars = [];
+	private $javascripts = [];
+	private $styles = [];
+	private $services = [];
+	private $managers = [];
+	private $tempmodules = [];
 	private $loader;
 	
 	public function __construct($loader)
@@ -204,14 +206,20 @@ class Container
 
 	public function getTable($name)
 	{
-		if (!$this->tables) {
-			$this->tables = $this->getAllTables();
-		}
-		
-		if (isset($this->tables[$name])) {
-			return $this->tables[$name];
-		} else {
-			throw new \Exception('Таблица "'.$name.'" не существует');
+		try {
+			if (!$this->tables) {
+				$this->tables = $this->getAllTables();
+			}
+
+			if (isset($this->tables[$name])) {
+				return $this->tables[$name];
+			} else {
+				throw new \Exception('Таблица "'.$name.'" не существует');
+			}
+		} catch (\Exception $e) {
+			$this->get('log')->addError($e->getMessage());
+			$this->get('log')->addError($e->getTraceAsString());
+			throw $e;
 		}
 	}
 
@@ -434,6 +442,30 @@ class Container
 		return $this->templateVars;	
 	}
 
+	public function addJs($path)
+	{
+		if (!in_array($path, $this->javascripts)) {
+			$this->javascripts[] = $path;
+		}
+	}
+
+	public function getJs()
+	{
+		return $this->javascripts;
+	}
+
+	public function addCss($path)
+	{
+		if (!in_array($path, $this->styles)) {
+			$this->styles[] = $path;
+		}
+	}
+
+	public function getCss()
+	{
+		return $this->styles;
+	}
+
 	public function register($name, $service)
 	{
 		$this->services[$name] = $service;
@@ -541,7 +573,7 @@ class Container
 					$this->services[$name] = new Translator($this->get('session')->get('locale'));
 					break;
 				case 'paginator':
-					$this->services[$name] = new Paginator($this->get('templating'));
+					$this->services[$name] = new Paginator($this->get('templating'), $this);
 					break;
 				case 'mailer':
 					$this->services[$name] = new Mailer\Mailer();

@@ -74,6 +74,7 @@ class IndexAction extends AdminController
 	private function getTableContent()
 	{
 		$tableHtml = '';
+
 		$this->paginator->paginate(
 			$this->table,
 			$this->searchRef.'?page=###', 

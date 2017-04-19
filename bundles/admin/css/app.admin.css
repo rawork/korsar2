@@ -215,6 +215,16 @@ textarea.tinymce {
 	display: none;
 }
 
+.field-date {
+	width: 250px;
+	display: inline-block;
+}
+
+.field-time {
+	width: 100px;
+	display: inline-block;
+}
+
 @media (min-width: 768px) {
 	body > .container {
 		padding-top: 120px;

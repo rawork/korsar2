@@ -20,12 +20,12 @@ class CommonController extends Controller {
 					$params
 				);
 			} catch (NotFoundHttpException $e) {
-				$this->get('log')->addError($e->getMessage());
-				$this->get('log')->addError($e->getTraceAsString());
+				$this->err($e->getMessage());
+				$this->err($e->getTraceAsString());
 				throw $this->createNotFoundException($e->getMessage());
 			} catch (\Exception $e) {
-				$this->get('log')->addError($e->getMessage());
-				$this->get('log')->addError($e->getTraceAsString());
+				$this->err($e->getMessage());
+				$this->err($e->getTraceAsString());
 				throw new \Exception($e->getMessage());
 			}
 		}

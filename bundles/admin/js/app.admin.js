@@ -1,18 +1,7 @@
-// @deprecated
-function showListDialog(inputId, table_name, field_name, value){
-    $.post(prj_ref + "/admin/dialog/list", {input_id: inputId, table_name: table_name, field_name: field_name, value: value},
-        function(data){
-            $('#popupTitle').html(data.title);
-            $('#popupButtons').html(data.button);
-            $('#popupContent').html(data.content);
-            showPopup();
-        }, "json");
-}
-
 (function($) {
     $(function() {
 
-        jQuery.cachedScript = function( url, options ) {
+        $.cachedScript = function( url, options ) {
 
             // Allow user to set any option except for dataType, cache, and url
             var options = $.extend( options || {}, {
@@ -209,15 +198,6 @@ function showListDialog(inputId, table_name, field_name, value){
             e.preventDefault();
             $('#filter-type').val($(this).attr('data-type'));
             $('#form-filter').submit();
-        });
-
-        $(document).on('click', '.btn-date-empty', function emptyDateSearch(e){
-            e.preventDefault();
-
-            var name = $(this).attr('data-name');
-
-            $('#'+name+'_beg').val('');
-            $('#'+name+'_end').val('');
         });
 
         $(document).on('click', '#btn-group-delete', function(e) {
@@ -562,6 +542,8 @@ function showListDialog(inputId, table_name, field_name, value){
         });
 
         $('#crew-vacancy').submit(function(){
+            //e.preventDefault();
+
             var that = $(this);
             var path = that.attr('action');
             var message = $('#message-vacancy');
@@ -585,41 +567,145 @@ function showListDialog(inputId, table_name, field_name, value){
 
             }, "json");
 
-            return false;
+            return;
         });
 
-        var cals = $('.field-date');
-        if (cals.length > 0) {
-            $.cachedScript( prj_ref + '/bundles/calendar/calendar.js' ).done(function( script, textStatus ) {
-                //console.log('calendar.js');
+        $('.btn-game-create-simple').click(function(e) {
+            e.preventDefault();
+
+            var that = $(this);
+            var type = that.siblings('input[name=type]').val();
+            var date = that.siblings('div').find('input[name=date]').val();
+            var time = that.siblings('div').find('input[name=date_time]').val();
+
+            var path = that.parent().attr('action');
+
+            var message = that.siblings('.alert');
+
+            console.log(type, date, time, path);
+
+            message.hide();
+
+            $.post(path, {type: type, date: date, time: time}, function(data){
+                console.log(data);
+                if (data.error) {
+                    message
+                        .removeClass()
+                        .addClass('alert alert-error')
+                        .html(data.message)
+                        .fadeIn(500);
+                } else {
+                    message
+                        .removeClass()
+                        .addClass('alert alert-success')
+                        .html(data.message)
+                        .fadeIn(500);
+                }
+
+            }, "json");
+        });
+
+        $('.btn-game-create-labirint').click(function(e) {
+            e.preventDefault();
+
+            var that = $(this);
+            var date = that.siblings('div').find('input[name=date]').val();
+            var time = that.siblings('div').find('input[name=date_time]').val();
+
+            var path = that.parent().attr('action');
+
+            var message = that.siblings('.alert');
+
+            console.log(date, time, path);
+
+            message.hide();
+
+            $.post(path, {date: date, time: time}, function(data){
+                console.log(data);
+                if (data.error) {
+                    message
+                        .removeClass()
+                        .addClass('alert alert-error')
+                        .html(data.message)
+                        .fadeIn(500);
+                } else {
+                    message
+                        .removeClass()
+                        .addClass('alert alert-success')
+                        .html(data.message)
+                        .fadeIn(500);
+                }
+
+            }, "json");
+        });
+
+        var $dateFields = $('.field-date');
+        if ($dateFields.length > 0) {
+            // $.cachedScript( prj_ref + '/bundles/calendar/calendar.js' ).done(function( script, textStatus ) {
+            //     //console.log('calendar.js');
+            // });
+            // $.cachedScript( prj_ref + '/bundles/calendar/calendar-ru.js' ).done(function( script, textStatus ) {
+            //     //console.log('calendar-ru.js');
+            // });;
+            // $.cachedScript( prj_ref + '/bundles/calendar/calendar-setup.js' ).done(function( script, textStatus ) {
+            //     //console.log('calendar-setup.js');
+            //     dateFields.each(function() {
+            //         var name = $(this).attr('data-name');
+            //         var time = $(this).attr('data-time');
+            //         time = (time ? ' ' + time : '');
+            //         Calendar.setup({
+            //             inputField : name,
+            //             ifFormat : "%d.%m.%Y" + time,
+            //             showsTime : time ? true : false,
+            //             button : "trigger_" + name,
+            //             align : "Br",
+            //             singleClick : true,
+            //             timeFormat : 24,
+            //             firstDay : 1
+            //         });
+            //     });
+            // });
+            $.cachedScript( prj_ref + '/bundles/pickadate/picker.js' ).done(function( script, textStatus ) {
+
             });
-            $.cachedScript( prj_ref + '/bundles/calendar/calendar-ru.js' ).done(function( script, textStatus ) {
-                //console.log('calendar-ru.js');
-            });;
-            $.cachedScript( prj_ref + '/bundles/calendar/calendar-setup.js' ).done(function( script, textStatus ) {
-                //console.log('calendar-setup.js');
-                cals.each(function() {
-                    var name = $(this).attr('data-name');
-                    var time = $(this).attr('data-time');
-                    time = (time ? ' ' + time : '');
-                    Calendar.setup({
-                        inputField : name,
-                        ifFormat : "%d.%m.%Y" + time,
-                        showsTime : time ? true : false,
-                        button : "trigger_" + name,
-                        align : "Br",
-                        singleClick : true,
-                        timeFormat : 24,
-                        firstDay : 1
-                    });
+
+            $.cachedScript( prj_ref + '/bundles/pickadate/picker.date.js' ).done(function( script, textStatus ) {
+                $dateFields.pickadate({
+                    monthsFull: [ 'января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря' ],
+                    monthsShort: [ 'янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек' ],
+                    weekdaysFull: [ 'воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота' ],
+                    weekdaysShort: [ 'вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб' ],
+                    today: 'сегодня',
+                    clear: 'удалить',
+                    close: 'закрыть',
+                    format: 'd mmmm, yyyy г.',
+                    formatSubmit: 'yyyy-mm-dd',
+                    hiddenName: true,
+                    firstDay: 1,
+                    selectYears: true,
+                    selectMonths: true
+                })
+            });
+
+            var $timeFields = $('.field-time');
+            if ($timeFields.length > 0) {
+                $.cachedScript( prj_ref + '/bundles/pickadate/picker.time.js' ).done(function( script, textStatus ) {
+                    $timeFields.pickatime({
+                        clear: 'удалить',
+                        format: 'H:i',
+                        formatSubmit: 'HH:i',
+                        interval: 10
+                    })
                 });
-            });
+            }
+
+
         }
 
         var editors = $('.tinymce');
         if (editors.length > 0) {
             $.cachedScript( prj_ref + '/bundles/tinymce/tinymce.min.js' ).done(function( script, textStatus ) {
-                $.cachedScript( prj_ref + '/bundles/tinymce/tinymce.init.js?2015120601' ).done(function( script, textStatus ) {})
+                $.cachedScript( prj_ref + '/bundles/tinymce/tinymce.init.js' ).done(function( script, textStatus ) {})
             });
 
         }

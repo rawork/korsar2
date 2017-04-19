@@ -28,7 +28,7 @@
                 resultUpdateUrl: '/ajax/sandbox/task/data',
 
                 messageInit: '<h2 class="init-message">Игра загружается, подождите...</h2>',
-                messageBefore: '<h2 class="before-message">Время начала игры<br>#time#</h2><br><button class="btn" id="task-btn-reload">Обновить страницу</button>',
+                messageBefore: '<h2 class="before-message">Время начала игры<br>#time#</h2><br><button class="btn" id="btn-reload">Обновить страницу</button>',
                 messageAfter: '<h2 class="end-message">Игра завершена.<br>Результаты будут объявлены позже.</h2>'
             },
 
@@ -89,13 +89,19 @@
                             _initMessage.call(this);
                             _setEvents.call(this);
 
-                            $.get(o.userInfoUrl, {},
+                            $.get(o.userInfoUrl+'?_='+ new Date().getTime(), {},
                                 function(data){
                                     if (data.error) {
                                         $this.html('<h2 class="init-message">'+data.error+'</h2>');
                                         return;
                                     }
+
+                                    console.log(data);
+
+                                    data.game.stop = parseInt(data.game.start) + (data.game.duration*60);
+
                                     taskStorage.set('start', data.game.start);
+                                    taskStorage.set('duration', data.game.duration);
                                     taskStorage.set('stop', data.game.stop);
                                     var minutes = data.game.stop-data.game.current;
                                     var timerMinutes = _integerDivision(minutes, 60);
@@ -211,7 +217,7 @@
                 var that = this;
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
-                $(document).on('click', '#task-btn-reload', function(){
+                $(document).on('click', '#btn-reload', function(){
                     window.location.reload();
                 });
 

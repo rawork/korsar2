@@ -33,7 +33,7 @@
                 resultUpdateUrl: '/ajax/sandbox/pexeso/data',
 
                 messageInit: '<h2 class="init-message">Игра загружается, подождите...</h2>',
-                messageBefore: '<h2>Время начала игры<br>#time#</h2><br><button id="pexeso-btn-reload">Обновить страницу</button>',
+                messageBefore: '<h2>Время начала игры<br>#time#</h2><br><button class="btn" id="btn-reload">Обновить страницу</button>',
                 messageAfter: '<h2 class="end-message">Игра завершена.<br>Результаты будут объявлены позже.</h2>',
                 messageStart: '<button id="pexeso-btn-start">Начать игру</button>'
             },
@@ -103,17 +103,21 @@
                                         return;
                                     }
                                     currentTime = data.game.current;
+
+                                    data.game.stop = parseInt(data.game.start) + (data.game.duration*60);
+
+
                                     pexesoStorage.set('start', data.game.start);
+                                    pexesoStorage.set('duration', data.game.duration);
                                     pexesoStorage.set('stop', data.game.stop);
 
-                                    if(pexesoStorage.isEmpty('user') || pexesoStorage.get('user') != data.game.user_id) {
-                                        pexesoStorage.set('user', data.game.user_id);
-                                        pexesoStorage.set('step', parseInt(data.game.step));
-                                        pexesoStorage.set('money', data.game.money);
-                                        if (pexesoStorage.get('user') != data.game.user_id) {
-                                            pexesoStorage.remove('started');
-                                        }
+                                    pexesoStorage.set('user', data.game.user_id);
+                                    pexesoStorage.set('step', parseInt(data.game.step));
+                                    pexesoStorage.set('money', data.game.money);
+                                    if (pexesoStorage.get('user') != data.game.user_id) {
+                                        pexesoStorage.remove('started');
                                     }
+
                                     if (pexesoStorage.get('start') > currentTime) {
                                         _beforeMessage.call(that);
                                     } else if (pexesoStorage.get('stop') < currentTime || pexesoStorage.get('step') > 5) {
@@ -299,7 +303,7 @@
                 var that = this;
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
-                $(document).on('click', '#pexeso-btn-reload', function(){
+                $(document).on('click', '#btn-reload', function(){
                     window.location.reload();
                 });
 

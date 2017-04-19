@@ -75,7 +75,7 @@ class PirateController extends Controller
 			}
 			$this->get('connection')->commit();
 		} catch (\Exception $e){
-			$this->get('log')->addError($e->getMessage());
+			$this->err($e->getMessage());
 			$this->get('connection')->rollback();
 		}
 

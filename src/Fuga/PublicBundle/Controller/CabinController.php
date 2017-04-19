@@ -221,7 +221,7 @@ class CabinController extends Controller
 				}
 			} catch (\Exception $e) {
 				$this->get('connection')->rollback();
-				$this->get('log')->addError($e->getMessage());
+				$this->err($e->getMessage());
 				$response->setData(array(
 					'error' => 'Ошибка регистрации. Обратитесь к администратору.',
 				));
@@ -520,7 +520,7 @@ class CabinController extends Controller
 
 				$this->get('connection')->commit();
 			} catch (\Exception $e) {
-				$this->get('log')->addError($e->getMessage());
+				$this->err($e->getMessage());
 				$this->get('connection')->rollback();
 			}
 
@@ -580,7 +580,7 @@ class CabinController extends Controller
 					array('id' => $user['id'])
 				);
 			} catch (\Exception $e) {
-				$this->get('log')->addError($e->getMessage());
+				$this->err($e->getMessage());
 				$response->setData(array(
 					'error' => 'Ошибка сохранения аватара. Обратитесь к администратору.',
 				));
@@ -638,7 +638,7 @@ class CabinController extends Controller
 					array('id' => $user['id'])
 				);
 			} catch (\Exception $e) {
-				$this->get('log')->addError($e->getMessage());
+				$this->err($e->getMessage());
 				$response->setData(array(
 					'error' => 'Ошибка сохранения данных. Обратитесь к администратору.',
 				));

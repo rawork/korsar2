@@ -2,13 +2,17 @@
 
 namespace Fuga\Component\DB\Field;
 
-class SelectTreeType extends LookUpType {
-	public function __construct(&$params, $entity = null) {
+class SelectTreeType extends LookUpType
+{
+	public function __construct(&$params, $entity = null)
+	{
 		parent::__construct($params, $entity);
 	}
 
-	public function getStatic($value = null) {
+	public function getStatic($value = null)
+	{
 		$value = $value ?: parent::getNativeValue();
+
 		if ($value) {
 			$sql = 'SELECT id,'.$this->getParam('l_field').' FROM '.$this->getParam('l_table').' WHERE id='.intval($value);
 			$stmt = $this->get('connection')->prepare($sql);
@@ -25,11 +29,14 @@ class SelectTreeType extends LookUpType {
 				return 'Элемент #'.$entity['id'];
 			}
 		}
+
 		return 'Не выбрано';
 	}
 	
-	public function getNativeValue() {
+	public function getNativeValue()
+	{
 		$value = array('value' => parent::getNativeValue());
+
 		if (!empty($value['value'])) {
 			$sql = 'SELECT * FROM '.$this->getParam('l_table').' WHERE id IN('.$value['value'].')';
 			$stmt = $this->get('connection')->prepare($sql);
@@ -42,6 +49,7 @@ class SelectTreeType extends LookUpType {
 				}
 			}
 		}
+
 		if ('many' == $this->getParam('link_type')  && $this->dbId) {
 			$sql = 'SELECT
 				t1.id as id,t1.'.$this->getParam('l_field').' as '.$this->getParam('l_field').'
@@ -63,18 +71,22 @@ class SelectTreeType extends LookUpType {
 				);
 			}
 		}
+
 		return $value;
 	}
 
-	public function getInput($value = '', $name = '') {
+	public function getInput($value = '', $name = '')
+	{
 		return $this->select_tree_getInput($value, $name);
 	}
 
-	public function getSearchInput() {
+	public function getSearchInput()
+	{
 		return $this->select_tree_getInput(parent::getSearchValue(), parent::getSearchName());
 	}
 
-	protected function select_tree_getInput($value, $name) {
+	protected function select_tree_getInput($value, $name)
+	{
 		$name = $name ?: $this->getName();
 		$value = empty($value) ? intval($this->dbValue) : $value;
 		$table = $this->getParam('table');
@@ -110,6 +122,8 @@ class SelectTreeType extends LookUpType {
 <input type="hidden" name="'.$name.'_extra" value="'.$extra.'" id="'.$input_id.'_extra">	
 <input type="hidden" name="'.$name.'_type" value="'.$this->getParam('link_type').'" id="'.$input_id.'_type">
 ';
+
 		return $ret;
 	}
+
 }

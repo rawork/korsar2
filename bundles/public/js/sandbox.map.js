@@ -31,7 +31,7 @@
                 setCellUrl: '/ajax/sandbox/map/data',
 
                 messageInit: '<h2>Игра загружается, подождите...</h2>',
-                messageBefore: '<h2>Время начала игры<br>#time#</h2><br><button id="pexeso-btn-reload">Обновить страницу</button>',
+                messageBefore: '<h2>Время начала игры<br>#time#</h2><br><button class="btn" id="btn-reload">Обновить страницу</button>',
                 messageAfter: '<h2 class="end-message">Игра завершена.<br>Результаты будут объявлены позже.</h2>'
             },
 
@@ -106,6 +106,7 @@
                                 $this.html('<h2 class="init-message">'+data.error+'</h2>');
                                 return;
                             }
+                            data.game.stop = parseInt(data.game.start) + (data.game.duration*60*60*24);
                             currentTime = data.game.current;
                             if (data.game.start > currentTime) {
                                 _beforeMessage.call(that, data.game.start);
@@ -113,6 +114,7 @@
                                 _afterMessage.call(that);
                             } else {
                                 _pluginMarkup.call(that); /* add plugin markup */
+
                                 if (data.game.cell != '') {
                                     $('#map-btn-ready').hide();
                                     $('#'+data.game.cell).addClass('active');
@@ -191,6 +193,10 @@
             _setEvents=function(){
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
+                $(document).on('click', '#btn-reload', function(){
+                    window.location.reload();
+                });
+
                 $(document).on('click', '#map-btn-task', function(e){
                     $('#modal-content').html('<div id="modal-content-fixed"></div>');
                     $('#modal-content-fixed')
@@ -237,22 +243,22 @@
                         }
                     }, 1000);
                     choosedCell = $(this).attr('id');
+                    $('#'+choosedCell).addClass('active');
                     $('#myModal').show();
 
                 });
 
                 $(document).on('click', '#map-btn-no', function(){
                     clearInterval(answerInterval);
+                    $('#'+choosedCell).removeClass('active');
                     $('#myModal').hide();
                 });
 
                 $(document).on('click', '#map-btn-yes', function(){
-                    console.log(choosedCell);
                     $.post(o.setCellUrl, {cell: choosedCell},
                         function(data){
                             $('#modal-content').html('<h1>ваш ответ принят!</h1>');
                             $('#myModal').show().delay(3000).hide(0, function(){
-                                $('#'+choosedCell).addClass('active');
                                 $('#map-matrix').removeClass('ready');
                             });
                         }, "json");

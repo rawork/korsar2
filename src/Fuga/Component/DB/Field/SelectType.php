@@ -2,15 +2,15 @@
 
 namespace Fuga\Component\DB\Field;
 
-class SelectType extends LookUpType {
-
-	private $entities = null;
-
-	public function __construct(&$params, $entity = null) {
+class SelectType extends LookUpType
+{
+	public function __construct(&$params, $entity = null)
+	{
 		parent::__construct($params, $entity);
 	}
 
-	private function getSelectInput($value, $name) {
+	private function getSelectInput($value, $name)
+	{
 		$name = $name ?: $this->getName();
 		$value = empty($value) ? intval($this->dbValue) : $value;
 		$table = $this->getParam('table');
@@ -46,10 +46,12 @@ class SelectType extends LookUpType {
 <input type="hidden" name="'.$name.'_extra" value="'.$extra.'" id="'.$input_id.'_extra">
 <input type="hidden" name="'.$name.'_type" value="'.$this->getParam('link_type').'" id="'.$input_id.'_type">
 ';
+
 		return $ret;
 	}
 
-	public function getStatic($value = null) {
+	public function getStatic($value = null)
+	{
 		$value = $value ?: parent::getNativeValue();
 		if ($value) {
 			$sql = 'SELECT id,'.$this->getParam('l_field').' FROM '.$this->getParam('l_table').' WHERE id='.intval($value);
@@ -62,11 +64,13 @@ class SelectType extends LookUpType {
 				foreach ($fields as $field_name)
 					if (!empty($entity[$field_name]))
 						$ret .= ($ret ? ' ' : '').$entity[$field_name];
+
 				return $ret.' ('.$entity['id'].')';
 			} else {
 				return 'Элемент #'.$entity['id'];
 			}
 		}
+
 		return 'Не выбрано';
 	}
 	

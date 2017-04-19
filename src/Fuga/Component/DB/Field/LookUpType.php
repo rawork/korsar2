@@ -2,13 +2,18 @@
 
 namespace Fuga\Component\DB\Field;
 
-class LookUpType extends Type {
-	public function __construct(&$params, $entity = null) {
+class LookUpType extends Type
+{
+	protected $type = 'integer';
+
+	public function __construct(&$params, $entity = null)
+	{
 		parent::__construct($params, $entity);
 		$this->dbValue = intval($this->dbValue);
 	}
 
-	public function getSearchSQL() {
+	public function getSearchSQL()
+	{
 		if ($value = $this->getSearchValue()) {
 			return $this->getName().'='.$value;
 		}
@@ -16,15 +21,12 @@ class LookUpType extends Type {
 		return '';
 	}
 
-	public function getValue($name = '') {
+	public function getValue($name = '')
+	{
 		$name = $name ? $name: $this->getName();
 		$value = $this->get('request')->request->getInt($name, $this->dbValue);
 		
 		return $value;
 	}
 	
-	public function getType() {
-		return 'integer';
-	}
-
 }
