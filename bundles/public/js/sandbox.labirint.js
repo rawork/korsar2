@@ -19,6 +19,7 @@
             timerInterval = null,
             marker = null,
             socket = io.connect('http://localhost:8080'),
+            initialized = false,
 
         /*
          ----------------------------------------
@@ -95,6 +96,99 @@
 
                             _loadData.call(this);
                             _setEvents.call(this);
+
+                            socket.on('move', function (data) {
+                                var state = labirintStorage.get('state');
+                                if (data.marker != marker) {
+                                    $('#result').html(state.colors[data.marker] +' игрок выкинул '+data.num);
+                                } else {
+                                    setTimeout(function() {
+                                        var index = parseInt(marker.replace('marker', ''));
+
+                                        var foundNext = false;
+                                        var j = 0;
+                                        while (!foundNext) {
+                                            if (index < 4) {
+                                                index++;
+                                            } else {
+                                                index = 1;
+                                            }
+
+                                            if (parseInt(state.wait['marker'+index]) == 1) {
+                                                state.wait['marker'+index] = 0;
+                                            } else if (parseInt(state.lives['marker'+index]) > 0 ) {
+                                                foundNext = true;
+                                            }
+
+                                            j++;
+                                            if (j > 12) {
+                                                _afterMessage.call(that);
+                                                break;
+                                            }
+                                        }
+
+                                        state.who_run = 'marker'+index;
+
+                                        console.log('move', state.positions[marker], marker, parseInt(data.num), state.positions[marker] + parseInt(data.num), state.who_run);
+
+                                        state.positions[marker] = parseInt(state.positions[marker]) + parseInt(data.num);
+
+                                        if ('step'+state.positions[marker] in labirintData.steps) {
+                                            var rule = labirintData.steps['step'+state.positions[marker]];
+                                            switch (rule.type) {
+                                                case 'death':
+                                                    state.positions[marker] = 0;
+                                                    state.lives[marker] = parseInt(state.lives[marker]) - 1;
+                                                    if (state.lives[marker] == 0) {
+                                                        $('#result').html('Вы проиграли! :(');
+                                                        $('#'+marker).hide();
+                                                    } else {
+                                                        $('#result').html(rule.text);
+                                                    }
+                                                    break;
+                                                case 'go':
+                                                    state.positions[marker] = parseInt(rule.step);
+                                                    $('#' + marker).removeClass().addClass('cell'+rule.step);
+                                                    $('#result').html(rule.text);
+                                                    break;
+                                                case 'time':
+                                                    state.wait[marker] = 1;
+                                                    $('#result').html(rule.text);
+                                                    break;
+                                                case 'money':
+                                                    state.money[marker] = parseInt(state.money[marker]) + parseInt(rule.money)
+                                                    $('#result').html(rule.text);
+                                                    break;
+                                                case 'chest':
+                                                    state.chest[marker] = parseInt(state.chest[marker]) + 1
+                                                    $('#result').html(rule.text);
+                                                    break;
+                                                case 'rom':
+                                                    state.rom[marker] = parseInt(state.rom[marker]) + 1
+                                                    $('#result').html(rule.text);
+                                                    break;
+                                                case 'coffee':
+                                                    state.coffee[marker] = parseInt(state.coffee[marker]) + 1
+                                                    $('#result').html(rule.text);
+                                                    break;
+                                            }
+                                        }
+
+                                        socket.emit('update state', state);
+                                    }, 2000);
+                                }
+                            });
+
+                            socket.on('update state', function (state) {
+                                labirintStorage.set('state', state);
+                                $.post(o.resultUpdateUrl , {state: state}, function(data) {
+                                    // console.log(data.message)
+                                }, 'json');
+                                setTimeout(function() {
+                                    methods.setup.call(that);
+                                }, 2000);
+
+                            });
 
                             $.get(o.userInfoUrl+'?_='+ new Date().getTime(), {},
                                 function(data){
@@ -176,19 +270,45 @@
 
                     var state = labirintStorage.get('state');
 
+                    console.log('setup', state);
 
-                    for (i = 1; i < 5; i++) {
-                        $('#marker'+i)
-                            .removeClass()
-                            .addClass('cell'+state.positions['marker'+i]);
+                    if (initialized) {
+                        for (var i = 1; i < 5; i++) {
+                            var localMarker = $('#marker' + i);
+                            var posPrev = parseInt(localMarker.attr('data-position'));
+                            var posCurrent = parseInt(state.positions['marker' + i]);
+                            if (posPrev != posCurrent) {
+                                localMarker
+                                    .hide()
+                                    .removeClass()
+                                    .addClass('cell' + posCurrent)
+                                    .attr('data-position', posCurrent)
+                                    .delay()
+                                    .show();
+                            }
+                        }
+                    } else {
+                        for (var i = 1; i < 5; i++) {
+                            if (state.lives['marker' + i] == 0) {
+                                $('#marker' + i).hide()
+                            } else {
+                                $('#marker' + i)
+                                    .removeClass()
+                                    .addClass('cell' + state.positions['marker' + i]);
+                            }
+                        }
+                        initialized = true;
                     }
 
                     if (marker == state.who_run) {
-                        $('#dice').show();
+                        $('#dice')
+                            .removeClass()
+                            .addClass('dice')
+                            .show();
                         $('#result').html('Жми на кубик');
                     } else {
-                        $('#result').html('Ход делает ' + state.colors[state.who_run] + ' игрок!');
                         $('#dice').hide();
+                        $('#result').html('Ход делает ' + state.colors[state.who_run] + ' игрок!');
                     }
                 },
 
@@ -248,7 +368,7 @@
             _pluginMarkup=function(){
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
-                $this.html('<div class="relative"><div id="timer"></div><div id="ship-map"></div><div id="step7" class="step"></div><div id="step11" class="step"></div><div id="step15" class="step"></div><div id="step24" class="step"></div><div id="step27" class="step"></div><div id="step29" class="step"></div><div id="step30" class="step"></div><div id="step33" class="step"></div><div id="step36" class="step"></div><div id="step41" class="step"></div><div id="step46" class="step"></div><div id="step58" class="step"></div><div id="step61" class="step"></div><div id="step65" class="step"></div><div id="step69" class="step"></div><div id="step72" class="step"></div><div id="step75" class="step"></div><div id="step80" class="step"></div><div id="step82" class="step"></div><div id="step84" class="step"></div><div id="step87" class="step"></div><div id="step94" class="step"></div><div id="step98" class="step"></div><div id="step5" class="step death"></div><div id="step8" class="step money"></div><div id="step9" class="step time"></div><div id="step14" class="step chest"></div><div id="step19" class="step rom"></div><div id="step23" class="step coffee"></div><div id="step38" class="step chest"></div><div id="step40" class="step time"></div><div id="step42" class="step death"></div><div id="step44" class="step time"></div><div id="step45" class="step money"></div><div id="step49" class="step time"></div><div id="step51" class="step coffee"></div><div id="step54" class="step death"></div><div id="step59" class="step time"></div><div id="step63" class="step money"></div><div id="step70" class="step money"></div><div id="step74" class="step time"></div><div id="step83" class="step chest"></div><div id="step85" class="step money"></div><div id="step86" class="step time"></div><div id="step90" class="step time"></div><div id="step95" class="step chest"></div><div id="step96" class="step time"></div><div id="step97" class="step money"></div><div id="marker1" class="cell0"></div><div id="marker2" class="cell0"></div><div id="marker3" class="cell0"></div><div id="marker4" class="cell0"></div><div class="info"><!-- <div class="message">Ход делает красный игрок!</div>--><div class="message" id="result"></div><div class="wrap"><div id="dice" class="dice"></div></div></div><div class="labirint-time"></div></div>');
+                $this.html('<div class="relative"><div id="timer"></div><div id="ship-map"></div><div id="step7" class="step"></div><div id="step11" class="step"></div><div id="step15" class="step"></div><div id="step24" class="step"></div><div id="step27" class="step"></div><div id="step29" class="step"></div><div id="step30" class="step"></div><div id="step33" class="step"></div><div id="step36" class="step"></div><div id="step41" class="step"></div><div id="step46" class="step"></div><div id="step58" class="step"></div><div id="step61" class="step"></div><div id="step65" class="step"></div><div id="step69" class="step"></div><div id="step72" class="step"></div><div id="step75" class="step"></div><div id="step80" class="step"></div><div id="step82" class="step"></div><div id="step84" class="step"></div><div id="step87" class="step"></div><div id="step94" class="step"></div><div id="step98" class="step"></div><div id="step5" class="step death"></div><div id="step8" class="step money"></div><div id="step9" class="step time"></div><div id="step14" class="step chest"></div><div id="step19" class="step rom"></div><div id="step23" class="step coffee"></div><div id="step38" class="step chest"></div><div id="step40" class="step time"></div><div id="step42" class="step death"></div><div id="step44" class="step time"></div><div id="step45" class="step money"></div><div id="step49" class="step time"></div><div id="step51" class="step coffee"></div><div id="step54" class="step death"></div><div id="step59" class="step time"></div><div id="step63" class="step money"></div><div id="step70" class="step money"></div><div id="step74" class="step time"></div><div id="step83" class="step chest"></div><div id="step85" class="step money"></div><div id="step86" class="step time"></div><div id="step90" class="step time"></div><div id="step95" class="step chest"></div><div id="step96" class="step time"></div><div id="step97" class="step money"></div><div id="marker1" class="cell0" data-position="0"></div><div id="marker2" class="cell0" data-position="0"></div><div id="marker3" class="cell0"  data-position="0"></div><div id="marker4" class="cell0" data-position="0"></div><div class="info"><!-- <div class="message">Ход делает красный игрок!</div>--><div class="message" id="result"></div><div class="wrap"><div id="dice" class="dice"></div></div></div><div class="labirint-time"></div></div>');
             };
         /* -------------------- */
 
@@ -262,22 +382,24 @@
                 });
 
                 $(document).on('click', '#dice', function(){
+                    var that = $(this);
                     $(".wrap").append("<div id='dice_mask'></div>");//add mask
-                    dice.attr("class","dice");//After clearing the last points animation
-                    dice.css('cursor','default');
+                    that.attr("class","dice");//After clearing the last points animation
+                    that.css('cursor','default');
                     var num = Math.floor(Math.random()*6+1);//random num 1-6
 
-                    dice.animate({left: '+2px'}, 100,function(){
-                        dice.addClass("dice_t");
+                    that.animate({left: '+2px'}, 100,function(){
+                        that.addClass("dice_t");
                     }).delay(200).animate({top:'-2px'},100,function(){
-                        dice.removeClass("dice_t").addClass("dice_s");
+                        that.removeClass("dice_t").addClass("dice_s");
                     }).delay(200).animate({opacity: 'show'},600,function(){
-                        dice.removeClass("dice_s").addClass("dice_e");
+                        that.removeClass("dice_s").addClass("dice_e");
                     }).delay(100).animate({left:'-2px',top:'2px'},100,function(){
-                        dice.removeClass("dice_e").addClass("dice_"+num);
+                        that.removeClass("dice_e").addClass("dice_"+num);
                         $("#result").html("Вы выкинули <span>"+num+"</span>");
-                        dice.css('cursor','pointer');
+                        that.css('cursor','pointer');
                         $("#dice_mask").remove();//remove mask
+                        socket.emit('move', {ship: labirintStorage.get('ship'), marker: marker, num: num})
                     });
                 });
 

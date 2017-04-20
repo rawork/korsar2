@@ -154,11 +154,15 @@ class GameController extends AdminController
 				$lives = array('marker1' => 3, 'marker2' => 3, 'marker3' => 3, 'marker4' => 3);
 				$positions = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
 				$wait = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
+				$money = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
+				$chest = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
+				$rom = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
+				$coffee = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
 				$colors = array(
-					'marker1' => 'коричневый',
-					'marker2' => 'синий',
-					'marker3' => 'зеленый',
-					'marker4' => 'красный');
+					'marker1' => 'Коричневый',
+					'marker2' => 'Синий',
+					'marker3' => 'Зеленый',
+					'marker4' => 'Красный');
 
 
 				$state = array(
@@ -168,6 +172,10 @@ class GameController extends AdminController
 					'positions' => $positions,
 					'colors' => $colors,
 					'wait' => $wait,
+					'money' => $money,
+					'chest' => $chest,
+					'rom' => $rom,
+					'coffee' => $coffee,
 				);
 
 

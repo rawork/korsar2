@@ -497,14 +497,17 @@ class GameController extends Controller
 
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$state = $this->get('request')->request->get('state');
+
+			$this->log(serialize($state));
 			$this->get('container')->updateItem(
-				'game_task',
+				'game_labirint',
 				array('state' => json_encode($state)),
 				array('ship_id' => $user['ship_id'])
 			);
 
 			$response->setData(array(
 				'error' => false,
+				'message' => 'state updated',
 			));
 
 			return $response;

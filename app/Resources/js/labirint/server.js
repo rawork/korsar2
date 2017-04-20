@@ -9,36 +9,15 @@ io.on('connection', function(socket){
         console.log('user disconnected');
     });
 
-    socket.on('chat message', function(msg){
-        io.emit('chat message', msg);
+    socket.on('move', function(data){
+        io.emit('move', data);
+    });
+
+    socket.on('update state', function(state) {
+        io.emit('update state', state);
     });
 });
 
-io.sockets.on('connection', function (socket) {
-    socket.on('user message', function (msg) {
-        socket.broadcast.emit('user message', socket.nickname, msg);
-    });
-
-    socket.on('nickname', function (nick, fn) {
-        if (nicknames[nick]) {
-            fn(true);
-        } else {
-            fn(false);
-            nicknames[nick] = socket.nickname = nick;
-            socket.broadcast.emit('announcement', nick + ' connected');
-            io.sockets.emit('nicknames', nicknames);
-        }
-    });
-
-    socket.on('disconnect', function () {
-        if (!socket.nickname) return;
-
-        delete nicknames[socket.nickname];
-        socket.broadcast.emit('announcement', socket.nickname + ' disconnected');
-        socket.broadcast.emit('nicknames', nicknames);
-    });
-});
-
-http.listen(3000, function(){
+http.listen(8080, function(){
     console.log('listening on *:8080');
 });
