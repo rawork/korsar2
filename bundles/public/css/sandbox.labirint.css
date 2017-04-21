@@ -31,6 +31,14 @@
     font-size: 17px;
 }
 
+.game-labirint .help {
+    top: 0;
+    left: 50%;
+    margin-left: 50px;
+    width: 300px;
+    font-size: 17px;
+}
+
 .game-labirint .info .message {
     font-size: 14px;
     padding-top: 20px;
@@ -426,24 +434,32 @@
     width: 36px;
     height: 49px;
     background: url('../img/labirint/marker1.png') top left no-repeat;
+    text-align: center;
+    padding-top: 35px;
 }
 
 .game-labirint #marker2 {
     width: 36px;
     height: 49px;
     background: url('../img/labirint/marker2.png') top left no-repeat;
+    text-align: center;
+    padding-top: 35px;
 }
 
 .game-labirint #marker3 {
     width: 36px;
     height: 49px;
     background: url('../img/labirint/marker3.png') top left no-repeat;
+    text-align: center;
+    padding-top: 35px;
 }
 
 .game-labirint #marker4 {
     width: 36px;
     height: 49px;
     background: url('../img/labirint/marker4.png') top left no-repeat;
+    text-align: center;
+    padding-top: 35px;
 }
 
 .game-labirint #marker1.cell0 {

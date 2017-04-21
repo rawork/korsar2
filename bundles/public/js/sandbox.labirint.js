@@ -14,9 +14,11 @@
             defaultSelector=".game-labirint",
             labirintData = {},
             labirintStorage = null,
-            timerSeconds = 10,
+            stepTime = 10,
+            stepInterval = null,
             labirintInterval = null,
             timerInterval = null,
+            markerInterval = null,
             marker = null,
             socket = io.connect('http://localhost:8080'),
             initialized = false,
@@ -97,7 +99,35 @@
                             _loadData.call(this);
                             _setEvents.call(this);
 
+                            socket.on('automove', function (data) {
+                                if (data.ship != labirintStorage.get('ship')) {
+                                    return;
+                                }
+
+                                var state = labirintStorage.get('state');
+                                if (data.marker != marker) {
+                                    $('#result').html(state.colors[data.marker] + ' игрок выкинул ' + data.num);
+                                }
+                            });
+
+                            socket.on('change marker', function (data) {
+                                if (data.ship != labirintStorage.get('ship')) {
+                                    return;
+                                }
+
+                                var state = labirintStorage.get('state');
+                                if (data.marker != marker) {
+                                    setTimeout(function() {
+                                        $('#result').html('Ход делает ' + state.colors[data.marker] + ' игрок!');
+                                    }, 2000);
+                                }
+                            });
+
                             socket.on('move', function (data) {
+                                if (data.ship != labirintStorage.get('ship')) {
+                                    return;
+                                }
+
                                 var state = labirintStorage.get('state');
                                 if (data.marker != marker) {
                                     $('#result').html(state.colors[data.marker] +' игрок выкинул '+data.num);
@@ -116,12 +146,13 @@
 
                                             if (parseInt(state.wait['marker'+index]) == 1) {
                                                 state.wait['marker'+index] = 0;
-                                            } else if (parseInt(state.lives['marker'+index]) > 0 ) {
+                                            } else if (parseInt(state.lives['marker'+index]) > 0
+                                                && parseInt(state.positions['marker'+index]) < 100 ) {
                                                 foundNext = true;
                                             }
 
                                             j++;
-                                            if (j > 12) {
+                                            if (j > 5) {
                                                 _afterMessage.call(that);
                                                 break;
                                             }
@@ -129,9 +160,13 @@
 
                                         state.who_run = 'marker'+index;
 
-                                        console.log('move', state.positions[marker], marker, parseInt(data.num), state.positions[marker] + parseInt(data.num), state.who_run);
+                                        // console.log('move', state.positions[marker], marker, parseInt(data.num), state.positions[marker] + parseInt(data.num), state.who_run);
 
                                         state.positions[marker] = parseInt(state.positions[marker]) + parseInt(data.num);
+
+                                        if (state.positions[marker] > 100) {
+                                            state.positions[marker] = 100;
+                                        }
 
                                         if ('step'+state.positions[marker] in labirintData.steps) {
                                             var rule = labirintData.steps['step'+state.positions[marker]];
@@ -174,14 +209,21 @@
                                             }
                                         }
 
-                                        socket.emit('update state', state);
+                                        socket.emit('update state', {ship: labirintStorage.get('ship'), state: state});
                                     }, 2000);
                                 }
                             });
 
-                            socket.on('update state', function (state) {
-                                labirintStorage.set('state', state);
-                                $.post(o.resultUpdateUrl , {state: state}, function(data) {
+                            socket.on('update state', function (data) {
+                                if (data.ship != labirintStorage.get('ship')) {
+                                    return;
+                                }
+
+                                //console.log('update state', data);
+
+                                clearTimeout(stepInterval);
+                                labirintStorage.set('state', data.state);
+                                $.post(o.resultUpdateUrl , {state: data.state}, function(data) {
                                     // console.log(data.message)
                                 }, 'json');
                                 setTimeout(function() {
@@ -243,8 +285,13 @@
 
                     _pluginMarkup.call(that);
 
+                    var state = labirintStorage.get('state');
+                    $('.help').html('Цвет вашей фишки ' + state.colors[marker]);
+                    $('#' + marker).html('ВЫ');
+
+
                     $('#timer').html(labirintStorage.get('minutes')+':'+labirintStorage.get('seconds'));
-                    taskInterval = setInterval(function(){
+                    labirintInterval = setInterval(function(){
                         var timerMinutes = labirintStorage.get('minutes');
                         var timerSeconds = labirintStorage.get('seconds');
                         if (timerSeconds == 0) {
@@ -257,9 +304,11 @@
                         labirintStorage.set('minutes', timerMinutes);
                         labirintStorage.set('seconds', timerSeconds);
                         if (timerMinutes <= 0 && timerSeconds <= 0) {
-                            $('.labirint-time').trigger('click');
+                            $('#labirint-time').trigger('click');
                         }
                     }, 1000);
+
+                    socket.emit('init game', {ship: labirintStorage.get('ship'), state: labirintStorage.get('state')})
 
                 },
                 /* ---------------------------------------- */
@@ -270,7 +319,7 @@
 
                     var state = labirintStorage.get('state');
 
-                    console.log('setup', state);
+                    //console.log('setup', state);
 
                     if (initialized) {
                         for (var i = 1; i < 5; i++) {
@@ -305,7 +354,24 @@
                             .removeClass()
                             .addClass('dice')
                             .show();
-                        $('#result').html('Жми на кубик');
+                        $('#result').html('Жми на кубик <span></span>');
+
+                        if (labirintStorage.isEmpty('step_seconds')) {
+                            labirintStorage.set('step_seconds', stepTime);
+                        }
+
+                        $('#result span').html(labirintStorage.get('step_seconds'));
+                        stepInterval = setInterval(function(){
+
+                            var stepSeconds = labirintStorage.get('step_seconds');
+                            stepSeconds--;
+
+                            $('#result span').html(stepSeconds);
+                            labirintStorage.set('step_seconds', stepSeconds);
+                            if (stepSeconds <= 0) {
+                                $('#dice').trigger('click');
+                            }
+                        }, 1000);
                     } else {
                         $('#dice').hide();
                         $('#result').html('Ход делает ' + state.colors[state.who_run] + ' игрок!');
@@ -360,6 +426,7 @@
             _afterMessage=function(){
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
+                socket.emit('stop game', {ship: labirintStorage.get('ship')});
                 $this.html(o.messageAfter);
             };
         /* -------------------- */
@@ -368,7 +435,7 @@
             _pluginMarkup=function(){
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
-                $this.html('<div class="relative"><div id="timer"></div><div id="ship-map"></div><div id="step7" class="step"></div><div id="step11" class="step"></div><div id="step15" class="step"></div><div id="step24" class="step"></div><div id="step27" class="step"></div><div id="step29" class="step"></div><div id="step30" class="step"></div><div id="step33" class="step"></div><div id="step36" class="step"></div><div id="step41" class="step"></div><div id="step46" class="step"></div><div id="step58" class="step"></div><div id="step61" class="step"></div><div id="step65" class="step"></div><div id="step69" class="step"></div><div id="step72" class="step"></div><div id="step75" class="step"></div><div id="step80" class="step"></div><div id="step82" class="step"></div><div id="step84" class="step"></div><div id="step87" class="step"></div><div id="step94" class="step"></div><div id="step98" class="step"></div><div id="step5" class="step death"></div><div id="step8" class="step money"></div><div id="step9" class="step time"></div><div id="step14" class="step chest"></div><div id="step19" class="step rom"></div><div id="step23" class="step coffee"></div><div id="step38" class="step chest"></div><div id="step40" class="step time"></div><div id="step42" class="step death"></div><div id="step44" class="step time"></div><div id="step45" class="step money"></div><div id="step49" class="step time"></div><div id="step51" class="step coffee"></div><div id="step54" class="step death"></div><div id="step59" class="step time"></div><div id="step63" class="step money"></div><div id="step70" class="step money"></div><div id="step74" class="step time"></div><div id="step83" class="step chest"></div><div id="step85" class="step money"></div><div id="step86" class="step time"></div><div id="step90" class="step time"></div><div id="step95" class="step chest"></div><div id="step96" class="step time"></div><div id="step97" class="step money"></div><div id="marker1" class="cell0" data-position="0"></div><div id="marker2" class="cell0" data-position="0"></div><div id="marker3" class="cell0"  data-position="0"></div><div id="marker4" class="cell0" data-position="0"></div><div class="info"><!-- <div class="message">Ход делает красный игрок!</div>--><div class="message" id="result"></div><div class="wrap"><div id="dice" class="dice"></div></div></div><div class="labirint-time"></div></div>');
+                $this.html('<div class="relative"><div id="timer"></div><div id="ship-map"></div><div id="step7" class="step"></div><div id="step11" class="step"></div><div id="step15" class="step"></div><div id="step24" class="step"></div><div id="step27" class="step"></div><div id="step29" class="step"></div><div id="step30" class="step"></div><div id="step33" class="step"></div><div id="step36" class="step"></div><div id="step41" class="step"></div><div id="step46" class="step"></div><div id="step58" class="step"></div><div id="step61" class="step"></div><div id="step65" class="step"></div><div id="step69" class="step"></div><div id="step72" class="step"></div><div id="step75" class="step"></div><div id="step80" class="step"></div><div id="step82" class="step"></div><div id="step84" class="step"></div><div id="step87" class="step"></div><div id="step94" class="step"></div><div id="step98" class="step"></div><div id="step5" class="step death"></div><div id="step8" class="step money"></div><div id="step9" class="step time"></div><div id="step14" class="step chest"></div><div id="step19" class="step rom"></div><div id="step23" class="step coffee"></div><div id="step38" class="step chest"></div><div id="step40" class="step time"></div><div id="step42" class="step death"></div><div id="step44" class="step time"></div><div id="step45" class="step money"></div><div id="step49" class="step time"></div><div id="step51" class="step coffee"></div><div id="step54" class="step death"></div><div id="step59" class="step time"></div><div id="step63" class="step money"></div><div id="step70" class="step money"></div><div id="step74" class="step time"></div><div id="step83" class="step chest"></div><div id="step85" class="step money"></div><div id="step86" class="step time"></div><div id="step90" class="step time"></div><div id="step95" class="step chest"></div><div id="step96" class="step time"></div><div id="step97" class="step money"></div><div id="marker1" class="cell0" data-position="0"></div><div id="marker2" class="cell0" data-position="0"></div><div id="marker3" class="cell0"  data-position="0"></div><div id="marker4" class="cell0" data-position="0"></div><div class="info"><!-- <div class="message">Ход делает красный игрок!</div>--><div class="message" id="result"></div><div class="wrap"><div id="dice" class="dice"></div></div></div><div class="help"></div><div id="labirint-time"></div></div>');
             };
         /* -------------------- */
 
@@ -382,6 +449,8 @@
                 });
 
                 $(document).on('click', '#dice', function(){
+                    labirintStorage.remove('step_seconds');
+                    clearInterval(stepInterval);
                     var that = $(this);
                     $(".wrap").append("<div id='dice_mask'></div>");//add mask
                     that.attr("class","dice");//After clearing the last points animation
@@ -403,19 +472,14 @@
                     });
                 });
 
+                $(document).on('click', '.labirint-time', function(){
+                    methods.stop.call(that);
+                });
+
             };
         /* -------------------- */
 
         /* set events for buttons */
-            _setTime=function(){
-                var that = this;
-                var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
-
-                $(document).on('click', '#task-btn-answer', function(){
-                    window.location.reload();
-                });
-
-            };
         /* -------------------- */
 
             _integerDivision=function (x, y){
