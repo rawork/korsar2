@@ -9,15 +9,14 @@
          ----------------------------------------
          */
 
-        var pluginNS="marketGame",
-            pluginPfx="marketGame",
-            defaultSelector=".game-market",
-            marketStorage = null,
-            marketInterval = null,
+        var pluginNS="duelGame",
+            pluginPfx="duelGame",
+            defaultSelector=".game-duel",
+            duelStorage = null,
             answerInterval = null,
-            answerNum = 999,
-            moneyPrize = 10,
-            currentChest = null,
+
+
+
             currentTime;
 
         /*
@@ -28,13 +27,13 @@
 
             defaults={
 
-                userInfoUrl: '/ajax/sandbox/market/data',
-                questionUrl: '/ajax/sandbox/market/question',
-                moneyUpdateUrl: '/ajax/sandbox/market/data',
+                userInfoUrl: '/ajax/sandbox/duel/data',
+                questionUrl: '/ajax/sandbox/duel/question',
+                moneyUpdateUrl: '/ajax/sandbox/duel/data',
 
                 messageInit: '<h2 class="init-message">Игра загружается, подождите...</h2>',
                 messageBefore: '<h2 class="before-message">Время начала игры<br>#time#</h2><br><button class="btn" id="btn-reload">Обновить страницу</button>',
-                messageAfter: '<h2 class="end-message">Игра завершена.<br>Результаты будут объявлены позже.</h2>'
+                messageAfter: '<h2 class="end-message">Игра завершена</h2>'
             },
 
         /*
@@ -90,60 +89,31 @@
                             var d=$this.data(pluginPfx),o=d.opt;
 
                             ns=$.initNamespaceStorage(pluginNS);
-                            marketStorage = ns.localStorage // Namespace in localStorage
+                            duelStorage = ns.localStorage // Namespace in localStorage
 
                             _initMessage.call(this);
                             _setEvents.call(this);
 
-                            $.get(o.userInfoUrl, {},
-                                function(data){
-                                    if (data.error) {
-                                        $this.html('<h2 class="init-message">'+data.error+'</h2>');
-                                        return;
-                                    }
+                            if(duelStorage.isEmpty('questions')) {
+                                $.get(o.userInfoUrl, {},
+                                    function(data){
 
-                                    data.game.stop = parseInt(data.game.start) + (data.game.duration*60);
-                                    currentTime = data.game.current;
-                                    marketStorage.set('start', data.game.start);
-                                    marketStorage.set('stop', data.game.stop);
+                                        console.log(data);
 
-                                    var minutes = data.game.stop - currentTime;
-                                    var timerMinutes = _integerDivision(minutes, 60);
-                                    marketStorage.set('minutes', timerMinutes );
-                                    marketStorage.set('seconds', minutes - timerMinutes*60);
-                                    marketStorage.set('money', data.game.money);
-                                    marketStorage.set('table', data.game.question);
-                                    marketStorage.set('testmode', data.game.testmode);
-
-                                    if(marketStorage.isEmpty('questions') || marketStorage.get('testmode') == '1') {
-                                        var numbers = [];
-                                        var lowEnd = 1;
-                                        var highEnd = 45;
-                                        while (lowEnd <= highEnd) {
-                                            numbers.push(lowEnd++);
-                                        }
-                                        _shuffle(numbers);
-                                        numbers = numbers.slice(0, 25);
-                                        var questions = {};
-                                        for (var i in numbers) {
-                                            var num = parseInt(i) + 1;
-                                            questions['chest' + num] = {
-                                                'question': numbers[i],
-                                                'class': 'chest'
-                                            }
+                                        if (data.error) {
+                                            $this.html('<h2 class="init-message">'+data.error+'</h2>');
+                                            return;
                                         }
 
-                                        marketStorage.set('questions', questions);
-                                        marketStorage.set('money', 0);
-                                    }
-                                    if (marketStorage.get('start') > currentTime) {
-                                        _beforeMessage.call(that);
-                                    } else if (marketStorage.get('stop') < currentTime) {
-                                        _afterMessage.call(that);
-                                    } else {
-                                        methods.start.call(that);
-                                    }
-                                }, "json");
+                                        duelStorage.set('questions', data.questions);
+                                        duelStorage.set('active', false);
+                                        duelStorage.set('qnum', 0);
+                                        duelStorage.set('answers', 0);
+
+                                    }, "json");
+                            }
+
+                            methods.start.call(that);
 
                         }
                     });
@@ -156,24 +126,6 @@
 
                     _pluginMarkup.call(that);
 
-                    $('#task-timer').html(marketStorage.get('minutes')+':'+marketStorage.get('seconds'));
-                    marketInterval = setInterval(function(){
-                        var timerMinutes = marketStorage.get('minutes');
-                        var timerSeconds = marketStorage.get('seconds');
-                        if (timerSeconds == 0) {
-                            timerMinutes--;
-                            timerSeconds = 59;
-                        } else {
-                            timerSeconds--;
-                        }
-                        $('#market-timer').html(timerMinutes+':'+timerSeconds);
-                        marketStorage.set('minutes', timerMinutes);
-                        marketStorage.set('seconds', timerSeconds);
-                        if (timerMinutes <= 0 && timerSeconds <= 0) {
-                            $('.market-time').trigger('click');
-                        }
-                    }, 1000);
-
                 },
                 /* ---------------------------------------- */
 
@@ -181,10 +133,7 @@
                     var that = this;
                     var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
-                    clearInterval(marketInterval);
-                    $('#market-timer').delay(1000).hide(0, function(){
-                        _afterMessage.call(that);
-                    });
+                    _afterMessage.call(that);
                 }
                 /* ---------------------------------------- */
 
@@ -233,18 +182,8 @@
             _pluginMarkup=function(){
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
-                $this.html('<div class="relative"><i id="market-timer" class="timer"></i></div><div class="account">счет: <span id="market-account"></span></div><div class="chests"><ul id="market-chests"></ul></div><div class="market-time"></div>');
-                var questions = marketStorage.get('questions');
-                var i = 1;
-                for (var key in questions) {
-                    var $li = $('<li></li>')
-                        .addClass(questions[key]['class'])
-                        .attr('data-num', i)
-                        .attr('id', key);
-                    $('ul#market-chests').append($li.get(0));
-                    i++;
-                }
-                $('#market-account').html(marketStorage.get('money'));
+                $this.html('<div class="relative"><div class="question"><div id="timer" class="timer"></div><div class="title"><strong>Вопрос <span id="qnum"></span> из 25</strong></div> <div class="text" id="question"></div><ul class="answers" id="answers"><li><input type="radio" id="answer_1" name="answer" value="1" /><label for="answer_1"></label></li><li><input type="radio" id="answer_2" name="answer" value="2" /><label for="answer_2"></label> </li><li><input type="radio" id="answer_3" name="answer" value="3" /><label for="answer_3"></label></li> </ul></div></div><div class="gamer gamer1" id="gamer1"><img src=""> <div class="name"></div> <div class="ship"></div> <div class="action"><button class="btn btn-duel-answer">Ответить</button></div></div><div class="gamer gamer2" id="gamer2"><img src=""> <div class="name"></div><div class="ship"></div><div class="action"><div class="message">Соперник отвечает</div></div></div>');
+
             };
         /* -------------------- */
 
@@ -285,19 +224,36 @@
 
                 });
 
-                $(document).on('click', '#market-btn-answer', function(e) {
+
+                $(document).on('click', '#dice', function(){
+                    var dice = $(this);
+                    $(".wrap").append("<div id='dice_mask'></div>");//add mask
+                    dice.attr("class","dice");//After clearing the last points animation
+                    dice.css('cursor','default');
+                    var num = Math.floor(Math.random()*6+1);//random num 1-6
+                    dice.animate({left: '+2px'}, 100,function(){
+                        dice.addClass("dice_t");
+                    }).delay(200).animate({top:'-2px'},100,function(){
+                        dice.removeClass("dice_t").addClass("dice_s");
+                    }).delay(200).animate({opacity: 'show'},600,function(){
+                        dice.removeClass("dice_s").addClass("dice_e");
+                    }).delay(100).animate({left:'-2px',top:'2px'},100,function(){
+                        dice.removeClass("dice_e").addClass("dice_"+num);
+                        $("#result").html("Your throwing points are<span>"+num+"</span>");
+                        dice.css('cursor','pointer');
+                        $("#dice_mask").remove();//remove mask
+                    });
+                });
+
+                $(document).on('click', '.btn-duel-answer', function(e) {
                     e.preventDefault();
                     clearTimeout(answerInterval);
                     var userAnswer = $('.answers input:checked').val();
-                    var questions = marketStorage.get('questions');
+                    var questions =
+                        marketStorage.get('questions');
                     if (answerNum == userAnswer) {
                         questions[currentChest]['class'] = 'money';
                         $('#'+currentChest).removeClass('chest money skull').addClass('money');
-                        marketStorage.set('money', parseInt(marketStorage.get('money')) + moneyPrize);
-                        $.post(o.moneyUpdateUrl, {money: marketStorage.get('money')},
-                            function(data){
-                                $('#market-account').html(marketStorage.get('money'));
-                            }, 'json');
 
                     } else {
                         questions[currentChest]['class'] = 'skull';
@@ -320,13 +276,6 @@
         /* integer division */
             _integerDivision=function (x, y){
                 return (x-x%y)/y;
-            };
-        /* -------------------- */
-
-        /* shuffle Array */
-            _shuffle=function( array ) {	// Shuffle an array
-                for(var j, x, i = array.length; i; j = parseInt(Math.random() * i), x = array[--i], array[i] = array[j], array[j] = x);
-                return true;
             };
         /* -------------------- */
 

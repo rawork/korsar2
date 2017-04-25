@@ -683,7 +683,10 @@
                     hiddenName: true,
                     firstDay: 1,
                     selectYears: true,
-                    selectMonths: true
+                    selectMonths: true,
+                    onClose: function() {
+                        $('.field-date').blur();
+                    }
                 })
             });
 
@@ -694,7 +697,10 @@
                         clear: 'удалить',
                         format: 'H:i',
                         formatSubmit: 'HH:i',
-                        interval: 10
+                        interval: 10,
+                        onClose: function() {
+                        $('.field-time').blur();
+                    }
                     })
                 });
             }

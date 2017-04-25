@@ -261,28 +261,31 @@ news_fresh:
 
 game_task_data:
   path: /ajax/sandbox/task/data
-  defaults: { _controller: 'Fuga:Public:Game:taskdata'}
+  defaults: { _controller: 'Fuga:Public:Game:Task:data'}
 game_pexeso_data:
   path: /ajax/sandbox/pexeso/data
-  defaults: { _controller: 'Fuga:Public:Game:pexesodata'}
+  defaults: { _controller: 'Fuga:Public:Game:Pexeso:data'}
 game_map_data:
   path: /ajax/sandbox/map/data
-  defaults: { _controller: 'Fuga:Public:Game:mapdata'}
+  defaults: { _controller: 'Fuga:Public:Game:Map:data'}
 game_labirint_data:
   path: /ajax/sandbox/labirint/data
-  defaults: { _controller: 'Fuga:Public:Game:labirintdata'}
+  defaults: { _controller: 'Fuga:Public:Game:Labirint:data'}
 game_market_data:
   path: /ajax/sandbox/market/data
-  defaults: { _controller: 'Fuga:Public:Game:marketdata'}
+  defaults: { _controller: 'Fuga:Public:Game:Market:data'}
 game_market_question:
   path: /ajax/sandbox/market/question
-  defaults: { _controller: 'Fuga:Public:Game:marketquestion'}
+  defaults: { _controller: 'Fuga:Public:Game:Market:question'}
 game_battle_data:
   path: /ajax/sandbox/battle/data
-  defaults: { _controller: 'Fuga:Public:Game:battledata'}
+  defaults: { _controller: 'Fuga:Public:Game:Battle:data'}
 game_duel_data:
   path: /ajax/sandbox/duel/data
-  defaults: { _controller: 'Fuga:Public:Game:dueldata'}
+  defaults: { _controller: 'Fuga:Public:Game:Duel:data'}
+game_duel_question:
+  path: /ajax/sandbox/duel/question
+  defaults: { _controller: 'Fuga:Public:Game:Duel:question'}
 
 chat_common_data:
   path: /ajax/chat/common

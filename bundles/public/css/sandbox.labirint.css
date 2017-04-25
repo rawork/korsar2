@@ -18,6 +18,22 @@
     font-weight: normal;
 }
 
+.game-labirint button {
+    font-family: 'Beryozki', Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 40px;
+    line-height: 40px;
+    font-style: normal;
+    font-weight: normal;
+    padding-top: 10px;
+    margin-bottom: 5px;
+    width: 300px;
+    height: 90px;
+    border-radius: 45px;
+    border-width: 2px;
+    border-style: solid;
+    text-transform: uppercase;
+}
+
 .game-labirint #ship-map {
     top: 0;
     left: 0;

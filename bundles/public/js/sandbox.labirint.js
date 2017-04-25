@@ -36,7 +36,7 @@
                 resultUpdateUrl: '/ajax/sandbox/labirint/data',
 
                 messageInit: '<h2 class="init-message">Игра загружается, подождите...</h2>',
-                messageBefore: '<h2 class="before-message">Время начала игры<br>#time#</h2><br><button class="btn" id="btn-reload">Обновить страницу</button>',
+                messageBefore: '<h2 class="before-message">Время начала игры<br><span id="before-timer">#time#</span></h2><br><button class="btn" id="btn-reload">Обновить страницу</button>',
                 messageAfter: '<h2 class="end-message">Игра завершена.<br>Результаты будут объявлены позже.</h2>'
             },
 
@@ -100,20 +100,22 @@
                             _setEvents.call(this);
 
                             socket.on('automove', function (data) {
-                                if (data.ship != labirintStorage.get('ship')) {
-                                    return;
-                                }
+                                // if (data.ship != labirintStorage.get('ship')) {
+                                //     return;
+                                // }
 
-                                var state = labirintStorage.get('state');
                                 if (data.marker != marker) {
-                                    $('#result').html(state.colors[data.marker] + ' игрок выкинул ' + data.num);
+                                    var pos = parseInt(data.state.positions[data.marker])+parseInt(data.num);
+                                    pos  = pos <= 100 ? pos : 100;
+                                    $('#result').html(data.state.colors[data.marker] + ' игрок выкинул ' + data.num +' и перешел на клетку '+pos);
+                                    $('#' + data.marker).removeClass().addClass('cell'+pos);
                                 }
                             });
 
                             socket.on('change marker', function (data) {
-                                if (data.ship != labirintStorage.get('ship')) {
-                                    return;
-                                }
+                                // if (data.ship != labirintStorage.get('ship')) {
+                                //     return;
+                                // }
 
                                 var state = labirintStorage.get('state');
                                 if (data.marker != marker) {
@@ -123,105 +125,119 @@
                                 }
                             });
 
+                            socket.on('stop game', function(){
+                                _afterMessage.call(this);
+                            });
+
+                            socket.on('rival move', function(data){
+                                var pos = parseInt(data.state.positions[data.marker])+parseInt(data.num);
+                                pos  = pos <= 100 ? pos : 100;
+                                $('#result').html(data.state.colors[data.marker] +' игрок выкинул '+data.num+' и перешел на клетку '+pos);
+                                $('#' + data.marker).removeClass().addClass('cell'+pos);
+                            });
+
                             socket.on('move', function (data) {
-                                if (data.ship != labirintStorage.get('ship')) {
-                                    return;
-                                }
+                                // if (data.ship != labirintStorage.get('ship')) {
+                                //     return;
+                                // }
 
-                                var state = labirintStorage.get('state');
-                                if (data.marker != marker) {
-                                    $('#result').html(state.colors[data.marker] +' игрок выкинул '+data.num);
-                                } else {
-                                    setTimeout(function() {
-                                        var index = parseInt(marker.replace('marker', ''));
+                                var pos = parseInt(data.state.positions[data.marker])+parseInt(data.num);
+                                pos  = pos <= 100 ? pos : 100;
+                                $('#' + data.marker).removeClass().addClass('cell'+pos);
 
-                                        var foundNext = false;
-                                        var j = 0;
-                                        while (!foundNext) {
-                                            if (index < 4) {
-                                                index++;
-                                            } else {
-                                                index = 1;
-                                            }
+                                var state = data.state;
+                                setTimeout(function() {
+                                    // console.log('move', state.positions[marker], marker, parseInt(data.num), state.positions[marker] + parseInt(data.num), state.who_run);
 
-                                            if (parseInt(state.wait['marker'+index]) == 1) {
-                                                state.wait['marker'+index] = 0;
-                                            } else if (parseInt(state.lives['marker'+index]) > 0
-                                                && parseInt(state.positions['marker'+index]) < 100 ) {
-                                                foundNext = true;
-                                            }
+                                    state.positions[marker] = pos;
 
-                                            j++;
-                                            if (j > 5) {
-                                                _afterMessage.call(that);
+                                    if (state.positions[marker] > 100) {
+                                        state.positions[marker] = 100;
+                                    }
+
+                                    if ('step'+state.positions[marker] in labirintData.steps) {
+                                        var rule = labirintData.steps['step'+state.positions[marker]];
+                                        switch (rule.type) {
+                                            case 'death':
+                                                state.positions[marker] = 0;
+                                                state.lives[marker] = parseInt(state.lives[marker]) - 1;
+                                                if (state.lives[marker] == 0) {
+                                                    $('#result').html('Вы проиграли! :(');
+                                                    $('#'+marker).hide();
+                                                } else {
+                                                    $('#result').html(rule.text);
+                                                }
                                                 break;
-                                            }
+                                            case 'go':
+                                                state.positions[marker] = parseInt(rule.step);
+                                                $('#' + marker).removeClass().addClass('cell'+rule.step);
+                                                $('#result').html(rule.text);
+                                                break;
+                                            case 'time':
+                                                state.wait[marker] = 1;
+                                                $('#result').html(rule.text);
+                                                break;
+                                            case 'money':
+                                                state.money[marker] = parseInt(state.money[marker]) + parseInt(rule.money)
+                                                $('#result').html(rule.text);
+                                                break;
+                                            case 'chest':
+                                                state.chest[marker] = parseInt(state.chest[marker]) + 1
+                                                $('#result').html(rule.text);
+                                                break;
+                                            case 'rom':
+                                                state.rom[marker] = parseInt(state.rom[marker]) + 1
+                                                $('#result').html(rule.text);
+                                                break;
+                                            case 'coffee':
+                                                state.coffee[marker] = parseInt(state.coffee[marker]) + 1
+                                                $('#result').html(rule.text);
+                                                break;
+                                        }
+                                    }
+
+                                    var index = parseInt(marker.replace('marker', ''));
+
+                                    var foundNext = false;
+                                    var j = 0;
+                                    while (!foundNext) {
+                                        if (index < 4) {
+                                            index++;
+                                        } else {
+                                            index = 1;
                                         }
 
-                                        state.who_run = 'marker'+index;
-
-                                        // console.log('move', state.positions[marker], marker, parseInt(data.num), state.positions[marker] + parseInt(data.num), state.who_run);
-
-                                        state.positions[marker] = parseInt(state.positions[marker]) + parseInt(data.num);
-
-                                        if (state.positions[marker] > 100) {
-                                            state.positions[marker] = 100;
+                                        if (parseInt(state.wait['marker'+index]) == 1) {
+                                            state.wait['marker'+index] = 0;
+                                        } else if (parseInt(state.lives['marker'+index]) > 0
+                                            && parseInt(state.positions['marker'+index]) < 100 ) {
+                                            foundNext = true;
                                         }
 
-                                        if ('step'+state.positions[marker] in labirintData.steps) {
-                                            var rule = labirintData.steps['step'+state.positions[marker]];
-                                            switch (rule.type) {
-                                                case 'death':
-                                                    state.positions[marker] = 0;
-                                                    state.lives[marker] = parseInt(state.lives[marker]) - 1;
-                                                    if (state.lives[marker] == 0) {
-                                                        $('#result').html('Вы проиграли! :(');
-                                                        $('#'+marker).hide();
-                                                    } else {
-                                                        $('#result').html(rule.text);
-                                                    }
-                                                    break;
-                                                case 'go':
-                                                    state.positions[marker] = parseInt(rule.step);
-                                                    $('#' + marker).removeClass().addClass('cell'+rule.step);
-                                                    $('#result').html(rule.text);
-                                                    break;
-                                                case 'time':
-                                                    state.wait[marker] = 1;
-                                                    $('#result').html(rule.text);
-                                                    break;
-                                                case 'money':
-                                                    state.money[marker] = parseInt(state.money[marker]) + parseInt(rule.money)
-                                                    $('#result').html(rule.text);
-                                                    break;
-                                                case 'chest':
-                                                    state.chest[marker] = parseInt(state.chest[marker]) + 1
-                                                    $('#result').html(rule.text);
-                                                    break;
-                                                case 'rom':
-                                                    state.rom[marker] = parseInt(state.rom[marker]) + 1
-                                                    $('#result').html(rule.text);
-                                                    break;
-                                                case 'coffee':
-                                                    state.coffee[marker] = parseInt(state.coffee[marker]) + 1
-                                                    $('#result').html(rule.text);
-                                                    break;
-                                            }
+                                        j++;
+                                        if (j > 5) {
+                                            break;
                                         }
+                                    }
 
-                                        socket.emit('update state', {ship: labirintStorage.get('ship'), state: state});
-                                    }, 2000);
-                                }
+                                    if (!foundNext) {
+                                        _afterMessage.call(that);
+                                    }
+
+                                    state.who_run = 'marker'+index;
+
+                                    socket.emit('update state', {ship: labirintStorage.get('ship'), state: state});
+                                }, 2000);
                             });
 
                             socket.on('update state', function (data) {
-                                if (data.ship != labirintStorage.get('ship')) {
-                                    return;
-                                }
+                                // if (data.ship != labirintStorage.get('ship')) {
+                                //     return;
+                                // }
 
                                 //console.log('update state', data);
 
-                                clearTimeout(stepInterval);
+                                clearInterval(stepInterval);
                                 labirintStorage.set('state', data.state);
                                 $.post(o.resultUpdateUrl , {state: data.state}, function(data) {
                                     // console.log(data.message)
@@ -230,6 +246,11 @@
                                     methods.setup.call(that);
                                 }, 2000);
 
+                            });
+
+                            socket.on('start game', function(data){
+                                methods.start.call(that);
+                                methods.setup.call(that);
                             });
 
                             $.get(o.userInfoUrl+'?_='+ new Date().getTime(), {},
@@ -246,7 +267,16 @@
                                     labirintStorage.set('stop', data.game.stop);
                                     labirintStorage.set('user', data.game.user);
                                     labirintStorage.set('ship', data.game.ship);
+                                    labirintStorage.set('room', 'ship' + data.game.ship);
                                     labirintStorage.set('state', data.game.state);
+
+                                    socket.emit('room', labirintStorage.get('room'));
+                                    socket.emit('init game', {
+                                        ship: labirintStorage.get('ship'),
+                                        state: labirintStorage.get('state'),
+                                        starttime: labirintStorage.get('start'),
+                                        stoptime: labirintStorage.get('stop')
+                                    });
 
                                     for (i = 1; i < 5; i++) {
                                         if (data.game.state.markers['marker'+i] == data.game.user) {
@@ -307,8 +337,6 @@
                             $('#labirint-time').trigger('click');
                         }
                     }, 1000);
-
-                    socket.emit('init game', {ship: labirintStorage.get('ship'), state: labirintStorage.get('state')})
 
                 },
                 /* ---------------------------------------- */
@@ -426,7 +454,7 @@
             _afterMessage=function(){
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
-                socket.emit('stop game', {ship: labirintStorage.get('ship')});
+                //socket.emit('stop game', {ship: labirintStorage.get('ship')});
                 $this.html(o.messageAfter);
             };
         /* -------------------- */
@@ -468,7 +496,7 @@
                         $("#result").html("Вы выкинули <span>"+num+"</span>");
                         that.css('cursor','pointer');
                         $("#dice_mask").remove();//remove mask
-                        socket.emit('move', {ship: labirintStorage.get('ship'), marker: marker, num: num})
+                        socket.emit('move', {ship: labirintStorage.get('ship'), state: labirintStorage.get('state'), marker: marker, num: num})
                     });
                 });
 

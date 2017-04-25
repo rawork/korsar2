@@ -12,12 +12,14 @@
         var pluginNS="duelGame",
             pluginPfx="duelGame",
             defaultSelector=".game-duel",
+            duelData = {},
             duelStorage = null,
-            answerInterval = null,
-
-
-
-            currentTime;
+            stepTime = 25,
+            stepInterval = null,
+            duelInterval = null,
+            socket = io.connect('http://localhost:8080'),
+            marker = null,
+            question = {}
 
         /*
          ----------------------------------------
@@ -29,11 +31,11 @@
 
                 userInfoUrl: '/ajax/sandbox/duel/data',
                 questionUrl: '/ajax/sandbox/duel/question',
-                moneyUpdateUrl: '/ajax/sandbox/duel/data',
+                resultUpdateUrl: '/ajax/sandbox/duel/data',
 
                 messageInit: '<h2 class="init-message">Игра загружается, подождите...</h2>',
-                messageBefore: '<h2 class="before-message">Время начала игры<br>#time#</h2><br><button class="btn" id="btn-reload">Обновить страницу</button>',
-                messageAfter: '<h2 class="end-message">Игра завершена</h2>'
+                messageBefore: '<h2 class="before-message">Время начала игры<br><span id="before-timer">#time#</span></h2><br><button class="btn" id="btn-reload">Обновить страницу</button>',
+                messageAfter: '<h2 class="end-message">Игра завершена.<br>Результаты будут объявлены позже.</h2>'
             },
 
         /*
@@ -69,7 +71,6 @@
                     /* plugin constructor */
                     return $(selector).each(function(){
 
-                        var that = this;
                         var $this=$(this);
 
                         if(!$this.data(pluginPfx)){ /* prevent multiple instantiations */
@@ -92,28 +93,72 @@
                             duelStorage = ns.localStorage // Namespace in localStorage
 
                             _initMessage.call(this);
+
                             _setEvents.call(this);
 
-                            if(duelStorage.isEmpty('questions')) {
-                                $.get(o.userInfoUrl, {},
-                                    function(data){
+                            socket.on('stop game', function(){
+                                _afterMessage.call(this);
+                            });
 
-                                        console.log(data);
+                            socket.on('start game', function(data){
+                                methods.start.call(that);
+                                methods.setup.call(that);
+                            });
 
-                                        if (data.error) {
-                                            $this.html('<h2 class="init-message">'+data.error+'</h2>');
-                                            return;
-                                        }
+                            socket.on('update state', function (data) {
+                                clearInterval(stepInterval);
+                                duelStorage.set('state', data.state);
+                                $.post(o.resultUpdateUrl , {state: data.state}, function(data) {
+                                    // console.log(data.message)
+                                }, 'json');
+                                setTimeout(function() {
+                                    methods.setup.call(that);
+                                }, 2000);
 
-                                        duelStorage.set('questions', data.questions);
-                                        duelStorage.set('active', false);
-                                        duelStorage.set('qnum', 0);
-                                        duelStorage.set('answers', 0);
+                            });
 
-                                    }, "json");
-                            }
+                            $.get(o.userInfoUrl+'?_='+ new Date().getTime(), {},
+                                function(data){
+                                    if (data.error) {
+                                        $this.html('<h2 class="init-message">'+data.error+'</h2>');
+                                        return;
+                                    }
 
-                            methods.start.call(that);
+                                    data.game.stop = parseInt(data.game.start) + (data.game.duration*60);
+
+                                    duelStorage.set('start', data.game.start);
+                                    duelStorage.set('duration', data.game.duration);
+                                    duelStorage.set('stop', data.game.stop);
+                                    duelStorage.set('user', data.game.user);
+                                    duelStorage.set('duel', data.game.id);
+                                    duelStorage.set('state', data.game.state);
+
+                                    socket.emit('init game', {
+                                        state: duelStorage.get('state'),
+                                        starttime: duelStorage.get('start'),
+                                        stoptime: duelStorage.get('stop')
+                                    });
+
+                                    marker = 'user'+data.game.user;
+
+                                    if (!marker) {
+                                        $this.html('<h2 class="init-message">Ошибка инициализации</h2>');
+                                        return;
+                                    }
+
+                                    var minutes = data.game.stop-data.game.current;
+                                    var timerMinutes = _integerDivision(minutes, 60);
+                                    duelStorage.set('minutes', timerMinutes );
+                                    duelStorage.set('seconds', minutes - timerMinutes*60);
+                                    if (duelStorage.get('start') > data.game.current) {
+                                        _beforeMessage.call(that);
+                                    } else if (duelStorage.get('stop') < data.game.current || data.game.state.step > 25) {
+                                        _afterMessage.call(that);
+                                    } else {
+                                        methods.start.call(that);
+                                        methods.setup.call(that);
+                                    }
+                                }, "json");
 
                         }
                     });
@@ -126,14 +171,117 @@
 
                     _pluginMarkup.call(that);
 
+                    var state = duelStorage.get('state');
+                    $('#qnum').text(state.step);
+                    // var $timer = $('#timer');
+                    // $timer.html(duelStorage.get('minutes')+':'+duelStorage.get('seconds'));
+                    // duelInterval = setInterval(function(){
+                    //     var timerMinutes = duelStorage.get('minutes');
+                    //     var timerSeconds = duelStorage.get('seconds');
+                    //     if (timerSeconds == 0) {
+                    //         timerMinutes--;
+                    //         timerSeconds = 59;
+                    //     } else {
+                    //         timerSeconds--;
+                    //     }
+                    //     $timer.html(timerMinutes+':'+timerSeconds);
+                    //     duelStorage.set('minutes', timerMinutes);
+                    //     duelStorage.set('seconds', timerSeconds);
+                    //     if (timerMinutes <= 0 && timerSeconds <= 0) {
+                    //         $('#duel-time').trigger('click');
+                    //     }
+                    // }, 1000);
+
                 },
                 /* ---------------------------------------- */
+
+                setup: function() {
+                    var that = this;
+                    var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
+
+                    var state = duelStorage.get('state');
+
+                    //console.log('setup', state);
+                    $('#qnum').text(state.step);
+                    if (marker == state.who_run) {
+                        if (duelStorage.isEmpty('step_seconds')) {
+                            duelStorage.set('step_seconds', stepTime);
+                        }
+                        if (duelStorage.isEmpty('question')) {
+                            $.post(o.questionUrl, {step: state.step}, function(data) {
+                                if (data.error) {
+                                    alert(data.error);
+                                    return;
+                                }
+                                duelStorage.set('question', data.question);
+                                var question = duelStorage.get('question');
+                                $('#question').html(question.question);
+                                $('#answer_1').html(question.answer1);
+                                $('#answer_2').html(question.answer2);
+                                $('#answer_3').html(question.answer3);
+                                $('#btn-answer').show();
+                                $('#question').show();
+                                $('#answers').show();
+
+                                $('#btn-answer').show();
+                                $('#timer').html(duelStorage.get('step_seconds'));
+                                stepInterval = setInterval(function(){
+
+                                    var stepSeconds = duelStorage.get('step_seconds');
+                                    stepSeconds--;
+
+                                    $('#timer').html(stepSeconds);
+                                    duelStorage.set('step_seconds', stepSeconds);
+                                    if (stepSeconds <= 0) {
+                                        duelStorage.remove('step_seconds');
+                                        clearInterval(stepInterval);
+                                        socket.emit('move', {state: duelStorage.get('state'), marker: marker, num: 0})
+                                    }
+                                }, 1000);
+                            })
+                        } else {
+                            var question = duelStorage.get('question');
+                            $('#question').html(question.question);
+                            $('#answer_1').html(question.answer1);
+                            $('#answer_2').html(question.answer2);
+                            $('#answer_3').html(question.answer3);
+                            $('#btn-answer').show();
+                            $('#question').show();
+                            $('#answers').show();
+
+                            $('#btn-answer').show();
+                            $('#timer').html(duelStorage.get('step_seconds'));
+                            stepInterval = setInterval(function(){
+
+                                var stepSeconds = duelStorage.get('step_seconds');
+                                stepSeconds--;
+
+                                $('#timer').html(stepSeconds);
+                                duelStorage.set('step_seconds', stepSeconds);
+                                if (stepSeconds <= 0) {
+                                    duelStorage.remove('step_seconds');
+                                    clearInterval(stepInterval);
+                                    socket.emit('move', {state: duelStorage.get('state'), marker: marker, num: 0})
+                                }
+                            }, 1000);
+                        }
+                    } else {
+                        $('#btn-answer').hide();
+                        $('#question').hide();
+                        $('#answers').hide();
+                        $('#timer').html('Ход делает соперник!');
+                    }
+                },
 
                 stop: function() {
                     var that = this;
                     var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
-                    _afterMessage.call(that);
+                    clearInterval(duelInterval);
+                    clearInterval(stepInterval);
+                    $('#timer').delay(1000).hide(0, function(){
+                        _afterMessage.call(that);
+                    });
                 }
                 /* ---------------------------------------- */
 
@@ -163,7 +311,7 @@
         /* before message */
             _beforeMessage=function(){
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
-                var dt = new Date(marketStorage.get('start')*1000);
+                var dt = new Date(duelStorage.get('start')*1000);
                 var msg = o.messageBefore;
                 msg = msg.replace('#time#', dt.getFullYear() + '.' + (dt.getMonth()<10?'0':'') + dt.getMonth() + '.' + (dt.getDate()<10?'0':'') + dt.getDate() + ' ' + (dt.getHours()<10?'0':'') + dt.getHours() + ':' + (dt.getMinutes()<10?'0':'') + dt.getMinutes());
                 $this.html(msg);
@@ -174,6 +322,7 @@
             _afterMessage=function(){
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
+                //socket.emit('stop game', {ship: duelStorage.get('ship')});
                 $this.html(o.messageAfter);
             };
         /* -------------------- */
@@ -182,8 +331,7 @@
             _pluginMarkup=function(){
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
-                $this.html('<div class="relative"><div class="question"><div id="timer" class="timer">0:25</div><div class="title"><strong>Вопрос <span id="qnum">1</span> из 25</strong></div> <div class="text" id="questions">ddsfasdfasdf</div><ul class="answers" id="answers"><li><input type="radio" id="answer_1" name="answer" value="1" /><label for="answer_1"></label></li><li><input type="radio" id="answer_2" name="answer" value="2" /><label for="answer_2"></label> </li><li><input type="radio" id="answer_3" name="answer" value="3" /><label for="answer_3"></label></li> </ul></div></div><div class="gamer gamer1" id="gamer1"><img src="/bundles/public/img/gamer1.jpg"> <div class="name">Константин Стародубозаборов</div> <div class="ship">Адский галлеон синего пламени имени Владимира Ильича Ленина</div> <div class="action"><button class="btn btn-duel-answer">Ответить</button></div></div><div class="gamer gamer2" id="gamer2"><img src="/bundles/public/img/gamer1.jpg"> <div class="name">Константин Стародубозаборов</div><div class="ship">Адский галлеон синего пламени имени Владимира Ильича Ленина</div><div class="action"><div class="message">Соперник отвечает</div></div></div>');
-
+                $this.html('<div class="relative"><div class="question"><div id="timer" class="timer"></div><div class="title"><strong>Вопрос <span id="qnum"></span> из 25</strong></div> <div class="text" id="questions"></div><ul class="answers" id="answers"><li><input type="radio" id="answer_1" name="answer" value="1" /><label for="answer_1"></label></li><li><input type="radio" id="answer_2" name="answer" value="2" /><label for="answer_2"></label> </li><li><input type="radio" id="answer_3" name="answer" value="3" /><label for="answer_3"></label></li> </ul></div></div><div class="gamer gamer1" id="user"><img src=""> <div class="name"></div> <div class="ship"></div> <div class="action"><div id="user1-count"></div><button class="btn btn-duel-answer">Ответить</button></div></div><div class="gamer gamer2" id="rival"><img src=""> <div class="name"></div><div class="ship"></div><div class="action"><div id="user2-count"></div><div class="message">Соперник отвечает</div></div></div>');
             };
         /* -------------------- */
 
@@ -196,87 +344,34 @@
                     window.location.reload();
                 });
 
-                $(document).on('click', '#market-chests li:not(.skull,.money)', function(e){
-                    e.preventDefault();
-                    currentChest = $(this).attr('id');
-                    var questions = marketStorage.get('questions');
-                    var question = questions[currentChest]['question'];
-                    $.post(o.questionUrl, {question: question, table: marketStorage.get('table')},
-                        function(data){
-                            marketStorage.set('started', 25);
-                            answerNum = data.question.answer;
-                            $('#myModal .close').hide();
-                            $('#modal-content').html('<div id="answer-timer"></div><div class="question">'+data.question.question +'</div>')
-                                .append('<div class="answers"><input name="question" value="1" type="hidden"><input type="radio" id="answer_1" name="answer" value="1" /><label for="answer_1">'+ data.question.answer1 + '</label><br><br><input type="radio" id="answer_2" name="answer" value="2" /><label for="answer_2">'+ data.question.answer2 +'</label><br><br><input type="radio" id="answer_3" name="answer" value="3" /><label for="answer_3">' + data.question.answer3 +'</label></div><button id="market-btn-answer" class="btn">Ответить</button><div class="answer-time"></div>');
-                            $('#answer-timer').html(marketStorage.get('started'));
-                            answerInterval = setInterval(function(){
-                                var realTimer = marketStorage.get('started');
-                                $('#answer-timer').html(--realTimer);
-                                marketStorage.set('started', realTimer);
-                                if (realTimer <= 0) {
-                                clearInterval(answerInterval);
-                                $('#market-btn-answer').trigger('click');
-                                }
-                            }, 1000);
-                            $('#myModal').show();
+                $(document).on('click', '#btn-answer', function(){
+                    duelStorage.remove('step_seconds');
+                    clearInterval(stepInterval);
 
-                        }, 'json');
+                    var question = duelStorage.get('question');
+                    var num = 0;
+                    var answerInput = $('input[name=answer]:checked');
 
-                });
-
-
-                $(document).on('click', '#dice', function(){
-                    var dice = $(this);
-                    $(".wrap").append("<div id='dice_mask'></div>");//add mask
-                    dice.attr("class","dice");//After clearing the last points animation
-                    dice.css('cursor','default');
-                    var num = Math.floor(Math.random()*6+1);//random num 1-6
-                    dice.animate({left: '+2px'}, 100,function(){
-                        dice.addClass("dice_t");
-                    }).delay(200).animate({top:'-2px'},100,function(){
-                        dice.removeClass("dice_t").addClass("dice_s");
-                    }).delay(200).animate({opacity: 'show'},600,function(){
-                        dice.removeClass("dice_s").addClass("dice_e");
-                    }).delay(100).animate({left:'-2px',top:'2px'},100,function(){
-                        dice.removeClass("dice_e").addClass("dice_"+num);
-                        $("#result").html("Your throwing points are<span>"+num+"</span>");
-                        dice.css('cursor','pointer');
-                        $("#dice_mask").remove();//remove mask
-                    });
-                });
-
-                $(document).on('click', '.btn-duel-answer', function(e) {
-                    e.preventDefault();
-                    clearTimeout(answerInterval);
-                    var userAnswer = $('.answers input:checked').val();
-                    var questions =
-                        marketStorage.get('questions');
-                    if (answerNum == userAnswer) {
-                        questions[currentChest]['class'] = 'money';
-                        $('#'+currentChest).removeClass('chest money skull').addClass('money');
-
-                    } else {
-                        questions[currentChest]['class'] = 'skull';
-                        $('#'+currentChest).removeClass('chest money skull').addClass('skull');
+                    if (answerInput && answerInput.val() == question.answer) {
+                        num = 1;
                     }
-                    marketStorage.set('questions', questions);
-                    currentChest = null;
-                    $('#myModal .close').show();
-                    $('#myModal').hide();
-                    answerNum = 999;
+                    socket.emit('move', {state: duelStorage.get('state'), marker: marker, num: num})
                 });
 
-                $(document).on('click', '.market-time', function(){
+                $(document).on('click', '.duel-time', function(){
                     methods.stop.call(that);
                 });
 
             };
         /* -------------------- */
 
-        /* integer division */
+        /* set events for buttons */
+        /* -------------------- */
+
             _integerDivision=function (x, y){
                 return (x-x%y)/y;
             };
+
         /* -------------------- */
 
         /*
