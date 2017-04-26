@@ -26,7 +26,8 @@ class DuelController extends Controller
 
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$duel = $this->get('request')->request->getInt('duel');
-			$state = $this->get('request')->request->getInt('state');
+			$state = $this->get('request')->request->get('state');
+
 			$this->get('container')->updateItem(
 				'game_duel',
 				array('state' => json_encode($state)),
@@ -80,7 +81,7 @@ class DuelController extends Controller
 		}
 
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
-			$questionId = $this->get('request')->request->get('question');
+			$questionId = $this->get('request')->request->get('step');
 			$question = $this->get('container')->getItem('question_duel', $questionId);
 			if ($question) {
 				$response->setData(array(

@@ -84,7 +84,7 @@
     float: left;
 }
 
-.game-duel .gamer.enemy {
+.game-duel .gamer.rival {
     float: right;
 }
 
@@ -111,5 +111,9 @@
 }
 
 .game-duel .question ul.answers li {
+    margin-bottom: 10px;
+}
+
+.game-duel .count {
     margin-bottom: 10px;
 }

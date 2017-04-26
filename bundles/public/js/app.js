@@ -89,6 +89,18 @@ function  strip_tags(str, allowed_tags) {
             var that = $(this);
 
             that.prev().prop('checked', !that.prev().prop('checked'));
+
+            if (that.prev().prop('checked')) {
+                that.prev()
+                    .parents('ul').find('input[type=radio]')
+                    .removeClass('active')
+                that.prev()
+                    .addClass('active')
+            } else {
+                that.prev()
+                    .parents('ul').find('input[type=radio]')
+                    .removeClass('active');
+            }
             if (that.prev().attr('data-avatar') == "true") {
                 $('.field-file').show();
             } else {
