@@ -27,11 +27,11 @@ io.on('connection', function(socket){
             return;
         }
 
-        console.log('init game');
+        // console.log('init game');
 
         gameState = data.state;
 
-        console.log('init', gameState);
+        // console.log('init', gameState);
 
         timer = stepTime;
         startTime = data.starttime*1000;
@@ -42,10 +42,10 @@ io.on('connection', function(socket){
         if (dt.getTime() < startTime) {
             // Запустим интервал для проверки начала игры
 
-            console.log('init game before');
+            // console.log('init game before');
             beforeInterval = setInterval(function() {
 
-                console.log('before game timer');
+                // console.log('before game timer');
 
                 const curdate = new Date();
                 const curtime = curdate.getTime();
@@ -80,8 +80,8 @@ io.on('connection', function(socket){
         } else {
             interval = setInterval(function() {
 
-                console.log('step timer: ' +timer);
-                console.log('step state: ' +gameState);
+                // console.log('step timer: ' +timer);
+                // console.log('step state: ' +gameState);
 
                 timer--;
 
@@ -103,11 +103,11 @@ io.on('connection', function(socket){
         }
 
 
-        console.log('init game stop');
+        // console.log('init game stop');
         // обязательно запускаем интервал на проверку окончания игры
         stopInterval = setInterval(function() {
 
-            console.log('stop game timer');
+            // console.log('stop game timer');
 
             const curdate = new Date();
             const curtime = curdate.getTime();
@@ -135,7 +135,7 @@ io.on('connection', function(socket){
         marker = gameState.who_run = (gameState.who_run == 'user1' ? 'user2' : 'user1');
         timer = stepTime;
 
-        console.log('move update', gameState);
+        // console.log('move update', gameState);
 
         io.emit('update state', {state: gameState});
     });

@@ -104,20 +104,14 @@
             <br><br>
             <form method="post">
                 <div class="form-group">
-                    <label for="date1">Дата и время игры, день 1 </label>
-                    <input type="text" class="form-control" id="date1" placeholder="YYYY-MM-DD HH:MM">
+                    <label for="date1">Дата и время игр, день 1 </label>
+                    <input class="form-control field-date" type="text" placeholder="Выберите дату..." name="date1" value="{{ "now"|date("Y-m-d") }}">
+                    <input class="form-control field-time" type="text" placeholder="Выберите время..." name="date1_time" value="12:00">
                 </div>
                 <div class="form-group">
-                    <label for="date1">Дата и время игры, день 2</label>
-                    <input type="text" class="form-control" id="date1" placeholder="YYYY-MM-DD HH:MM">
-                </div>
-                <div class="form-group">
-                    <label for="teams">Команды</label>
-                    <select class="form-control" id="teams" multiple style="height: 110px;">
-                        {% for team in teams %}
-                            <option value="{team.id}">{{ team.name }}</option>
-                        {% endfor %}
-                    </select>
+                    <label for="date2">Дата и время игр, день 2</label>
+                    <input class="form-control field-date" type="text" placeholder="Выберите дату..." name="date2" value="{{ "now"|date("Y-m-d") }}">
+                    <input class="form-control field-time" type="text" placeholder="Выберите время..." name="date2_time" value="12:00">
                 </div>
                 <button class="btn btn-success btn-market">Назначить игры</button>
             </form>

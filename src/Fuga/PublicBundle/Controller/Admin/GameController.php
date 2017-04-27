@@ -210,7 +210,100 @@ class GameController extends AdminController
 
 	public function battle()
 	{
+		// Играют 12 команд, 4 стола по 3 в 2 дня. 1 из 3 команд - победитель.
+		$duration = $this->getManager('Fuga:Common:Param')->findByName('game', 'battle_duration');
 
+		$response = new JsonResponse();
+
+		if ('POST' == $_SERVER['REQUEST_METHOD'] && $this->isXmlHttpRequest()) {
+
+			$this->get('log')->addError(json_encode($_POST));
+
+			$date1 = $this->get('request')->request->get('date1');
+			$time1 = $this->get('request')->request->get('time1');
+
+			$date2 = $this->get('request')->request->get('date2');
+			$time2 = $this->get('request')->request->get('time2');
+
+			$users = $this->get('container')->getItems('user_user', 'is_over<>1 AND role_id=' . HELPER_ROLE);
+			$ships = $this->get('container')->getItems('crew_ship');
+
+			$battles = array(1,2,3,4);
+
+			foreach ($battles as $battle) {
+				foreach ($ships as $ship) {
+					$game = $this->get('container')->getItem('game_labirint', 'ship_id=' . $ship['id']);
+					if ($game) {
+						continue;
+					}
+
+					$markers = array();
+
+					$i = 1;
+					foreach ($users as $user) {
+						if ($user['ship_id'] == $ship['id']) {
+							$markers['marker'.$i] = $user['id'];
+							$i++;
+						}
+					}
+
+					$lives = array('marker1' => 3, 'marker2' => 3, 'marker3' => 3, 'marker4' => 3);
+					$positions = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
+					$wait = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
+					$money = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
+					$chest = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
+					$rom = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
+					$coffee = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
+					$colors = array(
+						'marker1' => 'Коричневый',
+						'marker2' => 'Синий',
+						'marker3' => 'Зеленый',
+						'marker4' => 'Красный');
+
+
+					$state = array(
+						'markers' => $markers,
+						'who_run' => 'marker1',
+						'lives' => $lives,
+						'positions' => $positions,
+						'colors' => $colors,
+						'wait' => $wait,
+						'money' => $money,
+						'chest' => $chest,
+						'rom' => $rom,
+						'coffee' => $coffee,
+					);
+
+
+					$this->get('container')->addItem(
+						'game_labirint',
+						array(
+							'ship_id' => $ship['id'],
+							'start' => $date1 . ' ' . $time1 . ':00',
+							'duration' => $duration,
+							'state' => json_encode($state),
+							'publish' => 1,
+						)
+					);
+				}
+			}
+
+
+			$response->setData(array(
+					'error' => false,
+					'message' => 'Игры назначены для игроков!',
+				)
+			);
+
+			return $response;
+		}
+
+		$response->setData([
+			'error' => true,
+			'message' => 'Неправильная отправка данных',
+		]);
+
+		return $response;
 	}
 
 }

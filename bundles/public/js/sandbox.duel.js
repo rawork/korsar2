@@ -109,7 +109,7 @@
 
                             socket.on('update state', function (data) {
                                 clearInterval(stepInterval);
-                                console.log('socket update state', data.state);
+                                // console.log('socket update state', data.state);
                                 duelStorage.set('state', data.state);
                                 $.post(o.resultUpdateUrl , {state: data.state, duel: data.state.duel}, function(data) {
                                     // console.log(data.message)
@@ -143,7 +143,7 @@
                                         stoptime: duelStorage.get('stop')
                                     });
 
-                                    console.log(data.game, data.game.state);
+                                    // console.log(data.game, data.game.state);
                                     for (i = 1; i < 3; i++) {
                                         if (data.game.state.users['user'+i] == data.game.user) {
                                             marker = 'user'+i;
@@ -255,7 +255,7 @@
                         }
                         if (duelStorage.isEmpty('question')) {
                             $.post(o.questionUrl, {step: state.step}, function(data) {
-                                console.log('question json', data);
+                                // console.log('question json', data);
                                 if (data.error) {
                                     alert(data.error);
                                     return;
@@ -264,7 +264,7 @@
                                 methods.setQuestion.call(that, duelStorage.get('question'));
                             }, "json")
                         } else {
-                            console.log('question from storage', question);
+                            // console.log('question from storage', question);
                             methods.setQuestion.call(that, duelStorage.get('question'));
                         }
                     } else {
@@ -362,11 +362,11 @@
                         num = 1;
                     }
 
-                    console.log('num', answerInput.length,  answerInput.val(), question.answer, num);
+                    // console.log('num', answerInput.length,  answerInput.val(), question.answer, num);
 
                     duelStorage.remove('question');
 
-                    console.log('move state', duelStorage.get('state'));
+                    // console.log('move state', duelStorage.get('state'));
 
                     socket.emit('move', {state: duelStorage.get('state'), marker: marker, num: num})
                 });
