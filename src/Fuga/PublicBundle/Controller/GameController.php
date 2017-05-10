@@ -114,8 +114,8 @@ class GameController extends Controller
 
 		$this->get('container')->setVar('title', 'МОРСКОЙ БОЙ');
 		$this->get('container')->setVar('h1', 'МОРСКОЙ БОЙ');
+		$this->addCss('/bundles/public/css/battle.chat.css');
 		$this->addCss('/bundles/public/css/sandbox.battle.css');
-		$this->addCss('/bundles/public/css/app.chat.css');
 		$this->addJs('/bundles/storage/jquery.storageapi.min.js');
 		$this->addJs('/bundles/public/js/sandbox.battle.js');
 
