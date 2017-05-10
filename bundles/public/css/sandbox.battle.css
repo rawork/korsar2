@@ -1,4 +1,16 @@
+.game-battle {
+    text-align: center;
+    min-height: 600px;
+}
 
+.game-battle .timer {
+    text-align: center;
+    font-family: 'Beryozki', Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 45px;
+    font-style: normal;
+    font-weight: normal;
+    margin-bottom: 30px;
+}
 
 .game-battle button {
     font-family: 'Beryozki', Arial, Helvetica Neue, Helvetica, sans-serif;
