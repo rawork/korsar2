@@ -55,7 +55,7 @@
     width: 130px;
     padding-bottom: 20px;
     position: absolute;
-    left: 0;
+    left: 10px;
 }
 
 .game-battle .gamer .info {
@@ -83,6 +83,42 @@
 .game-battle .arrow {
     position: absolute;
     left: 146px;
+}
+
+.game-battle .mark-red {
+    position: absolute;
+    width: 39px;
+    height: 40px;
+    top: 30px;
+    left: 0;
+    background-image: url('../img/battle/gamer_red.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    z-index: 10;
+}
+
+.game-battle .mark-green {
+    position: absolute;
+    width: 39px;
+    height: 39px;
+    top: 225px;
+    left: 0;
+    background-image: url('../img/battle/gamer_green.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    z-index: 10;
+}
+
+.game-battle .mark-brown {
+    position: absolute;
+    width: 39px;
+    height: 39px;
+    top: 415px;
+    left: 0;
+    background-image: url('../img/battle/gamer_brown.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    z-index: 10;
 }
 
 .game-battle .arrow1 {
@@ -130,7 +166,7 @@
     position: absolute;
     width: 30px;
     height: 30px;
-    border: 1px solid #ffff00;
+    /*border: 1px solid #ffff00;*/
     z-index: 10;
 }
 
@@ -648,3 +684,77 @@
     top: 431px;
     left: 523px;
 }
+
+.game-battle .ship-red {
+    background-image: url('../img/battle/ship_red.png');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+}
+
+.game-battle .ship-red-killed {
+    background-image: url('../img/battle/ship_red_killed.png');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+}
+
+.game-battle .ship-green {
+    background-image: url('../img/battle/ship_green.png');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+}
+
+.game-battle .ship-green-killed {
+    background-image: url('../img/battle/ship_green_killed.png');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+}
+
+.game-battle .ship-brown {
+    background-image: url('../img/battle/ship_brown.png');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+}
+
+.game-battle .ship-brown-killed {
+    background-image: url('../img/battle/ship_brown_killed.png');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+}
+
+.game-battle .cell-empty {
+    background-image: url('../img/battle/empty.png');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+}
+
+.game-battle .imperial-part {
+    background-color: rgba(0,0,0,0.75);
+    background-image: url('../img/battle/empty.png');
+    background-repeat: no-repeat;
+    background-position: 0 0;
+}
+
+.game-battle .imperial-h {
+    background-image: url("../img/battle/imperial_killed_h.png");
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    position: absolute;
+    width: 92px;
+    height: 30px;
+    z-index: 11;
+    top: 369px;
+    left: 368px;
+}
+
+.game-battle .imperial-v {
+    background-image: url("../img/battle/imperial_killed_v.png");
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    position: absolute;
+    width: 30px;
+    height: 92px;
+    z-index: 11;
+    top: 276px;
+    left: 492px;
+}
+
