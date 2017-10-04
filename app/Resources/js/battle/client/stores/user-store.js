@@ -12,9 +12,6 @@ class User {
         return `${this.user.get("name")} - ${this.user.get("age")}`;
     }
 
-    @action toggle() {
-        this.user.set("checked", !this.user.get("checked"));
-    }
 }
 
 class UserStore {

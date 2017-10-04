@@ -66,12 +66,12 @@ class BattleController extends Controller
         }
 
         if ('GET' == $_SERVER['REQUEST_METHOD']) {
+            $rawData = json_decode(file_get_contents(PRJ_DIR . '/data/battle/battle1.json'), true);
+
+
+
             if (1 == 1) {
-                $response->setData(array(
-                    array( 'id' => 1, 'name'=> "Alexey", 'age'=> 30 ),
-                    array( 'id' => 2, 'name'=> "Ignat", 'age'=> 15 ),
-                    array( 'id' => 3, 'name'=> "Sergey", 'age'=> 26 ),
-                ));
+                $response->setData($rawData['teams']);
 
                 return $response;
             }
@@ -103,7 +103,7 @@ class BattleController extends Controller
         if ('POST' == $_SERVER['REQUEST_METHOD']) {
             $rawData = json_decode(file_get_contents(PRJ_DIR . '/data/battle/battle1.json'), true);
 
-            $data = $rawData['']
+            $data = $rawData;
 
             if ($data) {
                 $response->setData($data);

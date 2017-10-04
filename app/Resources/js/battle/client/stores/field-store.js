@@ -26,7 +26,7 @@ class FieldStore {
 
     constructor() {
         this.cells = [];
-        this.fetch();
+        // this.fetch();
     }
 
     getCells() {

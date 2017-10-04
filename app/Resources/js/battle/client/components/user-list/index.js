@@ -7,7 +7,7 @@ const Component = inject('userStore')(observer(({ userStore }) => {
     return (
         <UserList
             users={userStore.getUsers()}
-            selectedUsersCount={userStore.selectedCount} />
+            currentShooter={userStore.currentShooter} />
     );
 }));
 

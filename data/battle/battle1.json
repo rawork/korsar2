@@ -1,9 +1,10 @@
 {
-  "teams": {
-    "user1": {
-      "shooter_id": null,
+  "teams": [
+      {
+      "shooter_id": 1,
       "name": "Длинное название в 3 строчки",
       "flag": "/bundles/public/img/flag/flag1.png",
+      "num": 1,
       "color": "red",
       "ships": [
         {
@@ -38,10 +39,11 @@
         }
       ]
     },
-    "user10": {
-      "shooter_id": null,
+    {
+      "shooter_id": 10,
       "name": "Длинное название в 2 строчки",
       "flag": "/bundles/public/img/flag/flag2.png",
+      "num": 2,
       "color": "brown",
       "ships": [
         {
@@ -76,11 +78,12 @@
         }
       ]
     },
-    "user12": {
-      "id": null,
+    {
+      "shooter_id": 12,
       "name": "Длинное название в 4 строчки",
       "flag": "/bundles/public/img/flag/flag3.png",
       "color": "green",
+      "num": 3,
       "ships": [
         {
           "posx": "A",
@@ -114,7 +117,7 @@
         }
       ]
     }
-  },
+  ],
   "imperial": {
     "type": "h",
     "points": [

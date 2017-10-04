@@ -34,6 +34,11 @@ export default new Config().merge({
                 },
                 exclude: /node_modules/,
             }
+            // ,
+            // {
+            //     test: /\.(jpe?g|gif|png)$/,
+            //     loader: 'file-loader?emitFile=false&name=[path][name].[ext]'
+            // }
         ]
     }
     ,
