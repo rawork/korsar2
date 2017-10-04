@@ -36,7 +36,7 @@ class FugaExtension  extends \Twig_Extension
 		$text = '';
 		$files = $GLOBALS['container']->getJS();
 		foreach ($files as $file){
-			$text .= '<script src="'.$this->asset($file).'"></script>';
+			$text .= '<script type="module" src="'.$this->asset($file).'"></script>';
 		}
 
 		return $text;

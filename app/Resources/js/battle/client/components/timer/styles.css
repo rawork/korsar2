@@ -1,0 +1,11 @@
+.timer {
+    text-align: center;
+    font-family: 'Beryozki', Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 60px;
+    font-style: normal;
+    font-weight: normal;
+    margin-bottom: 30px;
+    position: absolute;
+    top: 30px;
+    left: 360px;
+}

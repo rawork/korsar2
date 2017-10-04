@@ -1,0 +1,146 @@
+{
+  "teams": {
+    "user1": {
+      "shooter_id": null,
+      "name": "Длинное название в 3 строчки",
+      "flag": "/bundles/public/img/flag/flag1.png",
+      "color": "red",
+      "ships": [
+        {
+          "posx": "A",
+          "posy": "3",
+          "alive": true
+        },
+        {
+          "posx": "B",
+          "posy": "6",
+          "alive": true
+        },
+        {
+          "posx": "C",
+          "posy": "8",
+          "alive": true
+        },
+        {
+          "posx": "D",
+          "posy": "1",
+          "alive": true
+        },
+        {
+          "posx": "E",
+          "posy": "7",
+          "alive": true
+        },
+        {
+          "posx": "F",
+          "posy": "2",
+          "alive": true
+        }
+      ]
+    },
+    "user10": {
+      "shooter_id": null,
+      "name": "Длинное название в 2 строчки",
+      "flag": "/bundles/public/img/flag/flag2.png",
+      "color": "brown",
+      "ships": [
+        {
+          "posx": "A",
+          "posy": "3",
+          "alive": true
+        },
+        {
+          "posx": "B",
+          "posy": "6",
+          "alive": true
+        },
+        {
+          "posx": "C",
+          "posy": "8",
+          "alive": true
+        },
+        {
+          "posx": "D",
+          "posy": "1",
+          "alive": true
+        },
+        {
+          "posx": "E",
+          "posy": "7",
+          "alive": true
+        },
+        {
+          "posx": "F",
+          "posy": "2",
+          "alive": true
+        }
+      ]
+    },
+    "user12": {
+      "id": null,
+      "name": "Длинное название в 4 строчки",
+      "flag": "/bundles/public/img/flag/flag3.png",
+      "color": "green",
+      "ships": [
+        {
+          "posx": "A",
+          "posy": "3",
+          "alive": true
+        },
+        {
+          "posx": "B",
+          "posy": "6",
+          "alive": true
+        },
+        {
+          "posx": "C",
+          "posy": "8",
+          "alive": true
+        },
+        {
+          "posx": "D",
+          "posy": "1",
+          "alive": true
+        },
+        {
+          "posx": "E",
+          "posy": "7",
+          "alive": true
+        },
+        {
+          "posx": "F",
+          "posy": "2",
+          "alive": true
+        }
+      ]
+    }
+  },
+  "imperial": {
+    "type": "h",
+    "points": [
+      {
+        "posx": "E",
+        "posy": "9",
+        "alive": true
+      },
+      {
+        "posx": "F",
+        "posy": "9",
+        "alive": true
+      },
+      {
+        "posx": "G",
+        "posy": "9",
+        "pos": "G9",
+        "alive": true
+      }
+    ]
+  },
+  "shots": [
+    {
+      "posx": "F",
+      "posy": "2",
+      "empty": true
+    }
+  ]
+}

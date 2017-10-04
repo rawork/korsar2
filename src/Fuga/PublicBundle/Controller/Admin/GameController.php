@@ -226,16 +226,19 @@ class GameController extends AdminController
 			$time2 = $this->get('request')->request->get('time2');
 
 			$users = $this->get('container')->getItems('user_user', 'is_over<>1 AND role_id=' . HELPER_ROLE);
-			$ships = $this->get('container')->getItems('crew_ship');
+			$ships = $this->get('container')->getItems('crew_ship', 'is_over<>1', 'purse DESC', '12');
 
 			$battles = array(1,2,3,4);
+            $players = 0;
 
 			foreach ($battles as $battle) {
 				foreach ($ships as $ship) {
-					$game = $this->get('container')->getItem('game_labirint', 'ship_id=' . $ship['id']);
+					$game = $this->get('container')->getItem('game_battle', 'ship_id=' . $ship['id']);
 					if ($game) {
 						continue;
 					}
+
+                    $users = $this->get('container')->getItems('user_user', 'is_over<>1 AND role_id=' . HELPER_ROLE);
 
 					$markers = array();
 
@@ -274,18 +277,18 @@ class GameController extends AdminController
 						'coffee' => $coffee,
 					);
 
-
-					$this->get('container')->addItem(
-						'game_labirint',
-						array(
-							'ship_id' => $ship['id'],
-							'start' => $date1 . ' ' . $time1 . ':00',
-							'duration' => $duration,
-							'state' => json_encode($state),
-							'publish' => 1,
-						)
-					);
 				}
+
+                $this->get('container')->addItem(
+                    'game_battle',
+                    array(
+                        'ship_id' => $ship['id'],
+                        'start' => $date1 . ' ' . $time1 . ':00',
+                        'duration' => $duration,
+                        'state' => json_encode($state),
+                        'publish' => 1,
+                    )
+                );
 			}
 
 

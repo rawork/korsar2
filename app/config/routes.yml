@@ -262,12 +262,15 @@ news_fresh:
 game_task_data:
   path: /ajax/sandbox/task/data
   defaults: { _controller: 'Fuga:Public:Game:Task:data'}
+
 game_pexeso_data:
   path: /ajax/sandbox/pexeso/data
   defaults: { _controller: 'Fuga:Public:Game:Pexeso:data'}
+
 game_map_data:
   path: /ajax/sandbox/map/data
   defaults: { _controller: 'Fuga:Public:Game:Map:data'}
+
 game_labirint_data:
   path: /ajax/sandbox/labirint/data
   defaults: { _controller: 'Fuga:Public:Game:Labirint:data'}
@@ -277,9 +280,23 @@ game_market_data:
 game_market_question:
   path: /ajax/sandbox/market/question
   defaults: { _controller: 'Fuga:Public:Game:Market:question'}
+
 game_battle_data:
   path: /ajax/sandbox/battle/data
   defaults: { _controller: 'Fuga:Public:Game:Battle:data'}
+game_battle_timer:
+  path: timer
+  defaults: { _controller: 'Fuga:Public:Game:Battle:timer'}
+game_battle_messages:
+  path: messages
+  defaults: { _controller: 'Fuga:Public:Game:Battle:messages'}
+game_battle_users:
+  path: users
+  defaults: { _controller: 'Fuga:Public:Game:Battle:users'}
+game_battle_field:
+  path: field
+  defaults: { _controller: 'Fuga:Public:Game:Battle:field'}
+
 game_duel_data:
   path: /ajax/sandbox/duel/data
   defaults: { _controller: 'Fuga:Public:Game:Duel:data'}

@@ -1,0 +1,180 @@
+<div class="game-large-container">
+    <div id="game-battle" class="game-battle">
+        <div class="relative">
+            <div id="battle"></div>
+            {#<div class="timer" id="timer">120:00</div>#}
+            <div class="gamer gamer1" id="user">
+                <div class="ship gamer_red"></div>
+                <div class="info">
+                    <span class="dead">3 сбито</span>,
+                    <span class="alive">3 живо</span>
+                </div>
+                <img src="/bundles/public/img/flag/flag1.png" class="flag" />
+                <div class="name">Длинное название в 3 строчки</div>
+            </div>
+            <div class="mark-red"></div>
+            <div class="mark-green"></div>
+            <div class="mark-brown"></div>
+            <div class="gamer gamer2" id="rival1">
+                <div class="ship gamer_green"></div>
+                <div class="info">
+                    <span class="dead">6 сбито</span>,
+                    <span class="alive">0 живо</span>
+                </div>
+                <img src="/bundles/public/img/flag/flag2.png" class="flag" />
+                <div class="name">Длинное название в 3 строчки</div>
+            </div>
+            <div class="gamer gamer3" id="rival2">
+                <div class="ship gamer_brown"></div>
+                <div class="info">
+                    <span class="dead">1 сбит</span>,
+                    <span class="alive">5 живо</span>
+                </div>
+                <img src="/bundles/public/img/flag/flag3.png" class="flag" />
+                <div class="name">Длинное название в 3 строчки</div>
+            </div>
+
+            <div class="arrow arrow1"></div>
+            <div class="arrow arrow2"></div>
+            <div class="arrow arrow3"></div>
+
+            <div class="battlefield" id="battlefield"></div>
+
+            <div class="cell cell1A"></div>
+            <div class="cell cell1B"></div>
+            <div class="cell cell1C"></div>
+            <div class="cell cell1D ship-brown"></div>
+            <div class="cell cell1E ship-brown-killed"></div>
+            <div class="cell cell1F"></div>
+            <div class="cell cell1G"></div>
+            <div class="cell cell1H"></div>
+            <div class="cell cell1I"></div>
+            <div class="cell cell1J"></div>
+
+            <div class="cell cell2A"></div>
+            <div class="cell cell2B ship-red"></div>
+            <div class="cell cell2C ship-red-killed"></div>
+            <div class="cell cell2D"></div>
+            <div class="cell cell2E"></div>
+            <div class="cell cell2F"></div>
+            <div class="cell cell2G"></div>
+            <div class="cell cell2H"></div>
+            <div class="cell cell2I"></div>
+            <div class="cell cell2J"></div>
+
+            <div class="cell cell3A"></div>
+            <div class="cell cell3B"></div>
+            <div class="cell cell3C ship-green-killed"></div>
+            <div class="cell cell3D"></div>
+            <div class="cell cell3E"></div>
+            <div class="cell cell3F"></div>
+            <div class="cell cell3G"></div>
+            <div class="cell cell3H ship-green"></div>
+            <div class="cell cell3I"></div>
+            <div class="cell cell3J"></div>
+
+            <div class="cell cell4A"></div>
+            <div class="cell cell4B"></div>
+            <div class="cell cell4C"></div>
+            <div class="cell cell4D cell-empty"></div>
+            <div class="cell cell4E"></div>
+            <div class="cell cell4F"></div>
+            <div class="cell cell4G"></div>
+            <div class="cell cell4H"></div>
+            <div class="cell cell4I"></div>
+            <div class="cell cell4J"></div>
+
+            <div class="cell cell5A"></div>
+            <div class="cell cell5B"></div>
+            <div class="cell cell5C"></div>
+            <div class="cell cell5D"></div>
+            <div class="cell cell5E"></div>
+            <div class="cell cell5F"></div>
+            <div class="cell cell5G"></div>
+            <div class="cell cell5H"></div>
+            <div class="cell cell5I"></div>
+            <div class="cell cell5J"></div>
+
+            <div class="cell cell6A"></div>
+            <div class="cell cell6B"></div>
+            <div class="cell cell6C"></div>
+            <div class="cell cell6D"></div>
+            <div class="cell cell6E"></div>
+            <div class="cell cell6F"></div>
+            <div class="cell cell6G"></div>
+            <div class="cell cell6H"></div>
+            <div class="cell cell6I"></div>
+            <div class="cell cell6J"></div>
+
+            <div class="cell cell7A"></div>
+            <div class="cell cell7B"></div>
+            <div class="cell cell7C"></div>
+            <div class="cell cell7D"></div>
+            <div class="cell cell7E"></div>
+            <div class="cell cell7F"></div>
+            <div class="cell cell7G"></div>
+            <div class="cell cell7H"></div>
+            <div class="cell cell7I"></div>
+            <div class="cell cell7J"></div>
+
+            <div class="cell cell8A"></div>
+            <div class="cell cell8B"></div>
+            <div class="cell cell8C"></div>
+            <div class="cell cell8D imperial-part"></div>
+            <div class="cell cell8E"></div>
+            <div class="cell cell8F"></div>
+            <div class="cell cell8G"></div>
+            <div class="cell cell8H"></div>
+            <div class="cell cell8I"></div>
+            <div class="cell cell8J"></div>
+
+            <div class="cell cell9A"></div>
+            <div class="cell cell9B"></div>
+            <div class="cell cell9C"></div>
+            <div class="cell cell9D"></div>
+            <div class="cell cell9E"></div>
+            <div class="cell cell9F"></div>
+            <div class="cell cell9G"></div>
+            <div class="cell cell9H"></div>
+            <div class="cell cell9I"></div>
+            <div class="cell cell9J"></div>
+
+            <div class="cell cell10A"></div>
+            <div class="cell cell10B"></div>
+            <div class="cell cell10C"></div>
+            <div class="cell cell10D"></div>
+            <div class="cell cell10E"></div>
+            <div class="cell cell10F"></div>
+            <div class="cell cell10G"></div>
+            <div class="cell cell10H"></div>
+            <div class="cell cell10I"></div>
+            <div class="cell cell10J"></div>
+
+            <div class="imperial imperial-h"></div>
+            <div class="imperial imperial-v"></div>
+
+            {#<div class="chat chat-app" id="chat">#}
+                {#<div class="chat-text-container" id="chat-messages" >#}
+                    {#<div class="message"><span><a data-name="Джек Воробей 1" data-role="Пороховая обезьяна1" data-ship="Черная жемчужина" href="#">Джек</a>:</span> Ребята, как думаете, кто украл сердце Деэви? Он мне звонил вчера, говорит - нету(</div>#}
+                    {#<div class="message"><span><a data-name="Константин Стародубозаборов" data-role="Пороховая обезьяна2" data-ship="Черная жемчужина2" href="#">Элизабет</a>:</span> Не понимаю, о чем ты, Джек.</div>#}
+                    {#<div class="message"><span><a data-name="Джек Воробей 2" data-role="Пороховая обезьяна" data-ship="Черная жемчужина" href="#">Уилл</a>:</span> Я тоже. Хи-хи-хи</div>#}
+                    {#<div class="message"><span><a data-name="Константин Стародубозаборов" data-role="Пороховая обезьяна" data-ship="Черная жемчужина" href="#">Джек</a>:</span> Ребята, как думаете, кто украл сердце Деэви? Он мне звонил вчера, говорит - нету(</div>#}
+                    {#<div class="message"><span><a data-name="Джек Воробей 3" data-role="Пороховая обезьяна" data-ship="Черная жемчужина" href="#">Элизабет</a>:</span> Не понимаю, о чем ты, Джек.</div>#}
+                    {#<div class="message"><span><a data-name="Константин Стародубозаборов" data-role="Пороховая обезьяна" data-ship="Черная жемчужина" href="#">Уилл</a>:</span> Я тоже. Хи-хи-хи</div>#}
+                    {#<div class="message"><span><a data-name="Джек Воробей 4" data-role="Пороховая обезьяна" data-ship="Черная жемчужина" href="#">Джек</a>:</span> Ребята, как думаете, кто украл сердце Деэви? Он мне звонил вчера, говорит - нету(</div>#}
+                    {#<div class="message"><span><a data-name="Джек Воробей 5" data-role="Пороховая обезьяна" data-ship="Черная жемчужина" href="#">Элизабет</a>:</span> Не понимаю, о чем ты, Джек.</div>#}
+                    {#<div class="message"><span><a data-name="Джек Воробей 6" data-role="Пороховая обезьяна" data-ship="Черная жемчужина" href="#">Уилл</a>:</span> Я тоже. Хи-хи-хи</div>#}
+                    {#<div class="message"><span><a data-name="Джек Воробей 7" data-role="Пороховая обезьяна" data-ship="Черная жемчужина" href="#">Джек</a>:</span> Ребята, как думаете, кто украл сердце Деэви? Он мне звонил вчера, говорит - нету(</div>#}
+                    {#<div class="message"><span><a data-name="Джек Воробей 8" data-role="Пороховая обезьяна" data-ship="Черная жемчужина" href="#">Элизабет</a>:</span> Не понимаю, о чем ты, Джек.</div>#}
+                    {#<div class="message"><span><a data-name="Джек Воробей 9" data-role="Пороховая обезьяна" data-ship="Черная жемчужина" href="#">Уилл</a>:</span> Я тоже. Хи-хи-хи</div>#}
+                {#</div>#}
+                {#<input type="text" id="chat-message" placeholder="Добавить сообщение"> <button id="chat-btn-send" class="btn">Отправить</button>#}
+                {#<div id="chat-user-info">#}
+                    {#<a href="#"></a>#}
+                    {#<div class="role"></div>#}
+                    {#<div class="ship"></div>#}
+                {#</div>#}
+            {#</div>#}
+        </div>
+    </div>
+</div>
