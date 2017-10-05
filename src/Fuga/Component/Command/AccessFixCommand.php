@@ -1,20 +1,18 @@
 <?php
 
-namespace Fuga\Component\Install;
+namespace Fuga\Component\Command;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class FixCommand extends Command
+class AccessFixCommand extends Command
 {
     protected function configure()
     {
         $this
-            ->setName('install:fix')
-            ->setDescription('Fix rights for folders')
+            ->setName('access:fix')
+            ->setDescription('Chmod access rules for folders & files')
         ;
     }
 

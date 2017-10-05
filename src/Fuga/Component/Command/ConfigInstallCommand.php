@@ -1,6 +1,6 @@
 <?php
 
-namespace Fuga\Component\Install;
+namespace Fuga\Component\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -8,13 +8,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ConfigCommand extends Command
+class ConfigInstallCommand extends Command
 {
     protected function configure()
     {
         $this
-            ->setName('install:config')
-            ->setDescription('Create config files')
+            ->setName('config:install')
+            ->setDescription('Create config files from samples')
         ;
     }
 
