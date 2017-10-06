@@ -4,19 +4,20 @@
 require_once 'init.php';
 
 $helperSet = new \Symfony\Component\Console\Helper\HelperSet(array(
-	'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($container->get('connection')),
+	'connection' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($container->get('connection')),
 //	'dm' => new \Doctrine\ODM\MongoDB\Tools\Console\Helper\DocumentManagerHelper($container->get('odm')),
 //	'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($container->get('em')),
-    'container' => $container,
+    'cache' => new \Fuga\Component\Console\Helper\CacheHelper($container->get('cache')),
 ));
 
 $app = new Symfony\Component\Console\Application('Fuga CMS Console');
 $app->setCatchExceptions(true);
 $app->setHelperSet($helperSet);
 $app->addCommands(array(
-	new \Fuga\Component\Command\AccessFixCommand(),
-	new \Fuga\Component\Command\ConfigInstallCommand(),
-    new \Fuga\Component\Command\CacheClearCommand(),
+	new \Fuga\Component\Console\Command\AccessFixCommand(),
+	new \Fuga\Component\Console\Command\ConfigInstallCommand(),
+    new \Fuga\Component\Console\Command\CacheClearCommand(),
+    new \Fuga\Component\Console\Command\CacheAddCommand(),
 	new \Doctrine\DBAL\Tools\Console\Command\ImportCommand(),
 	new \Doctrine\DBAL\Tools\Console\Command\RunSqlCommand(),
 //	new \Doctrine\ODM\MongoDB\Tools\Console\Command\QueryCommand(),

@@ -18,7 +18,7 @@
             answerNum = 999,
             moneyPrize = 10,
             currentChest = null,
-            currentTime;
+            currentTime,
 
         /*
          ----------------------------------------
@@ -89,7 +89,7 @@
 
                             var d=$this.data(pluginPfx),o=d.opt;
 
-                            ns=$.initNamespaceStorage(pluginNS);
+                            var ns=$.initNamespaceStorage(pluginNS);
                             marketStorage = ns.localStorage // Namespace in localStorage
 
                             _initMessage.call(this);
@@ -200,7 +200,7 @@
         /* validates selector (if selector is invalid or undefined uses the default one) */
             _selector=function(){
                 return (typeof $(this)!=="object" || $(this).length<1) ? defaultSelector : this;
-            };
+            },
         /* -------------------- */
 
         /* init message */
@@ -208,7 +208,7 @@
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
                 $this.html(o.messageInit);
-            };
+            },
         /* -------------------- */
 
         /* before message */
@@ -218,7 +218,7 @@
                 var msg = o.messageBefore;
                 msg = msg.replace('#time#', dt.getFullYear() + '.' + (dt.getMonth()<10?'0':'') + dt.getMonth() + '.' + (dt.getDate()<10?'0':'') + dt.getDate() + ' ' + (dt.getHours()<10?'0':'') + dt.getHours() + ':' + (dt.getMinutes()<10?'0':'') + dt.getMinutes());
                 $this.html(msg);
-            };
+            },
         /* -------------------- */
 
         /* after message */
@@ -226,7 +226,7 @@
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
                 $this.html(o.messageAfter);
-            };
+            },
         /* -------------------- */
 
         /* generates plugin markup */
@@ -245,7 +245,7 @@
                     i++;
                 }
                 $('#market-account').html(marketStorage.get('money'));
-            };
+            },
         /* -------------------- */
 
         /* set events for buttons */
@@ -314,13 +314,13 @@
                     methods.stop.call(that);
                 });
 
-            };
+            },
         /* -------------------- */
 
         /* integer division */
             _integerDivision=function (x, y){
                 return (x-x%y)/y;
-            };
+            },
         /* -------------------- */
 
         /* shuffle Array */

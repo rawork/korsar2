@@ -14,7 +14,7 @@
             defaultSelector=".game-task",
             taskStorage = null,
             taskChests = [1000, 1550, 750, 950, 800, 900],
-            taskInterval = null;
+            taskInterval = null,
 
         /*
          ----------------------------------------
@@ -83,7 +83,7 @@
 
                             var d=$this.data(pluginPfx),o=d.opt;
 
-                            ns=$.initNamespaceStorage(pluginNS);
+                            var ns=$.initNamespaceStorage(pluginNS);
                             taskStorage = ns.localStorage // Namespace in localStorage
 
                             _initMessage.call(this);
@@ -171,7 +171,7 @@
         /* validates selector (if selector is invalid or undefined uses the default one) */
             _selector=function(){
                 return (typeof $(this)!=="object" || $(this).length<1) ? defaultSelector : this;
-            };
+            },
         /* -------------------- */
 
         /* init message */
@@ -179,7 +179,7 @@
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
                 $this.html(o.messageInit);
-            };
+            },
         /* -------------------- */
 
         /* before message */
@@ -189,7 +189,7 @@
                 var msg = o.messageBefore;
                 msg = msg.replace('#time#', dt.getFullYear() + '.' + (dt.getMonth()<10?'0':'') + dt.getMonth() + '.' + (dt.getDate()<10?'0':'') + dt.getDate() + ' ' + (dt.getHours()<10?'0':'') + dt.getHours() + ':' + (dt.getMinutes()<10?'0':'') + dt.getMinutes());
                 $this.html(msg);
-            };
+            },
         /* -------------------- */
 
         /* after message */
@@ -197,7 +197,7 @@
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
                 $this.html(o.messageAfter);
-            };
+            },
         /* -------------------- */
 
         /* generates plugin markup */
@@ -209,7 +209,7 @@
                     var $li = $('<li><img src="/bundles/public/img/chest.png"><span>' + taskChests[i] + '</span> пиастров</li>');
                     $('ul#task-chests').append($li.get(0));
                 }
-            };
+            },
         /* -------------------- */
 
         /* set events for buttons */
@@ -243,7 +243,7 @@
                     methods.stop.call(that);
                 });
 
-            };
+            },
         /* -------------------- */
 
         /* set events for buttons */
@@ -255,7 +255,7 @@
                     window.location.reload();
                 });
 
-            };
+            },
         /* -------------------- */
 
             _integerDivision=function (x, y){

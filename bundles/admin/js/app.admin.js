@@ -639,6 +639,43 @@
             }, "json");
         });
 
+        $('.btn-game-create-battle').click(function(e) {
+            e.preventDefault();
+
+            var that = $(this);
+            var date1 = that.siblings('div').find('input[name=date1]').val();
+            var time1 = that.siblings('div').find('input[name=date1_time]').val();
+
+            var date2 = that.siblings('div').find('input[name=date2]').val();
+            var time2 = that.siblings('div').find('input[name=date2_time]').val();
+
+            var path = that.parent().attr('action');
+
+            var message = that.siblings('.alert');
+
+            console.log(date1, time1, path);
+
+            message.hide();
+
+            $.post(path, {date1: date1, time1: time1, date2: date2, time2: time2}, function(data){
+                console.log(data);
+                if (data.error) {
+                    message
+                        .removeClass()
+                        .addClass('alert alert-error')
+                        .html(data.message)
+                        .fadeIn(500);
+                } else {
+                    message
+                        .removeClass()
+                        .addClass('alert alert-success')
+                        .html(data.message)
+                        .fadeIn(500);
+                }
+
+            }, "json");
+        });
+
         var $dateFields = $('.field-date');
         if ($dateFields.length > 0) {
             // $.cachedScript( prj_ref + '/bundles/calendar/calendar.js' ).done(function( script, textStatus ) {

@@ -2,15 +2,25 @@
 
 namespace Fuga\CommonBundle\Controller;
 
-use Fuga\AdminBundle\AdminInterface;
 use Fuga\Component\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Fuga\Component\Container;
 
 class AppController extends Controller
 {
-	public function handle()
+    /**
+     * @var Container $container
+     */
+    protected $container;
+
+    public function setContainer(Container $container)
+    {
+        $this->container = $container;
+    }
+
+	public function run()
 	{
 		$request = Request::createFromGlobals();
 
@@ -25,22 +35,25 @@ class AppController extends Controller
 
 		$this->get('container')->setVar('mainurl', $site['url']);
 
-		if ($this->get('security')->isSecuredArea() && !$this->get('security')->isAuthenticated()) {
-			$controller = new SecurityController();
-
-			return $controller->login();
-		}
-
-		if ($this->get('security')->isClosedArea()) {
-			$controller = new SecurityController();
-
-			return $controller->closed();
-		}
-
 		try {
-			$parameters = $this->get('routing')->match(array_shift(explode('?', $site['url'])));
+		    // todo middleware
+            if ($this->get('security')->isSecuredArea() && !$this->get('security')->isAuthenticated()) {
+                $controller = new SecurityController();
+                $response = $controller->login();
+            } elseif ($this->get('security')->isClosedArea()) {
+                $controller = new SecurityController();
+                $response = $controller->closed();
+            } else {
+                $parameters = $this->get('routing')->match(array_shift(explode('?', $site['url'])));
+                $response = $this->get('container')->callAction($parameters['_controller'], $parameters);
+            }
 
-			return $this->get('container')->callAction($parameters['_controller'], $parameters);
+            if (!is_object($response) || !($response instanceof \Symfony\Component\HttpFoundation\Response)){
+                $this->container->get('log')->addError('link'.$_SERVER['REQUEST_URI']);
+                $this->container->get('log')->addError('response'.serialize($response));
+            }
+
+            $response->send();
 		} catch(ResourceNotFoundException $e) {
 			throw new NotFoundHttpException('Несуществующая страница');
 		}

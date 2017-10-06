@@ -50,8 +50,42 @@
 }
 
 .game-battle .arrow {
+    display: none;
     position: absolute;
     left: 146px;
+}
+
+.game-battle .arrow.active {
+    display: block;
+    position: absolute;
+    left: 146px;
+}
+
+.game-battle .arrow1 {
+    width: 74px;
+    height: 238px;
+    top: 80px;
+    background-image: url('../img/battle/arrow1.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
+}
+
+.game-battle .arrow2 {
+    width: 71px;
+    height: 52px;
+    top: 270px;
+    background-image: url('../img/battle/arrow2.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
+}
+
+.game-battle .arrow3 {
+    width: 77px;
+    height: 239px;
+    top: 300px;
+    background-image: url('../img/battle/arrow3.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
 }
 
 .game-battle .mark-red {
@@ -88,35 +122,6 @@
     background-position: 0 0;
     background-repeat: no-repeat;
     z-index: 10;
-}
-
-.game-battle .arrow1 {
-    width: 74px;
-    height: 238px;
-    top: 80px;
-    background-image: url('../img/battle/arrow1.png');
-    background-position: 0 0;
-    background-repeat: no-repeat;
-}
-
-.game-battle .arrow2 {
-    display: none;
-    width: 71px;
-    height: 52px;
-    top: 270px;
-    background-image: url('../img/battle/arrow2.png');
-    background-position: 0 0;
-    background-repeat: no-repeat;
-}
-
-.game-battle .arrow3 {
-    display: none;
-    width: 77px;
-    height: 239px;
-    top: 300px;
-    background-image: url('../img/battle/arrow3.png');
-    background-position: 0 0;
-    background-repeat: no-repeat;
 }
 
 .game-battle .gamer1 {

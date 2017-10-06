@@ -91,7 +91,7 @@
 
                             var d=$this.data(pluginPfx),o=d.opt;
 
-                            ns=$.initNamespaceStorage(pluginNS);
+                            var ns=$.initNamespaceStorage(pluginNS);
                             labirintStorage = ns.localStorage // Namespace in localStorage
 
                             _initMessage.call(this);
@@ -278,7 +278,7 @@
                                         stoptime: labirintStorage.get('stop')
                                     });
 
-                                    for (i = 1; i < 5; i++) {
+                                    for (var i = 1; i < 5; i++) {
                                         if (data.game.state.markers['marker'+i] == data.game.user) {
                                             marker = 'marker'+i;
                                             break;
@@ -429,7 +429,7 @@
         /* validates selector (if selector is invalid or undefined uses the default one) */
             _selector=function(){
                 return (typeof $(this)!=="object" || $(this).length<1) ? defaultSelector : this;
-            };
+            },
         /* -------------------- */
 
         /* init message */
@@ -437,7 +437,7 @@
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
                 $this.html(o.messageInit);
-            };
+            },
         /* -------------------- */
 
         /* before message */
@@ -447,7 +447,7 @@
                 var msg = o.messageBefore;
                 msg = msg.replace('#time#', dt.getFullYear() + '.' + (dt.getMonth()<10?'0':'') + dt.getMonth() + '.' + (dt.getDate()<10?'0':'') + dt.getDate() + ' ' + (dt.getHours()<10?'0':'') + dt.getHours() + ':' + (dt.getMinutes()<10?'0':'') + dt.getMinutes());
                 $this.html(msg);
-            };
+            },
         /* -------------------- */
 
         /* after message */
@@ -456,7 +456,7 @@
 
                 //socket.emit('stop game', {ship: labirintStorage.get('ship')});
                 $this.html(o.messageAfter);
-            };
+            },
         /* -------------------- */
 
         /* generates plugin markup */
@@ -464,7 +464,7 @@
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
                 $this.html('<div class="relative"><div id="timer"></div><div id="ship-map"></div><div id="step7" class="step"></div><div id="step11" class="step"></div><div id="step15" class="step"></div><div id="step24" class="step"></div><div id="step27" class="step"></div><div id="step29" class="step"></div><div id="step30" class="step"></div><div id="step33" class="step"></div><div id="step36" class="step"></div><div id="step41" class="step"></div><div id="step46" class="step"></div><div id="step58" class="step"></div><div id="step61" class="step"></div><div id="step65" class="step"></div><div id="step69" class="step"></div><div id="step72" class="step"></div><div id="step75" class="step"></div><div id="step80" class="step"></div><div id="step82" class="step"></div><div id="step84" class="step"></div><div id="step87" class="step"></div><div id="step94" class="step"></div><div id="step98" class="step"></div><div id="step5" class="step death"></div><div id="step8" class="step money"></div><div id="step9" class="step time"></div><div id="step14" class="step chest"></div><div id="step19" class="step rom"></div><div id="step23" class="step coffee"></div><div id="step38" class="step chest"></div><div id="step40" class="step time"></div><div id="step42" class="step death"></div><div id="step44" class="step time"></div><div id="step45" class="step money"></div><div id="step49" class="step time"></div><div id="step51" class="step coffee"></div><div id="step54" class="step death"></div><div id="step59" class="step time"></div><div id="step63" class="step money"></div><div id="step70" class="step money"></div><div id="step74" class="step time"></div><div id="step83" class="step chest"></div><div id="step85" class="step money"></div><div id="step86" class="step time"></div><div id="step90" class="step time"></div><div id="step95" class="step chest"></div><div id="step96" class="step time"></div><div id="step97" class="step money"></div><div id="marker1" class="cell0" data-position="0"></div><div id="marker2" class="cell0" data-position="0"></div><div id="marker3" class="cell0"  data-position="0"></div><div id="marker4" class="cell0" data-position="0"></div><div class="info"><!-- <div class="message">Ход делает красный игрок!</div>--><div class="message" id="result"></div><div class="wrap"><div id="dice" class="dice"></div></div></div><div class="help"></div><div id="labirint-time"></div></div>');
-            };
+            },
         /* -------------------- */
 
         /* set events for buttons */
@@ -504,7 +504,7 @@
                     methods.stop.call(that);
                 });
 
-            };
+            },
         /* -------------------- */
 
         /* set events for buttons */
@@ -512,7 +512,7 @@
 
             _integerDivision=function (x, y){
                 return (x-x%y)/y;
-            };
+            },
 
         /* load map data from backend */
         _loadData=function() {
@@ -521,7 +521,7 @@
                 function(data){
                     labirintData = data;
                 }, "json");
-        }
+        };
         /* -------------------- */
 
         /*

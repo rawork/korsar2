@@ -16,7 +16,7 @@
             lastMessageId = 0,
             chatIntervalTime = 15000,
             chatIntervalId = null,
-            closeChatUserInfo = null;
+            closeChatUserInfo = null,
 
         /*
          ----------------------------------------
@@ -24,7 +24,7 @@
          ----------------------------------------
          */
 
-            defaults={
+          defaults={
 
                 chatDataUrl: '/ajax/chat/common',
                 chatMessageUrl: '/ajax/chat/common/message',
@@ -38,7 +38,7 @@
          ----------------------------------------
          */
 
-            totalInstances=0, /* plugin instances amount */
+          totalInstances=0, /* plugin instances amount */
         /* general plugin classes */
 
 
@@ -48,7 +48,7 @@
          ----------------------------------------
          */
 
-            methods={
+           methods={
 
                 /*
                  plugin initialization method
@@ -138,7 +138,7 @@
         /* validates selector (if selector is invalid or undefined uses the default one) */
             _selector=function(){
                 return (typeof $(this)!=="object" || $(this).length<1) ? defaultSelector : this;
-            };
+            },
         /* -------------------- */
 
         /* init message */
@@ -146,7 +146,7 @@
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
                 $this.html(o.messageInit);
-            };
+            },
         /* -------------------- */
 
         /* generates plugin markup */
@@ -155,7 +155,7 @@
 
                 $this.html('<div class="chat-app"><div id="chat-messages" class="chat-text-container"></div><input type="text" id="chat-message" placeholder="Добавить сообщение"> <button id="chat-btn-send" class="btn">Отправить</button><div id="chat-user-info"><a href="#"></a><div class="role"></div><div class="ship"></div></div></div>');
 
-            };
+            },
         /* -------------------- */
 
         /* generates plugin markup */
@@ -212,7 +212,7 @@
             }
 
 //            console.log('lastMessageId', lastMessageId);
-        };
+        },
         /* -------------------- */
 
         /* set events for buttons */

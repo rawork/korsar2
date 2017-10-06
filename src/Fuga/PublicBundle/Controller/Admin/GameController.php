@@ -225,65 +225,53 @@ class GameController extends AdminController
 			$date2 = $this->get('request')->request->get('date2');
 			$time2 = $this->get('request')->request->get('time2');
 
-			$users = $this->get('container')->getItems('user_user', 'is_over<>1 AND role_id=' . HELPER_ROLE);
+
 			$ships = $this->get('container')->getItems('crew_ship', 'is_over<>1', 'purse DESC', '12');
+			$ships = array_values($ships);
 
 			$battles = array(1,2,3,4);
-            $players = 0;
+			$colors = array('red', 'brown', 'green');
 
 			foreach ($battles as $battle) {
-				foreach ($ships as $ship) {
-					$game = $this->get('container')->getItem('game_battle', 'ship_id=' . $ship['id']);
-					if ($game) {
-						continue;
-					}
+			    if (count($ships) < 3) {
+			        continue;
+                }
+				$teamShips = array_slice($ships, 0, 3);
+				$ships = array_diff($ships, $teamShips);
+				$game = $this->get('container')->getItem('game_battle', 'battle=' . $battle);
+                if ($game) {
+                    $this->get('container')->deleteItem('game_battle', 'battle=' . $battle);
+                }
 
-                    $users = $this->get('container')->getItems('user_user', 'is_over<>1 AND role_id=' . HELPER_ROLE);
+                // Информация о командах
+				$teamsInfo = array();
+                foreach($teamShips as $key => $ship) {
+                    $shooter = $this->get('container')->getItem('user_user', 'ship_id='.$ship['id'].' AND is_over<>1 AND role_id=' . HELPER_ROLE);
+                    $flag = $this->get('container')->getItem('crew_flag', $ship['flag']);
+                    $teamsInfo[] = array(
+                        'id' => $ship['id'],
+                        'shooter_id' => $shooter['id'],
+                        'name' => $ship['name'],
+                        'flag' => $flag['image_value']['value'],
+                        'num' => $key+1,
+                        'color' => $colors[$key],
+                        'alive' => 6,
+                        'dead' => 0,
+                        'current' => 0 == $key
+                    );
+                }
 
-					$markers = array();
-
-					$i = 1;
-					foreach ($users as $user) {
-						if ($user['ship_id'] == $ship['id']) {
-							$markers['marker'.$i] = $user['id'];
-							$i++;
-						}
-					}
-
-					$lives = array('marker1' => 3, 'marker2' => 3, 'marker3' => 3, 'marker4' => 3);
-					$positions = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
-					$wait = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
-					$money = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
-					$chest = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
-					$rom = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
-					$coffee = array('marker1' => 0, 'marker2' => 0, 'marker3' => 0, 'marker4' => 0);
-					$colors = array(
-						'marker1' => 'Коричневый',
-						'marker2' => 'Синий',
-						'marker3' => 'Зеленый',
-						'marker4' => 'Красный');
-
-
-					$state = array(
-						'markers' => $markers,
-						'who_run' => 'marker1',
-						'lives' => $lives,
-						'positions' => $positions,
-						'colors' => $colors,
-						'wait' => $wait,
-						'money' => $money,
-						'chest' => $chest,
-						'rom' => $rom,
-						'coffee' => $coffee,
-					);
-
-				}
+                $state = json_decode(file_get_contents(PRJ_DIR.'data/battle/battle'.$battle.'_raw.json'), true);
+                $state['teams'] = $teamsInfo;
 
                 $this->get('container')->addItem(
                     'game_battle',
                     array(
-                        'ship_id' => $ship['id'],
-                        'start' => $date1 . ' ' . $time1 . ':00',
+                        'battle' => $battle,
+                        'team1_id' => $teamShips[0]['id'],
+                        'team2_id' => $teamShips[1]['id'],
+                        'team3_id' => $teamShips[2]['id'],
+                        'start' => $battle < 3 ? $date1 . ' ' . $time1 . ':00' : $date2 . ' ' . $time2 . ':00',
                         'duration' => $duration,
                         'state' => json_encode($state),
                         'publish' => 1,

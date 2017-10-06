@@ -1,42 +1,10 @@
 {
-  "teams": [
-    {
-      "shooter_id": 1,
-      "name": "Длинное название в 3 строчки",
-      "flag": "/bundles/public/img/flag/flag1.png",
-      "num": 1,
-      "color": "red",
-      "alive": 6,
-      "dead": 0,
-      "current": false
-    },
-    {
-      "shooter_id": 10,
-      "name": "Длинное название в 2 строчки",
-      "flag": "/bundles/public/img/flag/flag2.png",
-      "num": 2,
-      "color": "brown",
-      "alive": 6,
-      "dead": 0,
-      "current": true
-    },
-    {
-      "shooter_id": 12,
-      "name": "Длинное название в 4 строчки",
-      "flag": "/bundles/public/img/flag/flag3.png",
-      "num": 3,
-      "color": "green",
-      "alive": 6,
-      "dead": 0,
-      "current": false
-    }
-  ],
   "imperial": {
     "type": "h",
     "points": [
       {
         "name": "9E",
-        "type": "imperial-part",
+        "type": "",
         "part": 1
       },
       {
@@ -79,7 +47,7 @@
     },
     {
       "name": "2F",
-      "type": "ship-red-killed",
+      "type": "ship-red",
       "color": "red"
     },
     {
@@ -99,7 +67,7 @@
     },
     {
       "name": "6D",
-      "type": "ship-brown-killed",
+      "type": "ship-brown",
       "color": "brown"
     },
     {
@@ -129,7 +97,7 @@
     },
     {
       "name": "2D",
-      "type": "ship-green-killed",
+      "type": "ship-green",
       "color": "green"
     },
     {
@@ -141,10 +109,6 @@
       "name": "1F",
       "type": "ship-green",
       "color": "green"
-    },
-    {
-      "name": "9J",
-      "type": "cell-empty"
     }
   ]
 }

@@ -1,0 +1,61 @@
+.chat-container {
+    position: absolute;
+    width: 490px;
+    top: 20px;
+    right: 0;
+
+    & input {
+      width: 290px;
+      height: 54px;
+      border: 2px dotted #fff;
+      padding-left: 20px;
+      outline: none;
+    }
+
+    button {
+        border: 2px solid #fff;
+        border-radius: 27px;
+        margin-left: 20px;
+        height: 54px;
+        width: 130px;
+        font-size: 16px;
+
+        &:hover {
+             border-color: #ad7512;
+        }
+    }
+
+    & .btn-history {
+        display: inline-block;
+        margin-left: 150px;
+        margin-bottom: 5px;
+        font-size: 13px;
+    }
+
+    & .init-message {
+          text-align: center;
+          padding-top: 100px;
+    }
+
+    & .text-container {
+          height: 425px;
+          padding-right: 25px;
+          font-size: 14px;
+          line-height: 22px;
+          overflow-y: scroll;
+          overflow-x: hidden;
+          margin-bottom: 30px;
+
+    & div {
+          margin-bottom: 5px;
+      }
+
+    & a {
+          text-decoration: underline;
+          display: inline-block;
+          margin-right: 5px;
+      }
+    }
+}
+
+

@@ -102,7 +102,7 @@
             <h3>Морской бой</h3>
             <span class="label label-warning">Играют 12 команд, 4 стола по 3 в 2 дня. 1 из 3 команд - победитель.</span>
             <br><br>
-            <form method="post">
+            <form method="post" id="game-battle" action="{{ path('admin_game_battle_create') }}">
                 <div class="form-group">
                     <label for="date1">Дата и время игр, день 1 </label>
                     <input class="form-control field-date" type="text" placeholder="Выберите дату..." name="date1" value="{{ "now"|date("Y-m-d") }}">
@@ -113,7 +113,7 @@
                     <input class="form-control field-date" type="text" placeholder="Выберите дату..." name="date2" value="{{ "now"|date("Y-m-d") }}">
                     <input class="form-control field-time" type="text" placeholder="Выберите время..." name="date2_time" value="12:00">
                 </div>
-                <button class="btn btn-success btn-market">Назначить игры</button>
+                <button class="btn btn-success btn-game-create-battle">Назначить игры</button>
             </form>
             <br>
             <div class="alert alert-info hidden"></div>

@@ -16,7 +16,7 @@
             choosedCell = null,
             timerSeconds = 10,
             answerInterval = null,
-            timerReal = 0;
+            timerReal = 0,
 
         /*
          ----------------------------------------
@@ -107,7 +107,7 @@
                                 return;
                             }
                             data.game.stop = parseInt(data.game.start) + (data.game.duration*60*60*24);
-                            currentTime = data.game.current;
+                            var currentTime = data.game.current;
                             if (data.game.start > currentTime) {
                                 _beforeMessage.call(that, data.game.start);
                             } else if (data.game.stop < currentTime) {
@@ -151,7 +151,7 @@
         /* validates selector (if selector is invalid or undefined uses the default one) */
             _selector=function(){
                 return (typeof $(this)!=="object" || $(this).length<1) ? defaultSelector : this;
-            };
+            },
         /* -------------------- */
 
         /* before message */
@@ -161,7 +161,7 @@
                 var msg = o.messageBefore;
                 msg = msg.replace('#time#', dt.getFullYear() + '.' + (dt.getMonth()<10?'0':'') + dt.getMonth() + '.' + (dt.getDate()<10?'0':'') + dt.getDate() + ' ' + (dt.getHours()<10?'0':'') + dt.getHours() + ':' + (dt.getMinutes()<10?'0':'') + dt.getMinutes());
                 $this.html(msg);
-            };
+            },
         /* -------------------- */
 
         /* after message */
@@ -169,7 +169,7 @@
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
                 $this.html(o.messageAfter);
-            };
+            },
         /* -------------------- */
 
 
@@ -186,7 +186,7 @@
                     var li = $('<li></li>').attr('id', 'cell' + lowEnd++);
                     $('#map-matrix').append(li[0].outerHTML);
                 }
-            };
+            },
         /* -------------------- */
 
         /* set events for buttons */
@@ -263,7 +263,7 @@
                             });
                         }, "json");
                 });
-            }
+            },
         /* -------------------- */
 
         /* load map data from backend */
@@ -273,7 +273,7 @@
                     function(data){
                         mapData = data;
                     }, "json");
-            }
+            };
         /* -------------------- */
 
         /*

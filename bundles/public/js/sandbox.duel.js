@@ -88,7 +88,7 @@
 
                             var d=$this.data(pluginPfx),o=d.opt;
 
-                            ns=$.initNamespaceStorage(pluginNS);
+                            var ns=$.initNamespaceStorage(pluginNS);
                             duelStorage = ns.localStorage // Namespace in localStorage
 
                             _initMessage.call(this);
@@ -144,7 +144,7 @@
                                     });
 
                                     // console.log(data.game, data.game.state);
-                                    for (i = 1; i < 3; i++) {
+                                    for (var i = 1; i < 3; i++) {
                                         if (data.game.state.users['user'+i] == data.game.user) {
                                             marker = 'user'+i;
                                             rival = i == 1 ? 'user2' : 'user1';
@@ -299,7 +299,7 @@
         /* validates selector (if selector is invalid or undefined uses the default one) */
             _selector=function(){
                 return (typeof $(this)!=="object" || $(this).length<1) ? defaultSelector : this;
-            };
+            },
         /* -------------------- */
 
         /* init message */
@@ -307,7 +307,7 @@
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
                 $this.html(o.messageInit);
-            };
+            },
         /* -------------------- */
 
         /* before message */
@@ -317,7 +317,7 @@
                 var msg = o.messageBefore;
                 msg = msg.replace('#time#', dt.getFullYear() + '.' + (dt.getMonth()<10?'0':'') + dt.getMonth() + '.' + (dt.getDate()<10?'0':'') + dt.getDate() + ' ' + (dt.getHours()<10?'0':'') + dt.getHours() + ':' + (dt.getMinutes()<10?'0':'') + dt.getMinutes());
                 $this.html(msg);
-            };
+            },
         /* -------------------- */
 
         /* after message */
@@ -325,7 +325,7 @@
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
                 $this.html(o.messageAfter);
-            };
+            },
         /* -------------------- */
 
         /* generates plugin markup */
@@ -333,7 +333,7 @@
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
                 $this.html('<div class="relative"><div class="question"><div id="timer" class="timer"></div><div class="title"><strong>Вопрос <span id="qnum"></span> из 25</strong></div> <div class="text" id="question"></div><ul class="answers" id="answers"><li><input type="radio" id="answer_1" name="answer" value="1" /><label for="answer_1"></label></li><li><input type="radio" id="answer_2" name="answer" value="2" /><label for="answer_2"></label> </li><li><input type="radio" id="answer_3" name="answer" value="3" /><label for="answer_3"></label></li> </ul><button class="btn btn-duel-answer" id="btn-answer">Ответить</button></div></div><div class="gamer gamer1" id="user"><img src=""> <div class="name"></div> <div class="ship"></div> <div class="action"><div class="count"></div></div></div><div class="gamer rival" id="rival"><img src=""> <div class="name"></div><div class="ship"></div><div class="action"><div class="count"></div></div></div>');
-            };
+            },
         /* -------------------- */
 
         /* set events for buttons */
@@ -375,7 +375,7 @@
                     methods.stop.call(that);
                 });
 
-            };
+            },
         /* -------------------- */
 
         /* set events for buttons */

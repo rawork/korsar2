@@ -12,7 +12,7 @@
         var pluginNS="diceGame",
             pluginPfx="diceGame",
             defaultSelector=".game-dice",
-            gamerPurse = 0;
+            gamerPurse = 0,
 
 
         /*
@@ -171,7 +171,7 @@
 
                 $this.html('<div class="dice-bankomet"><div class="bankomet"><img id="dice-bankomet-foto" src="'+o.bankometFoto+'"><div class="title">БАНКОМЕТ</div><div class="bet">Ставка: 1 пиастр</div></div></div><div class="dice-gamer"><div class="gamer"><img id="dice-gamer-foto" src=""><div class="title">ВЫ</div><div class="bet">Ставка: 1 пиастр</div><div class="purse">Кошелек: <span id="dice-gamer-purse"></span></div></div><div id="gamer-dices" class="relative"><i id="gamer-dice1" class="dice"></i><i id="gamer-dice2" class="dice"></i><i id="gamer-dice3" class="dice"></i></div></div></div><div class="dice-field"><div id="dice-message"></div><div id="dices" class="relative"><i id="field-dice1" class="dice"></i><i id="field-dice2" class="dice"></i><i id="field-dice3" class="dice"></i></div><button id="dice-btn-exit" class="dice-button">'+o.buttonTxtExit+'</button><button id="dice-btn-play" class="dice-button">'+o.buttonTxtPlay+'</button><button id="dice-btn-move" class="dice-button">'+o.buttonTxtMove+'</button><div id="dice-glass"><img src="" id="dice-glass-svg" /></div></div>');
 
-            };
+            },
         /* -------------------- */
 
         /* set events for buttons */
@@ -254,7 +254,7 @@
                 $('#dice-btn-exit').bind('click', function(e){
                     window.location.href = '/';
                 });
-            }
+            },
         /* -------------------- */
 
         /* russian lang for money */
@@ -276,7 +276,7 @@
                     }
                 }
                 return sEnding;
-            }
+            },
         /* -------------------- */
 
         /* russian lang for money */
@@ -290,7 +290,7 @@
                         }
                     }, "json");
                 $('#dice-gamer-purse').html(purse + ' '+ moneyName + _getNumEnding.call(this, purse, endings));
-            }
+            };
         /* -------------------- */
 
 

@@ -13,9 +13,9 @@ class BattleController extends Controller
 	}
 
 	public function timer() {
-//        if (!$this->isXmlHttpRequest()) {
-//            return $this->redirect('/');
-//        }
+        if (!$this->isXmlHttpRequest()) {
+            return $this->redirect('/');
+        }
 
         $response = new JsonResponse();
 
@@ -29,20 +29,25 @@ class BattleController extends Controller
         }
 
         if ('GET' == $_SERVER['REQUEST_METHOD']) {
+            $criteria = array();
+            for($i = 1; $i < 4; $i++) {
+                $criteria[] = 'team'.$i.'_id='.$user['ship_id'];
+            }
 
-            if (1 == 1) {
+            $game = $this->get('container')->getItem('game_battle', implode(' OR ', $criteria));
+            if (!$game) {
                 $response->setData(array(
-                    'error' => false,
-                    'start' => time(),
-                    'duration' => 25,
-                    'current' => time(),
+                    'error' => 'Данные о времени игры не найдены. Обратитесь к администратору.',
                 ));
 
                 return $response;
             }
 
             $response->setData(array(
-                'error' => 'Данные о времени игры не найдены. Обратитесь к администратору.',
+                'error' => false,
+                'start' => strtotime($game['start']),
+                'duration' => $game['duration'],
+                'current' => time(),
             ));
 
             return $response;
@@ -50,9 +55,9 @@ class BattleController extends Controller
     }
 
 	public function users() {
-//        if (!$this->isXmlHttpRequest()) {
-//            return $this->redirect('/');
-//        }
+        if (!$this->isXmlHttpRequest()) {
+            return $this->redirect('/');
+        }
 
         $response = new JsonResponse();
 
@@ -66,28 +71,31 @@ class BattleController extends Controller
         }
 
         if ('GET' == $_SERVER['REQUEST_METHOD']) {
-            $rawData = json_decode(file_get_contents(PRJ_DIR . '/data/battle/battle1.json'), true);
+            $criteria = array();
+            for($i = 1; $i < 4; $i++) {
+                $criteria[] = 'team'.$i.'_id='.$user['ship_id'];
+            }
 
-
-
-            if (1 == 1) {
-                $response->setData($rawData['teams']);
+            $game = $this->get('container')->getItem('game_battle', implode(' OR ', $criteria));
+            if (!$game) {
+                $response->setData(array(
+                    'error' => 'Данные об игре не найдены. Обратитесь к администратору.',
+                ));
 
                 return $response;
             }
 
-            $response->setData(array(
-                'error' => 'Данные пользователей не найдены. Обратитесь к администратору.',
-            ));
+            $rawData = json_decode($game['state'], true);
 
+            $response->setData($rawData['teams']);
             return $response;
         }
     }
 
     public function field() {
-//        if (!$this->isXmlHttpRequest()) {
-//            return $this->redirect('/');
-//        }
+        if (!$this->isXmlHttpRequest()) {
+            return $this->redirect('/');
+        }
 
         $response = new JsonResponse();
 
@@ -100,29 +108,56 @@ class BattleController extends Controller
             return $response;
         }
 
-        if ('POST' == $_SERVER['REQUEST_METHOD']) {
-            $rawData = json_decode(file_get_contents(PRJ_DIR . '/data/battle/battle1.json'), true);
+        if ('GET' == $_SERVER['REQUEST_METHOD']) {
+            $criteria = array();
+            for($i = 1; $i < 4; $i++) {
+                $criteria[] = 'team'.$i.'_id='.$user['ship_id'];
+            }
 
-            $data = $rawData;
-
-            if ($data) {
-                $response->setData($data);
+            $game = $this->get('container')->getItem('game_battle', implode(' OR ', $criteria));
+            if (!$game) {
+                $response->setData(array(
+                    'error' => 'Данные об игре не найдены. Обратитесь к администратору.',
+                ));
 
                 return $response;
             }
 
-            $response->setData(array(
-                'error' => 'Данные игрового поля не найдены. Обратитесь к администратору.',
-            ));
+            $rawData = json_decode($game['state'], true);
+
+            $team = null;
+            foreach($rawData['teams'] as $item) {
+                if ($item['shooter_id'] == $user['id']){
+                    $team = $item;
+                    break;
+                }
+
+            }
+            $field = [];
+
+            foreach ($rawData['field'] as $cell) {
+                if (!isset($cell['color']) || $cell['color'] == $team['color']) {
+                    $field[] = $cell;
+                }
+            }
+
+            foreach ($rawData['imperial']['points'] as $point) {
+                if ($point['type'] == 'imperial-part') {
+                    unset($point['part']);
+                    $field[] = $point;
+                }
+            }
+
+            $response->setData($field);
 
             return $response;
         }
     }
 
     public function messages() {
-//        if (!$this->isXmlHttpRequest()) {
-//            return $this->redirect('/');
-//        }
+        if (!$this->isXmlHttpRequest()) {
+            return $this->redirect('/');
+        }
 
         $response = new JsonResponse();
 
@@ -136,7 +171,20 @@ class BattleController extends Controller
         }
 
         if ('GET' == $_SERVER['REQUEST_METHOD']) {
-            $data = json_decode(file_get_contents(PRJ_DIR . '/data/battle/battle1_messages.json'), true);
+            $data = array();//json_decode(file_get_contents(PRJ_DIR . '/data/battle/battle1_messages.json'), true);
+            $messages = array_values($this->get('container')->getItems('chat_ship', 'ship_id='.$user['ship_id'], 'id DESC', '20'));
+            $messages = array_reverse($messages);
+
+            foreach ($messages as $message) {
+                $role = $this->get('container')->getitem('pirate_prof', $user['role_id']);
+                $data[] = array(
+                    'id' => $message['id'],
+                    'name' => $message['user_id_value']['item']['name'],
+                    'lastname' => $message['user_id_value']['item']['lastname'],
+                    'role' => $role['name'],
+                    'message' => $message['message'],
+                );
+            }
 
             if ($data) {
                 $response->setData($data);

@@ -18,7 +18,7 @@
             currentTime = 0,
             foundNeeded = 0,
             moneyPrize = 10,
-            stepInterval = null;
+            stepInterval = null,
 
         /*
          ----------------------------------------
@@ -89,7 +89,7 @@
 
                             var d=$this.data(pluginPfx),o=d.opt;
 
-                            ns=$.initNamespaceStorage(pluginNS);
+                            var ns=$.initNamespaceStorage(pluginNS);
                             pexesoStorage = ns.localStorage // Namespace in localStorage
 
                             _initMessage.call(this);
@@ -246,7 +246,7 @@
         /* validates selector (if selector is invalid or undefined uses the default one) */
             _selector=function(){
                 return (typeof $(this)!=="object" || $(this).length<1) ? defaultSelector : this;
-            };
+            },
         /* -------------------- */
 
         /* init message */
@@ -254,7 +254,7 @@
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
                 $this.html(o.messageInit);
-            };
+            },
         /* -------------------- */
 
         /* before message */
@@ -264,7 +264,7 @@
                 var msg = o.messageBefore;
                 msg = msg.replace('#time#', dt.getFullYear() + '.' + (dt.getMonth()<10?'0':'') + dt.getMonth() + '.' + (dt.getDate()<10?'0':'') + dt.getDate() + ' ' + (dt.getHours()<10?'0':'') + dt.getHours() + ':' + (dt.getMinutes()<10?'0':'') + dt.getMinutes());
                 $this.html(msg);
-            };
+            },
         /* -------------------- */
 
         /* after message */
@@ -272,7 +272,7 @@
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
                 $this.html(o.messageAfter);
-            };
+            },
         /* -------------------- */
 
         /* start message */
@@ -287,7 +287,7 @@
                         $this.html('<h2>кон ' + pexesoStorage.get('step') + '<br>' + task + '</h2>' + o.messageStart);
                     }, "json");
 
-            };
+            },
         /* -------------------- */
 
         /* generates plugin markup */
@@ -295,7 +295,7 @@
                 var $this=$(this),d=$this.data(pluginPfx),o=d.opt;
 
                 $this.html('<div class="info"><div class="timer" id="pexeso-timer"></div><div class="step">кон: <span id="pexeso-step"></span></div><div class="account">счет: <span id="pexeso-account"></span></div><div class="description" id="pexeso-description"></div><ul class="elements" id="pexeso-elements"></ul><div class="pexeso-time"></div></div><div class="field"><ul id="pexeso-field"></ul></div>');
-            };
+            },
         /* -------------------- */
 
         /* set events for buttons */
@@ -358,7 +358,7 @@
                     methods.next.call(that);
                 });
 
-            };
+            },
         /* -------------------- */
 
         /* load map data from backend */
@@ -368,7 +368,7 @@
                     function(data){
                         pexesoData = data;
                     }, "json");
-            };
+            },
         /* -------------------- */
 
         /* shuffle Array */
