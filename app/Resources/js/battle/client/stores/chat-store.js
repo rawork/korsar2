@@ -15,7 +15,10 @@ class Message {
 class ChatStore {
     @observable messages;
 
-    constructor() {
+    constructor(socket) {
+        this.socket = socket;
+
+        this.socket.on('newMessage', this.newMessage.bind(this))
         this.messages = [];
         this.fetch();
     }
@@ -26,24 +29,36 @@ class ChatStore {
 
     @action fetch() {
         fetch('/messages', { method: 'GET', credentials: "same-origin", headers: { 'X-Requested-With': 'XMLHttpRequest' }})
-            .then(res => { console.log(res); return res.json()})
+            .then(res => res.json())
             .then(json => this.putMessages(json));
     }
 
-    @action putMessages(messages) {
+    @action putMessages(data) {
         let messageArray = [];
-        messages.forEach(message => {
+        this.user = data.user;
+        data.messages.forEach(message => {
             messageArray.push(new Message(message));
         });
         this.messages = messageArray;
     }
+
+    @action newMessage(message) {
+        this.messages.push(new Message(message));
+    }
+
+    @action addMessage(message) {
+        this.socket.emit('newMessage', message);
+    }
+
+    @action saveMessage(message) {
+        let data = new FormData();
+        data.append( "message", message );
+        fetch('/message', { method: 'POST', body: data, credentials: "same-origin", headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+            .then(res => { console.log(res); return res.json()})
+            .then(json => this.addMessage(json));
+
+        this.socket.emit('newMessage', data);
+    }
 }
 
-const chatStore = new ChatStore();
-
-autorun(() => {
-    console.log(chatStore.getMessages().toJS());
-});
-
-export default chatStore;
-export { ChatStore };
+export default ChatStore;

@@ -12,12 +12,7 @@ const UserList = props => {
                 return (
                     <UserListItem
                         key={userStore.user.get('shooter_id')}
-                        num={userStore.user.get('num')}
-                        color={userStore.user.get('color')}
-                        name={userStore.user.get('name')}
-                        flag={userStore.user.get('flag')}
-                        alive={userStore.user.get('alive')}
-                        dead={userStore.user.get('dead')}
+                        user={userStore.user}
                          />);
             })}
             {props.users.map(userStore => {
@@ -25,7 +20,7 @@ const UserList = props => {
                     <UserListArrow
                         key={userStore.user.get('shooter_id')}
                         num={userStore.user.get('num')}
-                        current={userStore.user.get('current')}
+                        current={userStore.isCurrent}
                          />);
             })}
             {props.users.map(userStore => {

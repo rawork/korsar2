@@ -28,7 +28,7 @@ class FieldStore {
 
     @action fetch() {
         fetch('/field', { method: 'GET', credentials: "same-origin", headers: { 'X-Requested-With': 'XMLHttpRequest' }})
-            .then(res => { console.log(res); return res.json()})
+            .then(res => res.json())
             .then(json => this.putCells(json));
     }
 

@@ -6,15 +6,12 @@ import TimerStore from './timer-store';
 import QuestionStore from './question-store';
 
 class BattleStore {
-    constructor() {
-        this.userStore = new UserStore(this);
-        this.fieldStore = new FieldStore(this);
-        this.timerStore = new TimerStore(this);
-        this.questionStore = new QuestionStore(this);
+    constructor(socket) {
+        this.userStore = new UserStore(this, socket);
+        this.fieldStore = new FieldStore(this, socket);
+        this.timerStore = new TimerStore(this, socket);
+        this.questionStore = new QuestionStore(this, socket);
     }
 }
 
-const battleStore = new BattleStore();
-
-export default battleStore;
-export { BattleStore };
+export default BattleStore;

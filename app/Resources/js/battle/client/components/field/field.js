@@ -14,6 +14,7 @@ const Field = props => {
                     name={fieldStore.cell.get('name')}
                     type={fieldStore.cell.get('type')}
                     openQuestion={(name) => props.openQuestion(name)}
+                    isShooter={props.isShooter}
                 />);
         })}
     </div>

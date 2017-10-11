@@ -38,6 +38,10 @@
     left: 10px;
 }
 
+.game-battle .gamer.killed {
+    opacity: 0.2;
+}
+
 .game-battle .gamer .info {
     position: relative;
     float: right;
@@ -115,7 +119,7 @@
     position: absolute;
     width: 39px;
     height: 39px;
-    top: 225px;
+    top: 415px;
     left: 0;
     background-image: url('../img/battle/gamer_green.png');
     background-position: 0 0;
@@ -127,7 +131,7 @@
     position: absolute;
     width: 39px;
     height: 39px;
-    top: 415px;
+    top: 225px;
     left: 0;
     background-image: url('../img/battle/gamer_brown.png');
     background-position: 0 0;
@@ -777,5 +781,17 @@
 .answers label {
     margin-bottom: 20px;
     font-size: 16px;
+}
+
+.game-battle .user-panel {
+    font-family: 'Beryozki', Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 30px;
+    position: absolute;
+    width: 315px;
+    height: 40px;
+    top: 490px;
+    left: 241px;
+    border: 0 solid #fff;
+    text-align: center;
 }
 

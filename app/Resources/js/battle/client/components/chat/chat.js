@@ -21,7 +21,7 @@ const Chat = props => {
                              />);
                 })}
             </div>
-            <Form onClick={() => chatStore.send()} />
+            <Form onKeyDown={chatStore.addMessage} />
         </div>
     );
 };

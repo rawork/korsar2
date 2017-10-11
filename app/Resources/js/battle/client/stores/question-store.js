@@ -36,7 +36,7 @@ class QuestionStore {
         this.cell = cellName;
 
         fetch('/question?cell='+cellName, { method: 'GET', credentials: "same-origin", headers: { 'X-Requested-With': 'XMLHttpRequest' }})
-            .then(res => { console.log(res); return res.json()})
+            .then(res => res.json())
             .then(json => this.putQuestion(json));
     }
 

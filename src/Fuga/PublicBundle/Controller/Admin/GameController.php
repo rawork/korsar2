@@ -16,8 +16,51 @@ class GameController extends AdminController
 
         $numbers =  [1,2,3,4,5,6,7,8,9,10];
         $letters =  ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+        $games = array_values($this->get('container')->getItems('game_battle'));
 
-		return new Response($this->render('game/admin/index', compact('roles', 'teams', 'state', 'module', 'letters', 'numbers')));
+        $types = array(
+            'empty' => array('value' => 'empty', 'image' => '/bundles/admin/img/0.gif'),
+            'red'   => array('value' => 'red', 'image' => '/bundles/public/img/battle/ship_red.png'),
+            'brown' => array('value' => 'brown', 'image' => '/bundles/public/img/battle/ship_brown.png'),
+            'green' => array('value' => 'green', 'image' => '/bundles/public/img/battle/ship_green.png'),
+            'h'     => array('value' => 'h', 'image' => '/bundles/public/img/battle/ship_imperial_h.png'),
+            'v'     => array('value' => 'v', 'image' => '/bundles/public/img/battle/ship_imperial_v.png'),
+        );
+
+        $fields = array();
+        for ($i = 1; $i < 5; $i++) {
+            $fields[$i] = array();
+            $gameKey = array_search($i, array_column($games, 'battle'));
+
+            $checkType = false;
+            if ($gameKey !== false ) {
+                $checkType = true;
+                $game = $games[$gameKey];
+                $gameState = json_decode($game['state'], true);
+            }
+
+            foreach ($numbers as $num) {
+                foreach ($letters as $letter) {
+                    $type = 'empty';
+                    if ($checkType) {
+                        $key = array_search($num.$letter, array_column($gameState['field'], 'name'));
+                        if ($key !== false) {
+                            $type = $gameState['field'][$key]['color'];
+                        } elseif ($num.$letter == $gameState['imperial']['points'][1]['name']) {
+                            $type = $gameState['imperial']['type'];
+                        }
+                    }
+                    $fields[$i][$num.$letter] = $type;
+                }
+            }
+        }
+
+		return new Response(
+		    $this->render(
+		        'game/admin/index',
+                compact('roles', 'teams', 'state', 'module', 'letters', 'numbers', 'fields', 'types')
+            )
+        );
 	}
 
 	public function simple()

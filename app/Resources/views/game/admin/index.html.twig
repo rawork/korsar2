@@ -116,6 +116,7 @@
                 <div class="row">
                     {% set tables = [1, 2] %}
                     {%  for table in tables %}
+                    {% set currentFields = attribute(fields, table) %}
                     <div class="col-md-6">
                         <h3>Стол {{ table }}</h3>
                         <table class="table table-bordered">
@@ -136,14 +137,13 @@
                             <tr>
                                 <th>{{ num }}</th>
                                 {% for letter in letters %}
+                                    {% set currentName = num ~ letter %}
+                                    {% set currentType = attribute(currentFields, currentName) %}
                                     <td>
-                                        <input type="hidden" value="" name="cell_table{{ table }}_{{ num }}{{ letter }}">
-                                        <img class="select-image current" data-value="" src="/bundles/admin/img/0.gif">
-                                        <img class="select-image" data-value="red" src="/bundles/public/img/battle/ship_red.png">
-                                        <img class="select-image" data-value="brown" src="/bundles/public/img/battle/ship_brown.png">
-                                        <img class="select-image" data-value="green" src="/bundles/public/img/battle/ship_green.png">
-                                        <img class="select-image" data-value="v" src="/bundles/public/img/battle/imperial_v.png">
-                                        <img class="select-image" data-value="h" src="/bundles/public/img/battle/imperial_h.png">
+                                        <input type="hidden" value="{{ currentType }}" name="cell_table{{ table }}_{{ num }}{{ letter }}">
+                                        {%  for typeKey, type in types %}
+                                            <img class="select-image{% if type['value'] == currentType %} current{% endif %}" data-value="{{ type.value }}" src="{{ type.image }}">
+                                        {% endfor %}
                                     </td>
                                 {% endfor %}
                             </tr>
@@ -177,12 +177,9 @@
                                     {% for letter in letters %}
                                         <td>
                                             <input type="hidden" value="" name="cell_table{{ table }}_{{ num }}{{ letter }}">
-                                            <img class="select-image current" data-value="" src="/bundles/admin/img/0.gif">
-                                            <img class="select-image" data-value="red" src="/bundles/public/img/battle/ship_red.png">
-                                            <img class="select-image" data-value="brown" src="/bundles/public/img/battle/ship_brown.png">
-                                            <img class="select-image" data-value="green" src="/bundles/public/img/battle/ship_green.png">
-                                            <img class="select-image" data-value="v" src="/bundles/public/img/battle/imperial_v.png">
-                                            <img class="select-image" data-value="h" src="/bundles/public/img/battle/imperial_h.png">
+                                            {%  for type in types %}
+                                            <img class="select-image{% if type == fields[table][num+letter] %} current{% endif %}" data-value="{{ type.value }}" src="{{ type.image }}">
+                                            {% endfor %}
                                         </td>
                                     {% endfor %}
                                 </tr>

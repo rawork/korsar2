@@ -5,6 +5,7 @@ import UserList from '../../components/user-list';
 import TimeTable from '../../components/timetable';
 import Chat from '../../components/chat';
 import Field from '../../components/field';
+import UserPanel from '../../components/user-panel';
 import Modal from '../../components/modal';
 import StartPage from '../../components/startpage';
 import InitPage from '../../components/initpage';
@@ -17,6 +18,7 @@ const Home = inject('battleStore')(observer(({ battleStore }) => {
                 <UserList />
                 <Chat />
                 <Field />
+                <UserPanel />
                 <Modal />
             </div>
         );

@@ -8,6 +8,7 @@ const Component = inject('battleStore')(observer(({ battleStore }) => {
         <Field
             cells={battleStore.fieldStore.getCells()}
             openQuestion={(name) => battleStore.questionStore.openQuestion(name)}
+            isShooter={battleStore.userStore.isShooter}
         />
     );
 }));

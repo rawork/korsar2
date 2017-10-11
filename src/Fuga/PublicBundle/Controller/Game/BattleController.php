@@ -87,7 +87,15 @@ class BattleController extends Controller
 
             $rawData = json_decode($game['state'], true);
 
-            $response->setData($rawData['teams']);
+            $currentShooterKey = array_search(true, array_column($rawData['teams'], 'current'));
+
+            $currentShooterNum = $rawData['teams'][$currentShooterKey]['num'];
+
+            $response->setData(array(
+                'iam' => $user['ship_id'],
+                'current' => $currentShooterNum,
+                'teams' => $rawData['teams']
+            ));
             return $response;
         }
     }
@@ -171,13 +179,16 @@ class BattleController extends Controller
         }
 
         if ('GET' == $_SERVER['REQUEST_METHOD']) {
-            $data = array();//json_decode(file_get_contents(PRJ_DIR . '/data/battle/battle1_messages.json'), true);
+            $data = array(
+                'user' => array('name' => $user['name'], 'lastname' => $user['lastname'], 'role' => $user['role_id_value']['item']['name']),
+                'messages' => array(),
+            );
             $messages = array_values($this->get('container')->getItems('chat_ship', 'ship_id='.$user['ship_id'], 'id DESC', '20'));
             $messages = array_reverse($messages);
 
             foreach ($messages as $message) {
                 $role = $this->get('container')->getitem('pirate_prof', $user['role_id']);
-                $data[] = array(
+                $data['messages'][] = array(
                     'id' => $message['id'],
                     'name' => $message['user_id_value']['item']['name'],
                     'lastname' => $message['user_id_value']['item']['lastname'],

@@ -17,7 +17,7 @@ class TimerStore {
 
     @computed get displayTimer() {
         if (this.isStopped) {
-            return 'finish';
+            return '0';
         }
 
         const totalSeconds = this.isStarted
@@ -36,7 +36,7 @@ class TimerStore {
     }
 
     @computed get isStopped() {
-        return this.current >= this.stop && this.stop > 0;
+        return this.current >= this.stop;
     }
 
     getTimer() {
@@ -45,7 +45,7 @@ class TimerStore {
 
     @action fetch() {
         fetch('/timer', { method: 'GET', credentials: "same-origin", headers: { 'X-Requested-With': 'XMLHttpRequest' }})
-            .then(res => { console.log(res); return res.json()})
+            .then(res => res.json())
             .then(json => this.putTimer(json));
     }
 
@@ -67,6 +67,8 @@ class TimerStore {
             setTimeout(function () {
                 self.measure()
             }, 1000);
+        } else {
+            this.rootStore.userStore.stop();
         }
 
     }
