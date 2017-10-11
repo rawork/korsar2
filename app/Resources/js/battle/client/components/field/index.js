@@ -3,10 +3,11 @@ import { observer, inject } from 'mobx-react';
 
 import Field from './field';
 
-const Component = inject('fieldStore')(observer(({ fieldStore }) => {
+const Component = inject('battleStore')(observer(({ battleStore }) => {
     return (
         <Field
-            cells={fieldStore.getCells()}
+            cells={battleStore.fieldStore.getCells()}
+            openQuestion={(name) => battleStore.questionStore.openQuestion(name)}
         />
     );
 }));

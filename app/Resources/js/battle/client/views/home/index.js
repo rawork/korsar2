@@ -1,16 +1,31 @@
 import React from 'react';
+import { observer, inject } from 'mobx-react';
 
 import UserList from '../../components/user-list';
-import Timer from '../../components/timer';
+import TimeTable from '../../components/timetable';
 import Chat from '../../components/chat';
 import Field from '../../components/field';
+import Modal from '../../components/modal';
+import StartPage from '../../components/startpage';
+import InitPage from '../../components/initpage';
 
-const Home = () => (
-    <div className="relative">
-        <Timer />
-        <UserList />
-        <Chat />
-        <Field />
-    </div>
-);
+const Home = inject('battleStore')(observer(({ battleStore }) => {
+    if (battleStore.timerStore.isStarted) {
+        return (
+            <div className="relative">
+                <TimeTable />
+                <UserList />
+                <Chat />
+                <Field />
+                <Modal />
+            </div>
+        );
+    } else if (battleStore.timerStore.current == 0) {
+        return <InitPage />;
+    }
+
+    return <StartPage />;
+
+}));
+
 export default Home;

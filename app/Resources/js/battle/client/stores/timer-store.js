@@ -6,7 +6,8 @@ class TimerStore {
     @observable current;
     @observable stop;
 
-    constructor() {
+    constructor(rootStore) {
+        this.rootStore = rootStore;
         this.start = 0;
         this.duration = 0;
         this.current = 0;
@@ -15,22 +16,27 @@ class TimerStore {
     }
 
     @computed get displayTimer() {
-        let seconds = this.stop - this.current;
-        let minutes = (seconds-seconds%60)/60;
-        seconds = seconds%60;
-
-        if ( seconds == 0 && minutes == 0) {
+        if (this.isStopped) {
             return 'finish';
         }
 
+        const totalSeconds = this.isStarted
+            ? this.stop - this.current
+            : this.start - this.current;
+
+        const seconds = totalSeconds % 60;
+        const minutes = (totalSeconds - seconds)/60;
+
         return minutes + ":" + seconds;
+
     }
 
     @computed get isStarted() {
-        return this.current >= this.start;
+        return this.current >= this.start && this.current > 0;
     }
+
     @computed get isStopped() {
-        return this.current >= this.stop;
+        return this.current >= this.stop && this.stop > 0;
     }
 
     getTimer() {
@@ -52,8 +58,10 @@ class TimerStore {
     }
 
     @action measure() {
+        let time = parseInt((new Date().getTime()/1000));
+
         let self = this;
-        this.current += 1;
+        this.current = time;
 
         if (!this.isStopped){
             setTimeout(function () {
@@ -64,11 +72,12 @@ class TimerStore {
     }
 }
 
-const timerStore = new TimerStore();
+// const timerStore = new TimerStore();
+//
+// autorun(() => {
+//     console.log(timerStore.getTimer());
+// });
 
-autorun(() => {
-    console.log(timerStore.getTimer());
-});
-
-export default timerStore;
-export { TimerStore };
+// export default timerStore;
+export default TimerStore;
+// export { TimerStore };

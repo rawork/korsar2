@@ -296,6 +296,9 @@ game_battle_users:
 game_battle_field:
   path: field
   defaults: { _controller: 'Fuga:Public:Game:Battle:field'}
+game_battle_question:
+    path: question
+    defaults: { _controller: 'Fuga:Public:Game:Battle:question'}
 
 game_duel_data:
   path: /ajax/sandbox/duel/data

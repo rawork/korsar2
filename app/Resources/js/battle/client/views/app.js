@@ -6,14 +6,12 @@ import { useStrict } from 'mobx';
 import Home from './home';
 
 /* stores */
-import userStore from '../stores/user-store';
-import timerStore from '../stores/timer-store';
+import battleStore from '../stores/battle-store';
 import chatStore from '../stores/chat-store';
-import fieldStore from '../stores/field-store';
 
 useStrict(true);
 
-const stores = { userStore, timerStore, chatStore, fieldStore };
+const stores = { battleStore, chatStore };
 
 const App = props => (
     <Provider { ...stores }>

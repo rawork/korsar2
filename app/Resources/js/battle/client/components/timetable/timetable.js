@@ -3,10 +3,10 @@ import React from 'react';
 /* styles */
 import style from './styles.css';
 
-const Timer = props => {
+const TimeTable = props => {
     return (
         <div className={style.timer}>{props.displayTimer}</div>
     );
 };
 
-export default Timer;
+export default TimeTable;

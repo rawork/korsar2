@@ -17,7 +17,8 @@ class User {
 class UserStore {
     @observable users;
 
-    constructor() {
+    constructor(rootStore) {
+        this.rootStore = rootStore;
         this.users = [];
         this.fetch();
     }
@@ -30,6 +31,14 @@ class UserStore {
 
     getUsers() {
         return this.users;
+    }
+
+    @action addMoney(){
+
+    }
+
+    @action next(){
+
     }
 
     @action fetch() {
@@ -47,11 +56,12 @@ class UserStore {
     }
 }
 
-const userStore = new UserStore();
+// const userStore = new UserStore();
 
-autorun(() => {
-    console.log(userStore.getUsers().toJS());
-});
+// autorun(() => {
+//     console.log(userStore.getUsers().toJS());
+// });
 
-export default userStore;
-export { UserStore };
+// export default userStore;
+export default UserStore;
+// export { UserStore };

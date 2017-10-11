@@ -219,6 +219,7 @@ class BattleController extends Controller
 
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
 			$questionId = $this->get('request')->request->get('question');
+            $battleNum = $this->get('request')->request->get('battle');
 			$question = $this->get('container')->getItem('question_battle', $questionId);
 			if ($question) {
 				$response->setData(array(
@@ -235,5 +236,26 @@ class BattleController extends Controller
 
 			return $response;
 		}
+
+        if ('GET' == $_SERVER['REQUEST_METHOD']) {
+		    $questionId = rand(1, 25);
+            $question = $this->get('container')->getItem('question_duel', $questionId);
+            if ($question) {
+                unset($question['answer']);
+
+                $response->setData(array(
+                    'error' => false,
+                    'question' => $question,
+                ));
+
+                return $response;
+            }
+
+            $response->setData(array(
+                'error' => 'Вопрос не найден. Обратитесь к администратору.',
+            ));
+
+            return $response;
+        }
 	}
 }

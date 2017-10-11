@@ -3,11 +3,11 @@ import { observer, inject } from 'mobx-react';
 
 import UserList from './user-list';
 
-const Component = inject('userStore')(observer(({ userStore }) => {
+const Component = inject('battleStore')(observer(({ battleStore }) => {
     return (
         <UserList
-            users={userStore.getUsers()}
-            currentShooter={userStore.currentShooter} />
+            users={battleStore.userStore.getUsers()}
+            currentShooter={battleStore.userStore.currentShooter} />
     );
 }));
 

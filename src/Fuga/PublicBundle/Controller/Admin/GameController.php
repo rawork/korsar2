@@ -14,7 +14,10 @@ class GameController extends AdminController
 		$roles = $this->get('container')->getItems('pirate_prof', '1=1');
 		$teams = $this->get('container')->getItems('crew_ship', 'is_over=0');
 
-		return new Response($this->render('game/admin/index', compact('roles', 'teams', 'state', 'module')));
+        $numbers =  [1,2,3,4,5,6,7,8,9,10];
+        $letters =  ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+
+		return new Response($this->render('game/admin/index', compact('roles', 'teams', 'state', 'module', 'letters', 'numbers')));
 	}
 
 	public function simple()
@@ -217,13 +220,14 @@ class GameController extends AdminController
 
 		if ('POST' == $_SERVER['REQUEST_METHOD'] && $this->isXmlHttpRequest()) {
 
-			$this->get('log')->addError(json_encode($_POST));
+            $this->get('log')->addError('battle settings set');
+		    $this->get('log')->addError(json_encode($_POST));
 
 			$date1 = $this->get('request')->request->get('date1');
-			$time1 = $this->get('request')->request->get('time1');
+			$time1 = $this->get('request')->request->get('date1_time');
 
 			$date2 = $this->get('request')->request->get('date2');
-			$time2 = $this->get('request')->request->get('time2');
+			$time2 = $this->get('request')->request->get('date2_time');
 
 
 			$ships = $this->get('container')->getItems('crew_ship', 'is_over<>1', 'purse DESC', '12');
@@ -237,7 +241,9 @@ class GameController extends AdminController
 			        continue;
                 }
 				$teamShips = array_slice($ships, 0, 3);
-				$ships = array_diff($ships, $teamShips);
+
+			    $ships = array_slice($ships, 3);
+
 				$game = $this->get('container')->getItem('game_battle', 'battle=' . $battle);
                 if ($game) {
                     $this->get('container')->deleteItem('game_battle', 'battle=' . $battle);
@@ -257,11 +263,79 @@ class GameController extends AdminController
                         'color' => $colors[$key],
                         'alive' => 6,
                         'dead' => 0,
-                        'current' => 0 == $key
+                        'current' => 0 == $key,
+                        'money' => 0
                     );
                 }
 
-                $state = json_decode(file_get_contents(PRJ_DIR.'data/battle/battle'.$battle.'_raw.json'), true);
+//                $state = json_decode(file_get_contents(PRJ_DIR.'data/battle/battle'.$battle.'_raw.json'), true);
+                $state = ['field' => []];
+                $numbers = [1,2,3,4,5,6,7,8,9,10];
+                $letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+                foreach ($numbers as $numKey => $number) {
+                    foreach ($letters as $letterKey => $letter) {
+                        $cellValue = $this->get('request')->request->get('cell_table'.$battle.'_'.$number.$letter);
+                        if ($cellValue) {
+                            switch ($cellValue) {
+                                case 'v':
+                                    $state['imperial'] = [
+                                        'type' => $cellValue,
+                                        'points' => [
+                                            [
+                                                'name' => ($number-1).$letter,
+                                                'type' => '',
+                                                'part' => 1
+                                            ],
+                                            [
+                                                'name' => $number.$letter,
+                                                'type' => '',
+                                                'part' => 2
+                                            ],
+                                            [
+                                                'name' => ($number+1).$letter,
+                                                'type' => '',
+                                                'part' => 3
+                                            ]
+                                        ]
+                                    ];
+                                    break;
+                                case 'h':
+                                    $state['imperial'] = [
+                                        'type' => $cellValue,
+                                        'points' => [
+                                            [
+                                                'name' => $number.$letters[$letterKey-1],
+                                                'type' => '',
+                                                'part' => 1
+                                            ],
+                                            [
+                                                'name' => $number.$letter,
+                                                'type' => '',
+                                                'part' => 2
+                                            ],
+                                            [
+                                                'name' => $number.$letters[$letterKey+1],
+                                                'type' => '',
+                                                'part' => 3
+                                            ]
+                                        ]
+                                    ];
+                                    break;
+                                case 'red':
+                                case 'brown':
+                                case 'green':
+                                    $state['field'][] = [
+                                        'name' => $number.$letter,
+                                        'type' => 'ship-'.$cellValue,
+                                        'color' => $cellValue
+                                    ];
+                                    break;
+                                default:
+
+                            }
+                        }
+                    }
+                }
                 $state['teams'] = $teamsInfo;
 
                 $this->get('container')->addItem(

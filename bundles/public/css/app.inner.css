@@ -300,6 +300,10 @@ button:hover {
     background-color: rgba(0,0,0,0.5);
 }
 
+.modal.active {
+    display: block;
+}
+
 .close {
     width: 24px;
     height: 25px;

@@ -98,7 +98,7 @@
             {#<br>#}
             {#<div class="alert alert-info hidden"></div>#}
         {#</div>#}
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <h3>Морской бой</h3>
             <span class="label label-warning">Играют 12 команд, 4 стола по 3 в 2 дня. 1 из 3 команд - победитель.</span>
             <br><br>
@@ -113,10 +113,88 @@
                     <input class="form-control field-date" type="text" placeholder="Выберите дату..." name="date2" value="{{ "now"|date("Y-m-d") }}">
                     <input class="form-control field-time" type="text" placeholder="Выберите время..." name="date2_time" value="12:00">
                 </div>
+                <div class="row">
+                    {% set tables = [1, 2] %}
+                    {%  for table in tables %}
+                    <div class="col-md-6">
+                        <h3>Стол {{ table }}</h3>
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>*</th>
+                                <th>А</th>
+                                <th>Б</th>
+                                <th>В</th>
+                                <th>Г</th>
+                                <th>Д</th>
+                                <th>Е</th>
+                                <th>Ж</th>
+                                <th>З</th>
+                                <th>И</th>
+                                <th>К</th>
+                            </tr>
+                            {% for num in numbers  %}
+                            <tr>
+                                <th>{{ num }}</th>
+                                {% for letter in letters %}
+                                    <td>
+                                        <input type="hidden" value="" name="cell_table{{ table }}_{{ num }}{{ letter }}">
+                                        <img class="select-image current" data-value="" src="/bundles/admin/img/0.gif">
+                                        <img class="select-image" data-value="red" src="/bundles/public/img/battle/ship_red.png">
+                                        <img class="select-image" data-value="brown" src="/bundles/public/img/battle/ship_brown.png">
+                                        <img class="select-image" data-value="green" src="/bundles/public/img/battle/ship_green.png">
+                                        <img class="select-image" data-value="v" src="/bundles/public/img/battle/imperial_v.png">
+                                        <img class="select-image" data-value="h" src="/bundles/public/img/battle/imperial_h.png">
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="row">
+                    {% set tables = [3, 4] %}
+                    {%  for table in tables %}
+                    <div class="col-md-6">
+                        <h3>Стол {{ table }}</h3>
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>*</th>
+                                <th>А</th>
+                                <th>Б</th>
+                                <th>В</th>
+                                <th>Г</th>
+                                <th>Д</th>
+                                <th>Е</th>
+                                <th>Ж</th>
+                                <th>З</th>
+                                <th>И</th>
+                                <th>К</th>
+                            </tr>
+                            {% for num in numbers  %}
+                                <tr>
+                                    <th>{{ num }}</th>
+                                    {% for letter in letters %}
+                                        <td>
+                                            <input type="hidden" value="" name="cell_table{{ table }}_{{ num }}{{ letter }}">
+                                            <img class="select-image current" data-value="" src="/bundles/admin/img/0.gif">
+                                            <img class="select-image" data-value="red" src="/bundles/public/img/battle/ship_red.png">
+                                            <img class="select-image" data-value="brown" src="/bundles/public/img/battle/ship_brown.png">
+                                            <img class="select-image" data-value="green" src="/bundles/public/img/battle/ship_green.png">
+                                            <img class="select-image" data-value="v" src="/bundles/public/img/battle/imperial_v.png">
+                                            <img class="select-image" data-value="h" src="/bundles/public/img/battle/imperial_h.png">
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    {% endfor %}
+                </div>
                 <button class="btn btn-success btn-game-create-battle">Назначить игры</button>
+                <br>
+                <div class="alert alert-info hidden"></div>
             </form>
-            <br>
-            <div class="alert alert-info hidden"></div>
         </div>
     </div>
 {% endblock %}

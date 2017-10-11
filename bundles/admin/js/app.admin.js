@@ -657,7 +657,16 @@
 
             message.hide();
 
-            $.post(path, {date1: date1, time1: time1, date2: date2, time2: time2}, function(data){
+            // data = {date1: date1, time1: time1, date2: date2, time2: time2};
+
+            var unindexed_array = $('form#game-battle').serializeArray();
+            var indexed_array = {};
+
+            $.map(unindexed_array, function(n, i){
+                indexed_array[n['name']] = n['value'];
+            });
+
+            $.post(path, indexed_array, function(data){
                 console.log(data);
                 if (data.error) {
                     message
@@ -674,6 +683,25 @@
                 }
 
             }, "json");
+        });
+
+        $(document).on('click', 'img.select-image.current', function(e) {
+            e.preventDefault();
+
+            var that = $(this);
+
+            var newValueObj = that.next();
+
+            if (newValueObj.length == 0) {
+                var newValueElement = that.siblings('img').get(0);
+                newValueObj = $(newValueElement);
+            }
+            console.log(newValueObj);
+
+            that.siblings('input').attr('value', newValueObj.attr('data-value'));
+
+            newValueObj.addClass('current').siblings('img').removeClass('current');
+
         });
 
         var $dateFields = $('.field-date');

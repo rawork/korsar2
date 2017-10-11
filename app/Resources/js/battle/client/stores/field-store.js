@@ -16,7 +16,8 @@ class Cell {
 class FieldStore {
     @observable cells;
 
-    constructor() {
+    constructor(rootStore) {
+        this.rootStore = rootStore;
         this.cells = [];
         this.fetch();
     }
@@ -67,11 +68,12 @@ class FieldStore {
     }
 }
 
-const fieldStore = new FieldStore();
-
-autorun(() => {
-    console.log(fieldStore.getCells().toJS());
-});
-
-export default fieldStore;
-export { FieldStore };
+// const fieldStore = new FieldStore();
+//
+// autorun(() => {
+//     console.log(fieldStore.getCells().toJS());
+// });
+//
+// export default fieldStore;
+export default FieldStore;
+// export { FieldStore };

@@ -253,6 +253,17 @@ textarea.tinymce {
 
 }
 
+img.select-image {
+	width: 30px;
+	height: 30px;
+	display: none;
+}
+
+img.select-image.current {
+	display: block;
+}
+
+
 @media (min-width: 920px) {
 	body > .container {
 		padding-top: 70px;
