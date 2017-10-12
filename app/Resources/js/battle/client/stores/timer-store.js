@@ -6,18 +6,26 @@ class TimerStore {
     @observable current;
     @observable stop;
 
-    constructor(rootStore) {
+    constructor(rootStore, socket) {
         this.rootStore = rootStore;
+        this.socket = socket;
         this.start = 0;
         this.duration = 0;
         this.current = 0;
         this.stop = 0;
-        this.fetch();
+
+        this.socket.on('stop-game', this.stopTimer);
+    }
+
+    @action stopTimer() {
+        this.start = 0;
+        this.stop = 1;
+        this.current = 2;
     }
 
     @computed get displayTimer() {
         if (this.isStopped) {
-            return '0';
+            return 'Завершена';
         }
 
         const totalSeconds = this.isStarted
@@ -39,21 +47,19 @@ class TimerStore {
         return this.current >= this.stop;
     }
 
-    getTimer() {
-        return this.start;
+    @computed get isActive() {
+        return this.isStarted && !this.isStopped;
     }
 
-    @action fetch() {
-        fetch('/timer', { method: 'GET', credentials: "same-origin", headers: { 'X-Requested-With': 'XMLHttpRequest' }})
-            .then(res => res.json())
-            .then(json => this.putTimer(json));
+    getTimer() {
+        return this.start;
     }
 
     @action putTimer(data) {
         this.start = data.start;
         this.duration = data.duration;
         this.stop = (this.start + this.duration * 60);
-        this.current = data.current;
+        this.current = data.moment;
         this.measure();
     }
 
@@ -68,18 +74,10 @@ class TimerStore {
                 self.measure()
             }, 1000);
         } else {
-            this.rootStore.userStore.stop();
+            this.socket.emit('stop-game');
         }
 
     }
 }
 
-// const timerStore = new TimerStore();
-//
-// autorun(() => {
-//     console.log(timerStore.getTimer());
-// });
-
-// export default timerStore;
 export default TimerStore;
-// export { TimerStore };

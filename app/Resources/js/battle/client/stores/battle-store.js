@@ -6,11 +6,32 @@ import TimerStore from './timer-store';
 import QuestionStore from './question-store';
 
 class BattleStore {
+    @observable user;
+    @observable battle;
+    @observable shotTimer;
+
     constructor(socket) {
+        this.socket = socket;
         this.userStore = new UserStore(this, socket);
-        this.fieldStore = new FieldStore(this, socket);
         this.timerStore = new TimerStore(this, socket);
         this.questionStore = new QuestionStore(this, socket);
+        this.fieldStore = new FieldStore(this);
+        this.fetchData();
+    }
+
+    @action fetchData() {
+        fetch('/api/battle/data', { method: 'GET', credentials: "same-origin", headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+            .then(res => res.json())
+            .then(json => this.putData(json));
+    }
+
+    @action putData(data) {
+        this.user = data.user;
+        this.battle = data.battle;
+
+        this.timerStore.putTimer(data.timer);
+        this.userStore.putUsers(data.teams, data.shooter, this.user);
+        this.fieldStore.putCells(data.field);
     }
 }
 

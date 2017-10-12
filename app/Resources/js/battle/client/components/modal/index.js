@@ -10,7 +10,7 @@ const Component = inject('battleStore')(observer(({ battleStore }) => {
             question={battleStore.questionStore.question}
             answerTimer={battleStore.questionStore.displayTimer}
             setAnswer={(num) => battleStore.questionStore.setAnswer(num)}
-            answer={() => battleStore.questionStore.answer()}
+            onAnswer={() => battleStore.questionStore.onAnswer()}
         />
     );
 }));

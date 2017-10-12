@@ -7,6 +7,9 @@ const Component = inject('chatStore')(observer(({ chatStore }) => {
     return (
         <Chat
             messages={chatStore.getMessages()}
+            newMessageText={chatStore.newMessageText}
+            onChangeMessage={(e) => chatStore.onChangeMessage(e)}
+            onSubmitMessage={(e) => chatStore.onSubmitMessage(e)}
         />
     );
 }));

@@ -3,16 +3,14 @@
 namespace Fuga\PublicBundle\Controller\Game;
 
 use Fuga\CommonBundle\Controller\Controller;
+use Fuga\PublicBundle\Model\Game;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Fuga\PublicBundle\Model\Cell;
 
 class BattleController extends Controller
 {
 	public function data()
 	{
-
-	}
-
-	public function timer() {
         if (!$this->isXmlHttpRequest()) {
             return $this->redirect('/');
         }
@@ -29,13 +27,9 @@ class BattleController extends Controller
         }
 
         if ('GET' == $_SERVER['REQUEST_METHOD']) {
-            $criteria = array();
-            for($i = 1; $i < 4; $i++) {
-                $criteria[] = 'team'.$i.'_id='.$user['ship_id'];
-            }
+            $game = new Game($user['ship_id'], $this->get('container'));
 
-            $game = $this->get('container')->getItem('game_battle', implode(' OR ', $criteria));
-            if (!$game) {
+            if (!$game->getGame()) {
                 $response->setData(array(
                     'error' => 'Данные о времени игры не найдены. Обратитесь к администратору.',
                 ));
@@ -45,122 +39,18 @@ class BattleController extends Controller
 
             $response->setData(array(
                 'error' => false,
-                'start' => strtotime($game['start']),
-                'duration' => $game['duration'],
-                'current' => time(),
+                'user' => intval($user['id']),
+                'battle' => $game->getBattleNum(),
+                'shooter' => $game->getShooter(),
+                'shooter_timer' => $game->getUserTimer(),
+                'timer' => $game->getTimer(),
+                'teams' => $game->getTeams(),
+                'field' => $game->getCells(),
             ));
 
             return $response;
         }
-    }
-
-	public function users() {
-        if (!$this->isXmlHttpRequest()) {
-            return $this->redirect('/');
-        }
-
-        $response = new JsonResponse();
-
-        $user = $this->getManager('Fuga:Common:User')->getCurrentUser();
-        if (!$user || $user['group_id'] == FAN_GROUP) {
-            $response->setData(array(
-                'error' => 'Access denied',
-            ));
-
-            return $response;
-        }
-
-        if ('GET' == $_SERVER['REQUEST_METHOD']) {
-            $criteria = array();
-            for($i = 1; $i < 4; $i++) {
-                $criteria[] = 'team'.$i.'_id='.$user['ship_id'];
-            }
-
-            $game = $this->get('container')->getItem('game_battle', implode(' OR ', $criteria));
-            if (!$game) {
-                $response->setData(array(
-                    'error' => 'Данные об игре не найдены. Обратитесь к администратору.',
-                ));
-
-                return $response;
-            }
-
-            $rawData = json_decode($game['state'], true);
-
-            $currentShooterKey = array_search(true, array_column($rawData['teams'], 'current'));
-
-            $currentShooterNum = $rawData['teams'][$currentShooterKey]['num'];
-
-            $response->setData(array(
-                'iam' => $user['ship_id'],
-                'current' => $currentShooterNum,
-                'teams' => $rawData['teams']
-            ));
-            return $response;
-        }
-    }
-
-    public function field() {
-        if (!$this->isXmlHttpRequest()) {
-            return $this->redirect('/');
-        }
-
-        $response = new JsonResponse();
-
-        $user = $this->getManager('Fuga:Common:User')->getCurrentUser();
-        if (!$user || $user['group_id'] == FAN_GROUP) {
-            $response->setData(array(
-                'error' => 'Access denied',
-            ));
-
-            return $response;
-        }
-
-        if ('GET' == $_SERVER['REQUEST_METHOD']) {
-            $criteria = array();
-            for($i = 1; $i < 4; $i++) {
-                $criteria[] = 'team'.$i.'_id='.$user['ship_id'];
-            }
-
-            $game = $this->get('container')->getItem('game_battle', implode(' OR ', $criteria));
-            if (!$game) {
-                $response->setData(array(
-                    'error' => 'Данные об игре не найдены. Обратитесь к администратору.',
-                ));
-
-                return $response;
-            }
-
-            $rawData = json_decode($game['state'], true);
-
-            $team = null;
-            foreach($rawData['teams'] as $item) {
-                if ($item['shooter_id'] == $user['id']){
-                    $team = $item;
-                    break;
-                }
-
-            }
-            $field = [];
-
-            foreach ($rawData['field'] as $cell) {
-                if (!isset($cell['color']) || $cell['color'] == $team['color']) {
-                    $field[] = $cell;
-                }
-            }
-
-            foreach ($rawData['imperial']['points'] as $point) {
-                if ($point['type'] == 'imperial-part') {
-                    unset($point['part']);
-                    $field[] = $point;
-                }
-            }
-
-            $response->setData($field);
-
-            return $response;
-        }
-    }
+	}
 
     public function messages() {
         if (!$this->isXmlHttpRequest()) {
@@ -180,7 +70,6 @@ class BattleController extends Controller
 
         if ('GET' == $_SERVER['REQUEST_METHOD']) {
             $data = array(
-                'user' => array('name' => $user['name'], 'lastname' => $user['lastname'], 'role' => $user['role_id_value']['item']['name']),
                 'messages' => array(),
             );
             $messages = array_values($this->get('container')->getItems('chat_ship', 'ship_id='.$user['ship_id'], 'id DESC', '20'));
@@ -211,6 +100,68 @@ class BattleController extends Controller
         }
     }
 
+    public function message() {
+        if (!$this->isXmlHttpRequest()) {
+            return $this->redirect('/');
+        }
+
+        $response = new JsonResponse();
+
+        $user = $this->getManager('Fuga:Common:User')->getCurrentUser();
+        if (!$user || $user['group_id'] == FAN_GROUP) {
+            $response->setData(array(
+                'error' => 'Access denied',
+            ));
+
+            return $response;
+        }
+
+        if ('POST' == $_SERVER['REQUEST_METHOD']) {
+            $message = strip_tags($this->get('request')->request->get('message'));
+            if (!$message) {
+                $response->setData(array(
+                    'error' => 'Пустое сообщение',
+                ));
+
+                return $response;
+            }
+
+            try {
+                $messageId = $this->get('container')->addItem(
+                    'chat_ship',
+                    array(
+                        'message' => $message,
+                        'user_id' => $user['id'],
+                        'ship_id' => $user['ship_id'],
+                        'created' => date('Y-m-d H:i:s'),
+                        'publish' => 1,
+                    )
+                );
+
+            } catch (\Exception $e) {
+                $this->err($e->getMessage());
+                $response->setData(array(
+                    'error' => 'Сообщение не сохранено. Обратитесь к администратору.',
+                ));
+
+                return $response;
+            }
+
+            $role = $this->get('container')->getitem('pirate_prof', $user['role_id']);
+            $response->setData(array(
+                'error' => false,
+                'message' => array(
+                    'id' => $messageId,
+                    'name' => $user['name'],
+                    'lastname' => $user['lastname'],
+                    'role' => $role['name'],
+                    'message' => $message,
+            )));
+
+            return $response;
+        }
+    }
+
 	public function question()
 	{
 		if (!$this->isXmlHttpRequest()) {
@@ -229,28 +180,66 @@ class BattleController extends Controller
 		}
 
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
-			$questionId = $this->get('request')->request->get('question');
-            $battleNum = $this->get('request')->request->get('battle');
-			$question = $this->get('container')->getItem('question_battle', $questionId);
-			if ($question) {
-				$response->setData(array(
-					'error' => false,
-					'question' => $question,
-				));
+		    $game = new Game($user['ship_id'], $this->get('container'));
 
-				return $response;
-			}
+            if (!$game->getGame()) {
+                $response->setData(array(
+                    'error' => 'Данные об игре не найдены. Обратитесь к администратору.',
+                ));
+
+                return $response;
+            }
+
+            $money = 0;
+            $type = '';
+
+			$questionId = $this->get('request')->request->get('question');
+            $answer = $this->get('request')->request->get('answer');
+            $cell = $this->get('request')->request->get('cell');
+			$question = $this->get('container')->getItem('question_battle', 'id='.$questionId.' AND answer='.$answer);
+
+			//  нашли вопрос с таким ID и таким значением ответа = правильный ответ
+			if ($question) {
+			     list($money, $type) = $game->shot($cell);
+			} else {
+			    $game->setShooter($game->nextShooter($game->getShooter()));
+                $game->setUserTimer(time() + $game->getUserTimerDuration());
+            }
+
+            $game->save();
 
 			$response->setData(array(
-				'error' => 'Вопрос не найден. Обратитесь к администратору.',
-			));
+                'error' => false,
+                'money' => $money,
+                'type' => $type,
+                'shooter' => $game->getShooter(),
+                'timer' => $game->getUserTimer(),
+            ));
+
 
 			return $response;
 		}
 
         if ('GET' == $_SERVER['REQUEST_METHOD']) {
-		    $questionId = rand(1, 25);
-            $question = $this->get('container')->getItem('question_duel', $questionId);
+            $criteria = array();
+            for($i = 1; $i < 4; $i++) {
+                $criteria[] = 'team'.$i.'_id='.$user['ship_id'];
+            }
+
+            $game = $this->get('container')->getItem('game_battle', implode(' OR ', $criteria));
+            if (!$game) {
+                $response->setData(array(
+                    'error' => 'Данные о времени игры не найдены. Обратитесь к администратору.',
+                ));
+
+                return $response;
+            }
+
+
+            $cell = new Cell();
+            $questionId = $cell->getIndexByName($this->get('request')->request->get('cell'));
+
+            $question = $this->get('container')->getItem('question_battle', $questionId);
             if ($question) {
                 unset($question['answer']);
 

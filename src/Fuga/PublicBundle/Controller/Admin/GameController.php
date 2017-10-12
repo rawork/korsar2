@@ -263,8 +263,8 @@ class GameController extends AdminController
 
 		if ('POST' == $_SERVER['REQUEST_METHOD'] && $this->isXmlHttpRequest()) {
 
-            $this->get('log')->addError('battle settings set');
-		    $this->get('log')->addError(json_encode($_POST));
+//          $this->get('log')->addError('battle settings set');
+//		    $this->get('log')->addError(json_encode($_POST));
 
 			$date1 = $this->get('request')->request->get('date1');
 			$time1 = $this->get('request')->request->get('date1_time');
@@ -272,8 +272,8 @@ class GameController extends AdminController
 			$date2 = $this->get('request')->request->get('date2');
 			$time2 = $this->get('request')->request->get('date2_time');
 
-
-			$ships = $this->get('container')->getItems('crew_ship', 'is_over<>1', 'purse DESC', '12');
+			// находим 12 команд для формирования 4 игр
+			$ships = $this->get('container')->getItems('crew_ship', 'is_over<>1', 'purse DESC', 12);
 			$ships = array_values($ships);
 
 			$battles = array(1,2,3,4);
@@ -306,13 +306,16 @@ class GameController extends AdminController
                         'color' => $colors[$key],
                         'alive' => 6,
                         'dead' => 0,
-                        'current' => 0 == $key,
                         'money' => 0
                     );
                 }
 
 //                $state = json_decode(file_get_contents(PRJ_DIR.'data/battle/battle'.$battle.'_raw.json'), true);
-                $state = ['field' => []];
+                $state = [
+                    'shooter' => 1,
+                    'timer' => 0,
+                    'field' => []
+                ];
                 $numbers = [1,2,3,4,5,6,7,8,9,10];
                 $letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
                 foreach ($numbers as $numKey => $number) {
@@ -327,17 +330,17 @@ class GameController extends AdminController
                                             [
                                                 'name' => ($number-1).$letter,
                                                 'type' => '',
-                                                'part' => 1
+                                                'shooter' => 0
                                             ],
                                             [
                                                 'name' => $number.$letter,
                                                 'type' => '',
-                                                'part' => 2
+                                                'shooter' => 0
                                             ],
                                             [
                                                 'name' => ($number+1).$letter,
                                                 'type' => '',
-                                                'part' => 3
+                                                'shooter' => 0
                                             ]
                                         ]
                                     ];
@@ -349,17 +352,17 @@ class GameController extends AdminController
                                             [
                                                 'name' => $number.$letters[$letterKey-1],
                                                 'type' => '',
-                                                'part' => 1
+                                                'shooter' => 0
                                             ],
                                             [
                                                 'name' => $number.$letter,
                                                 'type' => '',
-                                                'part' => 2
+                                                'shooter' => 0
                                             ],
                                             [
                                                 'name' => $number.$letters[$letterKey+1],
                                                 'type' => '',
-                                                'part' => 3
+                                                'shooter' => 0
                                             ]
                                         ]
                                     ];

@@ -13,8 +13,9 @@ const Field = props => {
                     key={fieldStore.cell.get('id')}
                     name={fieldStore.cell.get('name')}
                     type={fieldStore.cell.get('type')}
-                    openQuestion={(name) => props.openQuestion(name)}
                     isShooter={props.isShooter}
+                    onOpenQuestion={(name) => props.onOpenQuestion(name)}
+
                 />);
         })}
     </div>

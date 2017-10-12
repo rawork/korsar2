@@ -32,7 +32,7 @@ class QuestionStore {
         return this.question;
     }
 
-    @action openQuestion(cellName) {
+    @action onOpenQuestion(cellName) {
         this.cell = cellName;
 
         fetch('/question?cell='+cellName, { method: 'GET', credentials: "same-origin", headers: { 'X-Requested-With': 'XMLHttpRequest' }})
@@ -40,17 +40,17 @@ class QuestionStore {
             .then(json => this.putQuestion(json));
     }
 
-    @action answer() {
+    @action onAnswer() {
         if (this.answerNum == 0) {
-            return;
-        } else {
-            console.log(this.answerNum);
-            this.clearQuestion();
+            console.log('empty answer')
             return;
         }
+        console.log(this.answerNum);
+
         let data = new FormData();
         data.append( "question", this.question.id );
         data.append( "answer", this.answerNum );
+        this.clearQuestion();
         fetch('/question', { method: 'POST', body: data, credentials: "same-origin", headers: { 'X-Requested-With': 'XMLHttpRequest' }})
             .then(res => { console.log(res); return res.json()})
             .then(json => this.putAnswer(json));
@@ -60,8 +60,12 @@ class QuestionStore {
         this.question = data.question;
         this.answerNum = 0;
         this.current =  parseInt(new Date().getTime()/1000);
-        this.stop = this.current + 25;
+        this.stop = this.current + (this.rootStore.userStore.users.length < 4 ? parseInt(25*2/3) : 25);
         this.measure();
+    }
+
+    @action putAnswer(data) {
+
     }
 
     @action clearQuestion() {
@@ -73,10 +77,6 @@ class QuestionStore {
 
     @action setAnswer(num) {
         this.answerNum = num;
-    }
-
-    @action putAnswer(data) {
-
     }
 
     @action measure() {
@@ -91,7 +91,7 @@ class QuestionStore {
             }, 1000);
         } else {
             this.clearQuestion();
-            //this.rootStore.userStore.nextStep()
+            //this.rootStore.userStore.next()
         }
 
     }

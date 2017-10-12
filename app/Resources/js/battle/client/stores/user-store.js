@@ -4,19 +4,14 @@ class User {
     @observable user = observable.map();
     @observable isCurrent;
 
-    constructor(userData = {}, currentUser) {
-        this.user.merge(userData);
-        this.isCurrent = this.user.get('id') == currentUser;
+    constructor(teamData = {}, userId) {
+        this.user.merge(teamData);
+        this.isCurrent = this.user.get('shooter_id') == userId;
     }
 
     @computed get isOver() {
         return this.user.get('dead') == 6;
     }
-
-    @action stop() {
-        this.user.set('current', false);
-    }
-
 }
 
 class UserStore {
@@ -25,21 +20,36 @@ class UserStore {
     @observable shotStopTime;
     @observable shotCurrentTime;
 
-    constructor(rootStore) {
+    constructor(rootStore, socket) {
         this.rootStore = rootStore;
+        this.socket = socket;
         this.users = [];
         this.currentShooter = 0;
         this.shotStopTime = 0;
         this.shotCurrentTime = 0;
-        this.fetch();
+
+        this.socket.on('next', this.setShooter);
+        this.socket.on('stop-game', this.stop);
+    }
+
+    @action setShooter(num) {
+        this.currentShooter = num;
+        if (this.isShooter && this.rootStore.timerStore.isActive) {
+            this.setShotTimer()
+        }
     }
 
     @computed get isShooter() {
-        const currentShooter = this.users.find(userStore => {
-            return userStore.user.get("current") ;
+        console.log('isShooter', this.currentShooter);
+        if (typeof this.currentShooter == 'undefined' || this.currentShooter == 0 ) {
+            return false;
+        }
+        const shooter = this.users.find(userStore => {
+            return userStore.user.get('num') ==  this.currentShooter;
         });
-        if (typeof currentShooter != 'undefined') {
-            return currentShooter.user.get('num') == this.currentShooter && currentShooter.isCurrent;
+
+        if (typeof shooter != 'undefined') {
+            return shooter.isCurrent;
         }
 
         return false;
@@ -89,50 +99,35 @@ class UserStore {
         this.currentShooter = this.getNextShooterNum(this.currentShooter);
         console.log('currentShooter', this.currentShooter);
         if (this.currentShooter === 0) {
-            this.stop();
-            // todo emit 'stopGame';
             // updateState
+            this.socket.emit('stop-game');
         } else {
-            // todo emit 'nextShooter'
             // updateState
-            this.setShotTimer();
+            this.socket.emit('next', this.currentShooter);
         }
 
     }
 
-    @action stop() {
-        this.users.forEach(userStore => {
-            userStore.stop();
-        })
-    }
-
-    @action fetch() {
-        fetch('/users', { method: 'GET', credentials: "same-origin", headers: { 'X-Requested-With': 'XMLHttpRequest' }})
-            .then(res => res.json())
-            .then(json => this.putUsers(json));
+    @action putUsers(teams, shooterNum, userId) {
+        let userArray = [];
+        this.currentShooter = shooterNum;
+        teams.forEach(team => {
+            userArray.push(new User(team, userId));
+        });
+        this.users = userArray;
+        if (this.isShooter && this.rootStore.timerStore.isActive) {
+            this.setShotTimer()
+        }
     }
 
     @action setShotTimer() {
         let shotTime = 15;
-        if (this.users.filter(userStore => userStore.user.get('dead') < 6).length < 3) {
+        if (this.users.filter(userStore => !userStore.isOver).length < 3) {
             shotTime = 10;
         }
         this.shotCurrentTime = parseInt((new Date().getTime()/1000));
         this.shotStopTime = this.shotCurrentTime + shotTime;
         this.measure();
-    }
-
-    @action putUsers(data) {
-        console.log(data);
-        let userArray = [];
-        this.currentShooter = data.current;
-        data.teams.forEach(user => {
-            userArray.push(new User(user, data.iam));
-        });
-        this.users = userArray;
-        if (this.isShooter) {
-            this.setShotTimer()
-        }
     }
 
     @action measure() {
@@ -149,6 +144,10 @@ class UserStore {
             this.next();
         }
 
+    }
+
+    @action stop() {
+        this.currentShooter = 0;
     }
 }
 

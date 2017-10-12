@@ -1,37 +1,16 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
-const Form = props => {
-
-    handleNewMessageKeyDown = (event) => {
-        if (event.keyCode !== ENTER_KEY) {
-            return;
-        }
-
-        event.preventDefault();
-
-        const val = ReactDOM.findDOMNode(this.refs.newMessage).value.trim();
-
-        if (val) {
-            props.onKeyDown(val);
-            ReactDOM.findDOMNode(this.refs.newMessage).value = '';
-        }
-    };
-
-    return (
-    <form>
+const Form = props => (
+    <form onSubmit={(e) => props.onSubmitMessage(e)}>
         <input
-            ref="newMessage"
             type="text"
-            onKeyDown={this.handleNewMessageKeyDown}
+            onChange={(e) => props.onChangeMessage(e)}
+            value={props.newMessageText}
             autoFocus={true}
             placeholder="Добавить сообщение"
         />
-        <button type="submit" onClick={(event) => props.onClick(event)} className="btn">Отправить</button>
+        <button type="submit" className="btn">Отправить</button>
     </form>
-    )
-};
+);
 
 export default Form;
-
-

@@ -21,7 +21,7 @@ const Modal = props => {
                             <input type="radio" id="answer_3" name="answer" value="3" />
                             <label htmlFor="answer_3" onClick={() => props.setAnswer(3)}>{props.question.answer3}</label>
                         </div>
-                        <button className="btn" onClick={() => props.answer()}>Ответить</button>
+                        <button className="btn" onClick={() => props.onAnswer()}>Ответить</button>
                     </div>
                 </div>
             </div>

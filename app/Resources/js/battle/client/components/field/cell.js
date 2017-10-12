@@ -6,7 +6,7 @@ const Cell = props => {
         return (
             <div
                 className={`cell cell${props.name} ${activeClass}`}
-                onClick={() => props.openQuestion(props.name)}
+                onClick={() => props.onOpenQuestion(props.name)}
             />
         )
     } else {
