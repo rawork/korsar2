@@ -26,6 +26,10 @@ class ChatStore {
         this.fetch();
     }
 
+    @computed get messagesCount() {
+        return this.messages.length;
+    }
+
     getMessages() {
         return this.messages;
     }
@@ -43,7 +47,6 @@ class ChatStore {
             messageArray.push(new Message(message));
         });
         this.messages = messageArray;
-        this.addScrollObserver();
     }
 
     @action onChangeMessage(e) {
@@ -53,6 +56,7 @@ class ChatStore {
     @action newMessage(message) {
         console.log('New message emited', message);
         this.messages.push(new Message(message));
+        this.addScrollObserver();
     }
 
     @action addMessage(data) {
@@ -61,6 +65,7 @@ class ChatStore {
             return;
         }
         this.messages.push(new Message(data.message));
+        this.addScrollObserver();
         this.newMessageText = '';
         this.socket.emit('newMessage', data.message);
     }
@@ -80,6 +85,9 @@ class ChatStore {
     }
 
     addScrollObserver() {
+        if (this.scrolled) {
+            return;
+        }
         // Get a reference to the div you want to auto-scroll.
         const someElement = document.querySelector('.text-container');
         // Create an observer and pass it a callback.

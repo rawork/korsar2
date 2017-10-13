@@ -6,9 +6,9 @@ class QuestionStore {
     @observable stop;
     @observable current;
 
-    constructor(rootStore) {
+    constructor(rootStore, socket) {
         this.rootStore = rootStore;
-        this.socket;
+        this.socket = socket;
         this.question = null;
         this.cell = null;
         this.stop = 0;
@@ -35,22 +35,26 @@ class QuestionStore {
 
     @action onOpenQuestion(cellName) {
         this.cell = cellName;
+        this.rootStore.userStore.shotTimer.stop();
+        this.socket.emit('question', this.rootStore.battle);
 
-        fetch('/question?cell='+cellName, { method: 'GET', credentials: "same-origin", headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+        console.log('onOpenQuestion',  this.cell);
+
+        fetch('/question?cell=' + this.cell, { method: 'GET', credentials: "same-origin", headers: { 'X-Requested-With': 'XMLHttpRequest' }})
             .then(res => res.json())
             .then(json => this.putQuestion(json));
     }
 
     @action onAnswer() {
         if (this.answerNum == 0) {
-            console.log('empty answer')
             return;
         }
-        console.log(this.answerNum);
+        console.log('onAnswer', this.question, this.answerNum, this.cell);
 
         let data = new FormData();
         data.append( "question", this.question.id );
         data.append( "answer", this.answerNum );
+        data.append( "cell", this.cell );
         this.clearQuestion();
         fetch('/question', { method: 'POST', body: data, credentials: "same-origin", headers: { 'X-Requested-With': 'XMLHttpRequest' }})
             .then(res => { console.log(res); return res.json()})
@@ -58,6 +62,8 @@ class QuestionStore {
     }
 
     @action putQuestion(data) {
+        console.log('get question data', data);
+        this.socket.emit('question', this.rootStore.battle);
         this.question = data.question;
         this.answerNum = 0;
         this.current =  parseInt(new Date().getTime()/1000);
@@ -66,7 +72,10 @@ class QuestionStore {
     }
 
     @action putAnswer(data) {
-        this.socket.emit('next', {shooter: data.shooter, timer: data.timer});
+        console.log('get answer result', data);
+
+        // todo сделать обновление данных state - дать денег
+        this.socket.emit('next', this.rootStore.battle);
 
     }
 
@@ -93,7 +102,7 @@ class QuestionStore {
             }, 1000);
         } else {
             this.clearQuestion();
-            //this.rootStore.userStore.next()
+            this.socket.emit('next', this.rootStore.battle);
         }
 
     }

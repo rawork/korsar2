@@ -72,7 +72,7 @@ class BattleController extends Controller
             $data = array(
                 'messages' => array(),
             );
-            $messages = array_values($this->get('container')->getItems('chat_ship', 'ship_id='.$user['ship_id'], 'id DESC', '20'));
+            $messages = array_values($this->get('container')->getItems('chat_ship', 'ship_id='.$user['ship_id'], 'id DESC', 10));
             $messages = array_reverse($messages);
 
             foreach ($messages as $message) {
@@ -237,7 +237,7 @@ class BattleController extends Controller
 
 
             $cell = new Cell();
-            $questionId = $cell->getIndexByName($this->get('request')->request->get('cell'));
+            $questionId = $cell->getIndexByName($this->get('request')->query->get('cell'));
 
             $question = $this->get('container')->getItem('question_battle', $questionId);
             if ($question) {

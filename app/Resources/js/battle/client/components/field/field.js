@@ -6,13 +6,12 @@ import Cell from './cell';
 const Field = props => {
     return (
     <div>
-        <div className="battlefield"></div>
+        <div className="battlefield" htmlFor={props.shotTimer}></div>
         {props.cells.map(fieldStore => {
             return (
                 <Cell
                     key={fieldStore.cell.get('id')}
-                    name={fieldStore.cell.get('name')}
-                    type={fieldStore.cell.get('type')}
+                    cell={fieldStore.cell}
                     isShooter={props.isShooter}
                     onOpenQuestion={(name) => props.onOpenQuestion(name)}
 

@@ -15,6 +15,9 @@ class TimerStore {
         this.stop = 0;
 
         this.socket.on('stop-game', this.stopTimer);
+        this.socket.on('automove', (data) => {
+            console.log('automove', data);
+        });
     }
 
     @action stopTimer() {

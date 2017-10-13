@@ -4,35 +4,56 @@ const io = require('socket.io')(http);
 const fs = require('fs');
 const path = require('path');
 
-const shotTime = 15;
-const questionTime = 25;
+const shotTime = 25;
+const questionTime = 35;
 
 let states = [];
 let shooters = [];
 let teams = [];
-let intervals = [];
 let timers = [];
+let autoStepIntervals = [];
 let beforeIntervals = [];
 let stopIntervals = [];
 let startTimes = [];
 let stopTimes = [];
 
-let autoStep = function(shooter, state) {
-    state.positions[marker] = parseInt(state.positions[marker]) + parseInt(num);
+const getShotTimer = function(battle) {
+    return teams[battle].filter(element => element.dead == 6).length < 3 ? 20 : 15;
+};
 
-    if (state.positions[marker] > 100) {
-        state.positions[marker] = 100;
+const getQuestionTimer = function(battle) {
+    return teams[battle].filter(element => element.dead == 6).length < 3 ? 35 : 25;
+};
+
+const getShotStopTime = function(battle) {
+    return parseInt((new Date().getTime()/1000)) + getShotTimer(battle);
+};
+
+const getNextShooterNum = function(battle, currentNum, level = 0) {
+    // из трех игроков двоих не нашли - закончить игру
+    if (level >= 2) {
+        return 0;
     }
-    //console.log('autostep', state);
-    return state;
-}
+
+    const newNum = currentNum >= 3 ? 1 : currentNum + 1;
+
+    const nextTeam = teams[battle].find(team => {
+        return team.num == newNum && team.dead < 6;
+    });
+
+    if (typeof nextTeam == 'undefined') {
+        return getNextShooterNum(battle, newNum, level+1)
+    }
+
+    return newNum;
+};
 
 io.on('connection', function(socket){
     console.log('a user connected');
 
     socket.on('room', function(battle) {
         socket.join(battle);
-        console.log('user connected to ' + battle);
+        console.log('user connected to battle ' + battle);
     });
 
     socket.on('disconnect', function(){
@@ -44,9 +65,17 @@ io.on('connection', function(socket){
         socket.broadcast.emit('newMessage', message);
     });
 
-    socket.on('next', function(data) {
-        console.log('next', data);
-        io.emit('next', data);
+    socket.on('next', function(battle) {
+        console.log('next', battle);
+        states[battle].shooter = getNextShooterNum(battle, states[battle].shooter);
+        timers[battle] = shotTime;
+        shooters[battle] = states[battle].shooter;
+        io.in(battle).emit('next', {battle: battle, shooter: shooters[battle], timer: getShotTimer(battle)});
+    });
+
+    socket.on('question', function(battle) {
+        console.log('question', battle);
+        timers[battle] = questionTime;
     });
 
     socket.on('stop-game', function(data) {
@@ -56,98 +85,69 @@ io.on('connection', function(socket){
 
     socket.on('init-battle', function(data) {
         if (data.battle in states) {
+            console.log('already init battle ' + data.battle);
             return;
         }
 
-        console.log('init game for ' + data.battle);
+        console.log('init battle ' + data.battle);
 
-        states[data.battle] = data.teams;
+        states[data.battle] = data;
+        teams[data.battle] = data.teams;
         shooters[data.battle] = data.shooter;
+        timers[data.battle] = getShotTimer(data.battle);
         startTimes[data.battle] = data.timer.start*1000;
         stopTimes[data.battle] = (data.timer.start+data.timer.duration)*1000;
 
-        const dt = new Date();
-
-        if (dt.getTime() < startTimes[data.ship]) {
+        if (new Date().getTime() < startTimes[data.battle]) {
             // Запустим интервал для проверки начала игры
-            beforeIntervals[data.ship] = setInterval(function() {
+            beforeIntervals[data.battle] = setInterval(function() {
 
-                console.log('before timer in room' + data.ship);
+                console.log('before timer in room' + data.battle);
 
-                const curdate = new Date();
-                const curtime = curdate.getTime();
-
-                if (startTimes[data.ship] <= curtime) {
-                    clearInterval(beforeIntervals[data.ship]);
-                    io.in('ship' + data.ship).emit('start game', {start: true});
+                if (startTimes[data.battle] <= new Date().getTime()) {
+                    clearInterval(beforeIntervals[data.battle]);
+                    timers[data.battle] = getShotTimer(data.battle);
+                    io.in(data.battle).emit('start game', {battle: data.battle, shooter: shooters[data.battle], timer: timers[data.battle]});
                 }
             }, 15000);
         } else {
             // запустим интервал для принудительного автохода для отсутствующих игроков
-            intervals[data.ship] = setInterval(function() {
+            autoStepIntervals[data.battle] = setInterval(function() {
 
-                console.log('step timer in room' + data.ship + ': ' +timers[data.ship]);
+                console.log('shot/question timer in battle ' + data.battle + ': ' + timers[data.battle]);
 
-                timers[data.ship]--;
+                timers[data.battle]--;
 
-                if (timers[data.ship] <= 0) {
-                    timers[data.ship] = stepTime;
-                    const num = Math.floor(Math.random()*6+1);
-                    io.in('ship' + data.ship).emit('automove', {ship: data.ship, marker: markers[data.ship],state: data.state,  num});
+                if (timers[data.battle] <= 0) {
+                    io.in(data.battle).emit('automove', {battle: data.battle, shooter: shooters[data.battle]});
 
-                    state = autoStep(markers[data.ship], states[data.ship], num);
+                    states[data.battle].shooter = getNextShooterNum(data.battle, states[data.battle].shooter);
+                    timers[data.battle] = shotTime;
+                    shooters[data.battle] = states[data.battle].shooter;
 
-                    let index = parseInt(markers[data.ship].replace('marker', ''));
+                    if (states[data.battle].shooter === 0) {
+                        clearInterval(stopIntervals[data.battle]);
+                        clearInterval(autoStepIntervals[data.battle]);
+                        io.in(data.battle).emit('stop game', {stop: true});
 
-                    let foundNext = false;
-                    let j = 0;
-                    while (!foundNext) {
-                        if (index < 4) {
-                            index++;
-                        } else {
-                            index = 1;
-                        }
-
-                        if (parseInt(state.wait['marker'+index]) == 1) {
-                            state.wait['marker'+index] = 0;
-                        } else if (parseInt(state.lives['marker'+index]) > 0
-                            && parseInt(state.positions['marker'+index]) < 100 ) {
-                            foundNext = true;
-                        }
-
-                        j++;
-                        if (j > 5) {
-                            break;
-                        }
-                    }
-
-                    if (!foundNext) {
-                        clearInterval(stopIntervals[data.ship]);
-                        clearInterval(intervals[data.ship]);
-                        io.in('ship' + data.ship).emit('stop game', {start: true});
                         return;
                     }
 
-                    markers[data.ship] = state.who_run = 'marker'+index;
-
-                    io.in('ship' + data.ship).emit('change marker', {ship: data.ship, marker: markers[data.ship]});
-                    io.in('ship' + data.ship).emit('update state', {ship: data.ship, state: state})
+                    io.in(data.battle).emit('next', {battle: data.battle, shooter: shooters[data.battle], timer: getShotTimer(data.battle)});
+                    io.in(data.battle).emit('update state', {battle: data.battle, state: states[data.battle]})
                 }
 
             }, 1000);
             // обязательно запускаем интервал на проверку окончания игры
-            stopIntervals[data.ship] = setInterval(function() {
+            stopIntervals[data.battle] = setInterval(function() {
 
-                console.log('stop game timer in room' + data.ship);
+                console.log('stop game timer in battle ' + data.battle);
+                const curtime = new Date().getTime();
 
-                const curdate = new Date();
-                const curtime = curdate.getTime();
-
-                if (stopTimes[data.ship] <= curtime) {
-                    clearInterval(stopIntervals[data.ship]);
-                    clearInterval(intervals[data.ship]);
-                    io.in('ship' + data.ship).emit('stop game', {start: true});
-
+                if (stopTimes[data.battle] <= curtime) {
+                    clearInterval(stopIntervals[data.battle]);
+                    clearInterval(intervals[data.battle]);
+                    io.in(data.battle).emit('stop game', {stop: true});
                 }
             }, 15000);
         }
@@ -156,18 +156,18 @@ io.on('connection', function(socket){
 
     socket.on('shot', function(data){
         states[data.battle] = data.state;
-        timers[data.battle] = stepTime;
-        socket.broadcast.to('ship' + data.ship).emit('rival move', data);
-        socket.emit('move', data);
+        timers[data.battle] = getShotTimer(data.battle);
+        socket.to(data.battle).emit('shot', data);
+        socket.to(data.battle).emit('shot', data);
     });
 
     socket.on('update state', function(data) {
 
-        states[data.ship] = data.state;
-        markers[data.ship] = data.state.who_run;
-        timers[data.ship] = stepTime;
+        states[data.battle] = data.state;
+        shooters[data.battle] = data.state.shooter;
+        timers[data.battle] = getShotTimer(data.battle);
 
-        io.in('ship' + data.ship).emit('update state', {ship: data.ship, state: states[data.ship]});
+        io.in(data.battle).emit('update state', {battle: data.battle, state: states[data.battle]});
     });
 });
 

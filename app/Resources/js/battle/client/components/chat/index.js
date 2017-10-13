@@ -6,7 +6,8 @@ import Chat from './chat';
 const Component = inject('chatStore')(observer(({ chatStore }) => {
     return (
         <Chat
-            messages={chatStore.getMessages()}
+            messages={chatStore.messages}
+            messagesCount={chatStore.messagesCount}
             newMessageText={chatStore.newMessageText}
             onChangeMessage={(e) => chatStore.onChangeMessage(e)}
             onSubmitMessage={(e) => chatStore.onSubmitMessage(e)}
