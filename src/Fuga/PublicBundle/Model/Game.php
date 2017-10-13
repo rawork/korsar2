@@ -147,7 +147,6 @@ class Game
                         break;
                     default:
                 }
-                $this->killShip($state['field'][$cellKey]['type']);
                 $state['field'][$cellKey]['type'] = $type;
 
             }
@@ -212,7 +211,7 @@ class Game
     public function getTeams()
     {
         $state = $this->getState();
-        
+
         return $state['teams'];
     }
 

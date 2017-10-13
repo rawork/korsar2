@@ -26,6 +26,8 @@ class BattleStore {
     }
 
     @action putData(data) {
+        this.socket.emit('room', data.battle);
+        this.socket.emit('init-battle', data);
         this.user = data.user;
         this.battle = data.battle;
 

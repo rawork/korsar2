@@ -6,7 +6,7 @@ import UserPanel from './user-panel';
 const Component = inject('battleStore')(observer(({ battleStore }) => {
     return (
         <UserPanel
-            shotTimer={battleStore.userStore.shotTimer}
+            shotTimer={battleStore.userStore.shotTimer.currentValue}
         />
     );
 }));

@@ -4,6 +4,7 @@
   "description": "Sea battle socket.io server app",
   "dependencies": {
     "express": "^4.15.2",
+    "node-fetch-json": "0.0.3",
     "socket.io": "^1.7.3"
   },
   "scripts": {

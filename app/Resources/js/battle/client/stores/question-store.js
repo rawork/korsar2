@@ -8,6 +8,7 @@ class QuestionStore {
 
     constructor(rootStore) {
         this.rootStore = rootStore;
+        this.socket;
         this.question = null;
         this.cell = null;
         this.stop = 0;
@@ -65,6 +66,7 @@ class QuestionStore {
     }
 
     @action putAnswer(data) {
+        this.socket.emit('next', {shooter: data.shooter, timer: data.timer});
 
     }
 

@@ -4,10 +4,12 @@ const io = require('socket.io')(http);
 const fs = require('fs');
 const path = require('path');
 
-const stepTime = 20;
+const shotTime = 15;
+const questionTime = 25;
 
 let states = [];
-let markers = [];
+let shooters = [];
+let teams = [];
 let intervals = [];
 let timers = [];
 let beforeIntervals = [];
@@ -15,7 +17,7 @@ let stopIntervals = [];
 let startTimes = [];
 let stopTimes = [];
 
-let autoStep = function(marker, state, num) {
+let autoStep = function(shooter, state) {
     state.positions[marker] = parseInt(state.positions[marker]) + parseInt(num);
 
     if (state.positions[marker] > 100) {
@@ -28,9 +30,9 @@ let autoStep = function(marker, state, num) {
 io.on('connection', function(socket){
     console.log('a user connected');
 
-    socket.on('room', function(room) {
-        socket.join(room);
-        console.log('user connected to ' + room);
+    socket.on('room', function(battle) {
+        socket.join(battle);
+        console.log('user connected to ' + battle);
     });
 
     socket.on('disconnect', function(){
@@ -39,12 +41,17 @@ io.on('connection', function(socket){
 
     socket.on('newMessage', function(message) {
         console.log('new message', message);
-        io.broadcast.emit('newMessage', message);
+        socket.broadcast.emit('newMessage', message);
     });
 
-    socket.on('next', function(num) {
-        console.log('new message', num);
-        io.broadcast.emit('next', num);
+    socket.on('next', function(data) {
+        console.log('next', data);
+        io.emit('next', data);
+    });
+
+    socket.on('stop-game', function(data) {
+        console.log('stop-game', data);
+        io.emit('stop-game', data);
     });
 
     socket.on('init-battle', function(data) {
@@ -52,13 +59,12 @@ io.on('connection', function(socket){
             return;
         }
 
-        // console.log('init game');
+        console.log('init game for ' + data.battle);
 
-        states[data.ship] = data.state;
-        markers[data.ship] = data.state.who_run;
-        timers[data.ship] = stepTime;
-        startTimes[data.ship] = data.starttime*1000;
-        stopTimes[data.ship] = data.stoptime*1000;
+        states[data.battle] = data.teams;
+        shooters[data.battle] = data.shooter;
+        startTimes[data.battle] = data.timer.start*1000;
+        stopTimes[data.battle] = (data.timer.start+data.timer.duration)*1000;
 
         const dt = new Date();
 

@@ -14,28 +14,42 @@ class User {
     }
 }
 
+class ShotTimer {
+    @observable stopTime;
+    @observable currentTime;
+
+    constructor(rootStore, socket){
+        this.rootStore = rootStore;
+        this.stopTime = 0;
+        this.currentTime = 0;
+        this.socket = socket;
+    }
+
+    @computed get currentValue() {
+        return this.stopTime - this.currentTime;
+    }
+}
+
 class UserStore {
     @observable users;
     @observable currentShooter;
-    @observable shotStopTime;
-    @observable shotCurrentTime;
+    @observable shotTimer;
 
     constructor(rootStore, socket) {
         this.rootStore = rootStore;
-        this.socket = socket;
         this.users = [];
         this.currentShooter = 0;
-        this.shotStopTime = 0;
-        this.shotCurrentTime = 0;
+        this.shotTimer = new ShotTimer(rootStore, socket);
 
-        this.socket.on('next', this.setShooter);
+        this.socket = socket;
+        this.socket.on('next', this.setNext);
         this.socket.on('stop-game', this.stop);
     }
 
-    @action setShooter(num) {
-        this.currentShooter = num;
+    @action setNext(data) {
+        this.currentShooter = data.shooter;
         if (this.isShooter && this.rootStore.timerStore.isActive) {
-            this.setShotTimer()
+            this.setShotTimer(data.timer)
         }
     }
 
@@ -53,10 +67,6 @@ class UserStore {
         }
 
         return false;
-    }
-
-    @computed get shotTimer() {
-        return this.shotStopTime - this.shotCurrentTime;
     }
 
     @computed get isStopped() {
@@ -120,13 +130,15 @@ class UserStore {
         }
     }
 
-    @action setShotTimer() {
-        let shotTime = 15;
-        if (this.users.filter(userStore => !userStore.isOver).length < 3) {
-            shotTime = 10;
-        }
+    @action setShotTimer(shotStopTime) {
+        this.shotStopTime = shotStopTime;
         this.shotCurrentTime = parseInt((new Date().getTime()/1000));
-        this.shotStopTime = this.shotCurrentTime + shotTime;
+        // let shotTime = 15;
+        // if (this.users.filter(userStore => !userStore.isOver).length < 3) {
+        //     shotTime = 10;
+        // }
+        //
+        // this.shotStopTime = this.shotCurrentTime + shotTime;
         this.measure();
     }
 
