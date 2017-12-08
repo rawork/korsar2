@@ -200,11 +200,9 @@ class BattleController extends Controller
 
 			//  нашли вопрос с таким ID и таким значением ответа = правильный ответ
 			if ($question) {
+
 			     list($money, $type) = $game->shot($cell);
-			} else {
-			    $game->setShooter($game->nextShooter($game->getShooter()));
-                $game->setUserTimer(time() + $game->getUserTimerDuration());
-            }
+			}
 
             $game->save();
 
@@ -212,8 +210,6 @@ class BattleController extends Controller
                 'error' => false,
                 'money' => $money,
                 'type' => $type,
-                'shooter' => $game->getShooter(),
-                'timer' => $game->getUserTimer(),
             ));
 
 

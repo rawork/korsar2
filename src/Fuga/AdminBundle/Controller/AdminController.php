@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AdminController extends Controller
 {
-	public function render($template, $params = array())
+	public function render($template, $params = array(), $silent = false)
 	{
 		$params['user'] = $this->get('security')->getCurrentUser();
 		$params['states'] = $this->getManager('Fuga:Admin:Module')->getStates();
@@ -16,7 +16,7 @@ class AdminController extends Controller
 		$params['fugaVersion'] = LIB_VERSION;
 		$params['mainurl'] = $this->get('container')->getVar('mainurl');
 
-		return parent::render($template, $params);
+		return parent::render($template, $params, $silent);
 	}
 
 	public function rpp()

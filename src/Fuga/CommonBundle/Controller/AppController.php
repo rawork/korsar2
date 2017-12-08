@@ -44,7 +44,9 @@ class AppController extends Controller
                 $controller = new SecurityController();
                 $response = $controller->closed();
             } else {
-                $parameters = $this->get('routing')->match(array_shift(explode('?', $site['url'])));
+                $urlParts = explode('?', $site['url']);
+                $pureUrl = array_shift($urlParts);
+                $parameters = $this->get('routing')->match($pureUrl);
                 $response = $this->get('container')->callAction($parameters['_controller'], $parameters);
             }
 

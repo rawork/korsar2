@@ -36,7 +36,9 @@ class ShotTimer {
 
     @action measure() {
         if (this.stoped) {
-            this.socket.emit('question', this.rootStore.battle);
+            this.stopTime = 0;
+            this.currentTime = 0;
+            return;
         }
         let self = this;
         this.currentTime = parseInt((new Date().getTime()/1000));
@@ -52,7 +54,7 @@ class ShotTimer {
     }
 
     @action stop() {
-        this.stoped = false;
+        this.stoped = true;
     }
 }
 
