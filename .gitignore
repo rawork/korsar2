@@ -3,6 +3,9 @@
 
 node_modules
 
+#js games
+/app/Resources/js/task
+
 # Uploads
 upload/*
 !upload/.htaccess
