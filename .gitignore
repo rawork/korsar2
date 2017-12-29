@@ -5,6 +5,8 @@ node_modules
 
 #js games
 /app/Resources/js/task
+/app/Resources/js/battle-vue
+
 
 # Uploads
 upload/*
