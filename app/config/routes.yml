@@ -288,19 +288,19 @@ game_battle_timer:
   path: timer
   defaults: { _controller: 'Fuga:Public:Game:Battle:timer'}
 game_battle_messages:
-  path: messages
+  path: /api/battle/messages
   defaults: { _controller: 'Fuga:Public:Game:Battle:messages'}
 game_battle_message:
-    path: message
+    path: /api/battle/message
     defaults: { _controller: 'Fuga:Public:Game:Battle:message'}
 game_battle_users:
-  path: users
+  path: /api/battle/users
   defaults: { _controller: 'Fuga:Public:Game:Battle:users'}
 game_battle_field:
-  path: field
+  path: /api/battle/field
   defaults: { _controller: 'Fuga:Public:Game:Battle:field'}
 game_battle_question:
-    path: question
+    path: /api/battle/question
     defaults: { _controller: 'Fuga:Public:Game:Battle:question'}
 
 game_duel_data:

@@ -4,7 +4,7 @@
     top: 20px;
     right: 0;
 
-    & input {
+    input {
       width: 290px;
       height: 54px;
       border: 2px dotted #fff;
@@ -25,19 +25,19 @@
         }
     }
 
-    & .btn-history {
+    .btn-history {
         display: inline-block;
         margin-left: 150px;
         margin-bottom: 5px;
         font-size: 13px;
     }
 
-    & .init-message {
+    .init-message {
           text-align: center;
           padding-top: 100px;
     }
 
-    & .text-container {
+    .text-container {
           height: 425px;
           padding-right: 25px;
           font-size: 14px;
@@ -46,11 +46,11 @@
           overflow-x: hidden;
           margin-bottom: 30px;
 
-    & div {
+    div {
           margin-bottom: 5px;
       }
 
-    & a {
+    a {
           text-decoration: underline;
           display: inline-block;
           margin-right: 5px;

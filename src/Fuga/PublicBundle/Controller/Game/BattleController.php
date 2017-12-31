@@ -3,7 +3,7 @@
 namespace Fuga\PublicBundle\Controller\Game;
 
 use Fuga\CommonBundle\Controller\Controller;
-use Fuga\PublicBundle\Model\Game;
+use Fuga\PublicBundle\Model\BattleGame;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Fuga\PublicBundle\Model\Cell;
 
@@ -27,7 +27,7 @@ class BattleController extends Controller
         }
 
         if ('GET' == $_SERVER['REQUEST_METHOD']) {
-            $game = new Game($user['ship_id'], $this->get('container'));
+            $game = new BattleGame($user['ship_id'], $this->get('container'));
 
             if (!$game->getGame()) {
                 $response->setData(array(
@@ -180,7 +180,7 @@ class BattleController extends Controller
 		}
 
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
-		    $game = new Game($user['ship_id'], $this->get('container'));
+		    $game = new BattleGame($user['ship_id'], $this->get('container'));
 
             if (!$game->getGame()) {
                 $response->setData(array(

@@ -175,10 +175,12 @@
                                 <tr>
                                     <th>{{ num }}</th>
                                     {% for letter in letters %}
+                                        {% set currentName = num ~ letter %}
+                                        {% set currentType = attribute(currentFields, currentName) %}
                                         <td>
-                                            <input type="hidden" value="" name="cell_table{{ table }}_{{ num }}{{ letter }}">
-                                            {%  for type in types %}
-                                            <img class="select-image{% if type == fields[table][num+letter] %} current{% endif %}" data-value="{{ type.value }}" src="{{ type.image }}">
+                                            <input type="hidden" value="{{ currentType }}" name="cell_table{{ table }}_{{ num }}{{ letter }}">
+                                            {%  for typeKey, type in types %}
+                                                <img class="select-image{% if type['value'] == currentType %} current{% endif %}" data-value="{{ type.value }}" src="{{ type.image }}">
                                             {% endfor %}
                                         </td>
                                     {% endfor %}

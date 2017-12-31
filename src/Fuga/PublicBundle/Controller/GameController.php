@@ -112,13 +112,12 @@ class GameController extends Controller
 			return $this->render('game/access');
 		}
 
-		$this->get('container')->setVar('title', 'МОРСКОЙ БОЙ');
-		$this->get('container')->setVar('h1', 'МОРСКОЙ БОЙ');
-		$this->addCss('/bundles/public/css/battle.chat.css');
-		$this->addCss('/bundles/public/css/sandbox.battle.css');
-//		$this->addJs('/bundles/storage/jquery.storageapi.min.js');
-		$this->addJs('/bundles/public/js/bundle.battle.min.js');
-
+        $this->get('container')->setVar('title', 'МОРСКОЙ БОЙ');
+        $this->get('container')->setVar('h1', 'МОРСКОЙ БОЙ');
+        $this->addCss('/bundles/battle/css/app.css');
+        $this->addJs('/bundles/battle/js/manifest.js');
+        $this->addJs('/bundles/battle/js/vendor.js');
+        $this->addJs('/bundles/battle/js/app.js');
 
 		return $this->render('game/battle');
 	}

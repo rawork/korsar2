@@ -4,7 +4,7 @@ namespace Fuga\PublicBundle\Model;
 
 use Fuga\Component\Container;
 
-class Game
+class BattleGame
 {
     protected $game;
     protected $state;
