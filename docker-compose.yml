@@ -1,0 +1,60 @@
+version: '3.7'
+services:
+  ##
+  # Окружение ${} берется из файла .env
+  ##
+  nginx:
+    image: nginx
+    ports:
+      - ${NGINX_PORT:-80}:80
+    environment:
+      - VIRTUAL_HOST=${VIRTUAL_HOST:-korsar.loc}
+    volumes:
+      - ./docker/nginx/sites.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/nginx/custom-settings.conf:/etc/nginx/conf.d/custom_settings.conf
+      - ./:/app
+    restart: always
+    networks:
+      - korsar_backend
+    depends_on:
+      - app
+
+  app:
+    build:
+      dockerfile: docker/Dockerfile
+      context: ./
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - korsar_backend
+    volumes:
+      - ./:/app
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+      - ./docker/php/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'korsar_db'
+      MYSQL_USER: 'korsar_user'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: 'korsar_pass'
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: 'root'
+    networks:
+      - korsar_backend
+    ports:
+      - '33060:3306'
+    expose:
+      - '3306'
+    volumes:
+      - korsar-db:/var/lib/mysql
+
+volumes:
+  korsar-db:
+    external: true
+
+networks:
+  korsar_backend:
+    driver: bridge

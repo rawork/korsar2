@@ -2,29 +2,32 @@
 
 namespace Fuga\CommonBundle\Controller;
 
+use Fuga\CommonBundle\Security\SecurityHandler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class SecurityController extends Controller
 {
-	
 	public function login()
 	{
-		$message = null;
+        /** @var Request $request */
+        $request = $this->get('request');
 		if ('POST' == $_SERVER['REQUEST_METHOD']) {
-			$login = $this->get('request')->request->get('_user');
-			$password = $this->get('request')->request->get('_password');
-			$is_remember = $this->get('request')->request->get('_remember_me');
-			
+			$login = $request->request->get('_user');
+			$password = $request->request->get('_password');
+			$is_remember = $request->request->get('_remember_me');
+
+            /** @var SecurityHandler $security */
+            $security = $this->get('security');
 			if (!$login || !$password){
-				$this->get('session')->set('danger', 'Неверный Логин или Пароль');
-			} elseif ($this->get('security')->isServer()) {
-				$res = $this->get('security')->login($login, $password, $is_remember);
+				$this->get('session')->set('danger', 'Неверный Логин или Пароль 1');
+			} elseif ($security->isServer()) {
+				$res = $security->login($login, $password, $is_remember);
 				if ($res) {
-					return $res;
-				} else {
-					$this->get('session')->set('danger', 'Неверный Логин или Пароль');
+                    return $res;
 				}
+
+                $this->get('session')->set('danger', 'Неверный Логин или Пароль 2');
 			}
 			
 			return $this->reload();
@@ -37,7 +40,6 @@ class SecurityController extends Controller
 	
 	public function forget()
 	{
-		$message = null;
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$login  = $this->get('request')->request->get('_user');
 			$sql = "SELECT id, login, email FROM user_user WHERE login= :login OR email = :login ";
@@ -118,5 +120,4 @@ class SecurityController extends Controller
 
 		return $response;
 	}
-	
 }

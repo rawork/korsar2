@@ -1,7 +1,7 @@
 {
     "config": {
         "platform": {
-            "php": "5.3.29"
+            "php": "7.4"
         }
     },
     "require": {
@@ -23,5 +23,8 @@
     },
     "autoload": {
         "psr-4": {"Fuga\\": "src/Fuga/"}
+    },
+    "provide" : {
+        "ext-mongo": "*"
     }
 }

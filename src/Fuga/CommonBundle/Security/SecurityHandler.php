@@ -137,9 +137,10 @@ class SecurityHandler
 			$stmt = $this->container->get('connection')->prepare($sql);
 			$stmt->bindValue("login", $login);
 			$stmt->bindValue("password", $passwordHash);
-			$stmt->execute();
-			$user = $stmt->fetch();
+			$stmt->executeStatement();
+			$user = $stmt->fetchAssociative();
 		}
+
 		if ($user){
 			$token = $this->token($login, $passwordHash);
 			$response = new RedirectResponse($this->container->get('request')->getRequestUri());
@@ -152,18 +153,14 @@ class SecurityHandler
 			);
 
 			if ($isRemember) {
-				$this->container->updateItem('user_user',
-					array('token' => $token),
-					array('id' => $user['id'])
-				);
 				$response->headers->setCookie(new Cookie('fuga_user', $user['login'], time()+AUTH_TTL));
 				$response->headers->setCookie(new Cookie('fuga_key', $token, time()+AUTH_TTL));
 			}
 
 			return $response;
-		} else {
-			return false;
 		}
+
+        return false;
 	}
 	
 	private function token($login, $password)
@@ -171,34 +168,45 @@ class SecurityHandler
 		return hash('sha512', $password.$login.$this->container->get('request')->getClientIp());
 	}
 	
-	public function getGroup($name) {
+	public function getGroup($name)
+    {
 		return $this->container->getItem('user_group', "name='$name'");
 	}
 	
-	public function isGroup($name) {
+	public function isGroup($name)
+    {
 		$group = $this->getGroup($name);
 		$user = $this->getCurrentUser();
 		return !empty($user['group_id']) && !empty($group['id']) && $user['group_id'] == $group['id'];
 	}
 
-	public function isAdmin() {
+	public function isAdmin()
+    {
 		return $this->container->get('session')->get('fuga_user') == 'admin';
 	}
 
-	public function isDeveloper() {
+	public function isDeveloper()
+    {
 		return $this->container->get('session')->get('fuga_user') == 'dev';
 	}
 
-	public function isSuperuser() {
+	public function isSuperuser()
+    {
 		return $this->isAdmin() || $this->isDeveloper();
 	}
 
-	public function isLocal() {
+	public function isLocal()
+    {
 		return $this->container->get('request')->getClientIp() == gethostbyname($this->container->get('request')->server->get('SERVER_NAME'));
 	}
 
-	public function isServer() {
-		return isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'], $_SERVER['SERVER_NAME']);
+	public function isServer()
+    {
+        // TODO: SERVER_NAME пустой прилетает
+        if ($_SERVER['SERVER_NAME']) {
+            return isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'], $_SERVER['SERVER_NAME']);
+        }
+
+        return true;
 	}
-	
 }
